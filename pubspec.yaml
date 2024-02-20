@@ -1,0 +1,63 @@
+name: e_spw
+description: "Aplikasi Jual Beli PKK online."
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.4 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_native_splash: ^2.3.10
+  animated_text_kit: ^4.2.2
+  gap: ^3.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+  flutter_launcher_icons: ^0.13.1
+
+# Defining package
+flutter:
+  assets:
+    - assets/image/
+
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/font/Poppins-Thin.ttf
+          weight: 200
+        - asset: assets/font/Poppins-Light.ttf
+          weight: 300
+        - asset: assets/font/Poppins-Italic.ttf
+          style: italic
+        - asset: assets/font/Poppins-Regular.ttf
+        - asset: assets/font/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/font/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/font/Poppins-Bold.ttf
+          weight: 700
+        - asset: assets/font/Poppins-ExtraBold.ttf
+          weight: 800
+        - asset: assets/font/Poppins-Black.ttf
+          weight: 900
+
+  uses-material-design: true
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: "assets/image/espw-colored-with-space-resize.png"
+  android: true
+  android_12:
+    color: "#FFFFFF"
+    image: "assets/image/espw-colored-with-space-resize.png"
+    icon_background_color: "#FFFFFF"
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  image_path: "assets/image/espw-white-with-space-resize.png"
+  adaptive_icon_background: "#FF5B00"
+  adaptive_icon_foreground: "assets/image/espw-white-with-space-resize.png"
