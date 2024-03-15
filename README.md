@@ -15,3 +15,6 @@ E - SPW adalah aplikasi jual beli produk produk PKK secara online. Aplikasi ini 
 - Simple and Fast, Sistem aplikasi dibuat sederhana menyesuaikan dengan kebutuhan pelajar dalam kegiatan PKK.
 - Automatic Report, dengan pencatatan otomatis, pelajar tidak perlu memikirkan laporan penjualan karena laporan dibuat secara otomatis dan terintegrasi langsung dengan website Guru, sehingga laporan dapat langsung dikirimkan.
 - ***and more ...***
+
+## More
+Lihat <a href="https://github.com/mutaqinmi/e-spw-web">E - SPW Web</a>
