@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:e_spw/widgets/bottom_navigation_items.dart';
 import 'package:go_router/go_router.dart';
+import 'package:gap/gap.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,28 +22,28 @@ class _HomePageState extends State<HomePage> {
             title: SizedBox(
               width: double.infinity,
               height: 40,
-              child: TextField(
-                onTap: (){
+              child: FilledButton(
+                onPressed: (){
                   context.pushNamed('search');
                 },
-                style: const TextStyle(
-                  fontSize: 14
+                style: ButtonStyle(
+                  shape: MaterialStatePropertyAll(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)
+                    )
+                  ),
+                  backgroundColor: const MaterialStatePropertyAll(Color.fromARGB(255, 214, 214, 214)),
+                  foregroundColor: const MaterialStatePropertyAll(Colors.grey),
+                  padding: const MaterialStatePropertyAll(EdgeInsets.symmetric(horizontal: 10))
                 ),
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 15),
-                  border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                  ),
-                  hintText: 'Cari ...',
-                  hintStyle: const TextStyle(
-                    fontSize: 14
-                  ),
-                  prefixIcon: IconButton(
-                    onPressed: (){},
-                    icon: const Icon(Icons.search_rounded),
-                  ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.search_rounded),
+                    Gap(5),
+                    Text('Telusuri produk ...')
+                  ],
                 ),
-              ),
+              )
             ),
             actions: [
               IconButton(

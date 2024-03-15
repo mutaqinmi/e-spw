@@ -2,29 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:e_spw/widgets/dialog.dart';
-import 'package:e_spw/widgets/bottom_snack_bar.dart';
+import 'package:e_spw/app/controllers.dart';
 
 class Verify extends StatefulWidget {
   const Verify({super.key});
 
   @override
   State<Verify> createState() => _VerifyState();
-}
-
-void _verify(BuildContext context, TextEditingController data){
-  String userPassword = 'ilham123';
-  if(data.text == userPassword){
-    successSnackBar(
-      context,
-      const Text('Login berhasil!')
-    );
-    context.pushNamed('home');
-  } else {
-    alertSnackBar(
-      context,
-      const Text('Password salah!')
-    );
-  }
 }
 
 class _VerifyState extends State<Verify> {
@@ -147,7 +131,7 @@ class _VerifyState extends State<Verify> {
                 )
               ],
             ),
-            onPressed: (){_verify(context, _password);},
+            onPressed: (){verify(context, _password);},
           ),
         ),
       ),

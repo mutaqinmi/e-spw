@@ -1,30 +1,14 @@
-import 'package:e_spw/widgets/bottom_snack_bar.dart';
 import 'package:e_spw/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:e_spw/app/controllers.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
 
   @override
   State<SignUp> createState() => _SignUpState();
-}
-
-void _signUp(BuildContext context, TextEditingController data){
-  String userNIS = '12225173';
-  if(data.text == userNIS){
-    successSnackBar(
-      context,
-      const Text('Login berhasil!')
-    );
-    context.goNamed('home');
-  } else {
-    alertSnackBar(
-      context,
-      const Text('NIS salah / tidak ditemukan!')
-    );
-  }
 }
 
 class _SignUpState extends State<SignUp> {
@@ -136,7 +120,7 @@ class _SignUpState extends State<SignUp> {
                 )
               ],
             ),
-            onPressed: (){_signUp(context, _nis);},
+            onPressed: (){signUp(context, _nis);},
           ),
         ),
       ),

@@ -6,6 +6,7 @@ import 'package:e_spw/pages/home_page.dart';
 import 'package:e_spw/pages/signup_page.dart';
 import 'package:e_spw/pages/signin_page.dart';
 import 'package:e_spw/pages/verify_page.dart';
+import 'package:e_spw/pages/search_page.dart';
 
 final routes = GoRouter(
   routes: [
@@ -37,6 +38,13 @@ final routes = GoRouter(
       name: 'home',
       path: '/home',
       builder: (context, state) => const HomePage(),
+      routes: [
+        GoRoute(
+          name: 'search',
+          path: 'search',
+          builder: (context, state) => const SearchPage(),
+        )
+      ]
     )
   ]
 );

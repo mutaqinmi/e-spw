@@ -2,25 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:e_spw/widgets/dialog.dart';
-import 'package:e_spw/widgets/bottom_snack_bar.dart';
+import 'package:e_spw/app/controllers.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
 
   @override
   State<SignIn> createState() => _SignInState();
-}
-
-void _signIn(BuildContext context, TextEditingController data){
-  String userNIS = '12225173';
-  if(data.text == userNIS){
-    context.pushNamed('verify');
-  } else {
-    alertSnackBar(
-      context,
-      const Text('NIS salah / tidak ditemukan!')
-    );
-  }
 }
 
 class _SignInState extends State<SignIn> {
@@ -98,6 +86,7 @@ class _SignInState extends State<SignIn> {
                 hintText: 'NIS (Nomor Induk Siswa)',
                 prefixIcon: Icon(Icons.pin_outlined),
               ),
+              validator: (value){return value!.isEmpty ? 'Isi field ini terlebih dahulu!' : null;},
             ),
           ],
         ),
@@ -132,7 +121,7 @@ class _SignInState extends State<SignIn> {
                 )
               ],
             ),
-            onPressed: (){_signIn(context, _nis);},
+            onPressed: (){signIn(context, _nis);},
           ),
         ),
       ),
