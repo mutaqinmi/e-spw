@@ -1,0 +1,65 @@
+name: espw
+description: "Aplikasi Jual Beli PKK online."
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.4 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_native_splash: ^2.3.10
+  animated_text_kit: ^4.2.2
+  gap: ^3.0.1
+  go_router: ^13.2.0
+  persistent_bottom_nav_bar: any
+  carousel_slider: ^4.2.1
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+  flutter_launcher_icons: ^0.13.1
+
+flutter:
+  assets:
+    - assets/image/
+    - assets/icon/
+
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/font/Poppins-Thin.ttf
+          weight: 200
+        - asset: assets/font/Poppins-Light.ttf
+          weight: 300
+        - asset: assets/font/Poppins-Italic.ttf
+          style: italic
+        - asset: assets/font/Poppins-Regular.ttf
+        - asset: assets/font/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/font/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/font/Poppins-Bold.ttf
+          weight: 700
+        - asset: assets/font/Poppins-ExtraBold.ttf
+          weight: 800
+        - asset: assets/font/Poppins-Black.ttf
+          weight: 900
+
+  uses-material-design: true
+
+flutter_native_splash:
+  android: true
+  color: "#FFFFFF"
+  image: "assets/icon/espw-colored-with-space-resize.png"
+  android_12:
+    color: "#FFFFFF"
+    image: "assets/icon/espw-colored-with-space-resize.png"
+  fullscreen: true
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  image_path: "assets/icon/espw-colored-with-space-resize.png"

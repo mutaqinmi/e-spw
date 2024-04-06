@@ -1,0 +1,133 @@
+import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
+import 'package:espw/app/controllers.dart';
+
+class Verify extends StatefulWidget {
+  const Verify({super.key});
+
+  @override
+  State<Verify> createState() => _VerifyState();
+}
+
+class _VerifyState extends State<Verify> {
+  final _formFieldKey = GlobalKey<FormFieldState>();
+  bool _obscureText = true;
+  String _password = '';
+
+  void _submit(){
+    if(_formFieldKey.currentState!.validate()){
+      _formFieldKey.currentState!.save();
+      verify(context, _password);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: true,
+        title: const Text(
+          'Verifikasi',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600
+          ),
+        ),
+        actions: [
+          IconButton(
+            onPressed: (){},
+            icon: const Icon(Icons.help_outline),
+          )
+        ],
+      ),
+      body: SafeArea(
+        minimum: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Gap(10),
+            const Row(
+              children: [
+                Text(
+                  'Verifikasi akun anda.',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600
+                  ),
+                ),
+              ],
+            ),
+            const Row(
+              children: [
+                Text(
+                  'Masukkan password untuk melanjutkan.',
+                  style: TextStyle(
+                    fontSize: 12
+                  ),
+                )
+              ],
+            ),
+            const Gap(30),
+            Form(
+              child: TextFormField(
+                key: _formFieldKey,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                obscureText: _obscureText,
+                autofocus: true,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10))
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
+                  hintText: 'Password',
+                  labelText: 'Password',
+                  suffixIcon: IconButton(
+                    icon: Icon(_obscureText ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                    onPressed: (){
+                      setState(() {
+                        _obscureText = !_obscureText;
+                      });
+                    },
+                  )
+                ),
+                validator: (value){
+                  if(value!.isEmpty){
+                    return 'Isi field terlebih dahulu!';
+                  }
+
+                  if(value.length <= 4){
+                    return 'Password harus diisi minimal 5 karakter';
+                  }
+
+                  return null;
+                },
+                onSaved: (value){_password = value!;},
+              ),
+            ),
+            const Gap(30),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: FilledButton(
+                style: ButtonStyle(
+                  shape: MaterialStatePropertyAll(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    )
+                  ),
+                ),
+                child: const Text(
+                  'Masuk',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                onPressed: (){_submit();},
+              ),
+            ),
+          ],
+        ),
+      )
+    );
+  }
+}
