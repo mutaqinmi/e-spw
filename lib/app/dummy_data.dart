@@ -4,6 +4,8 @@ final List<Map> shop = [
     'profile_picture': 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1381&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     'class': 'XI PPLG',
     'name': 'Fiesta Food',
+    'short_description': 'Aneka makanan dan minuman',
+    'description': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur non urna gravida, tempus felis in, commodo elit. Ut fringilla velit nec volutpat fringilla. Phasellus venenatis imperdiet cursus.',
     'rating': 4.8,
   },
   {
@@ -11,6 +13,8 @@ final List<Map> shop = [
     'profile_picture': 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     'class': 'XI PPLG',
     'name': 'Kedai Cici',
+    'short_description': 'Aneka makanan dan minuman',
+    'description': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur non urna gravida, tempus felis in, commodo elit. Ut fringilla velit nec volutpat fringilla. Phasellus venenatis imperdiet cursus.',
     'rating': 4.7,
   },
   {
@@ -18,6 +22,8 @@ final List<Map> shop = [
     'profile_picture': 'https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     'class': 'XI TJKT 2',
     'name': 'Si Cepot',
+    'short_description': 'Aneka makanan dan minuman',
+    'description': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur non urna gravida, tempus felis in, commodo elit. Ut fringilla velit nec volutpat fringilla. Phasellus venenatis imperdiet cursus.',
     'rating': 4.6,
   },
   {
@@ -25,6 +31,8 @@ final List<Map> shop = [
     'profile_picture': 'https://images.unsplash.com/photo-1533910534207-90f31029a78e?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     'class': 'XI TJKT 2',
     'name': 'Kedai Naasa',
+    'short_description': 'Aneka makanan dan minuman',
+    'description': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur non urna gravida, tempus felis in, commodo elit. Ut fringilla velit nec volutpat fringilla. Phasellus venenatis imperdiet cursus.',
     'rating': 4.7,
   },
   {
@@ -32,6 +40,8 @@ final List<Map> shop = [
     'profile_picture': 'https://images.unsplash.com/photo-1483695028939-5bb13f8648b0?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     'class': 'XI DPIB 2',
     'name': 'Warung Kopi',
+    'short_description': 'Aneka makanan dan minuman',
+    'description': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur non urna gravida, tempus felis in, commodo elit. Ut fringilla velit nec volutpat fringilla. Phasellus venenatis imperdiet cursus.',
     'rating': 4.8,
   }
 ];

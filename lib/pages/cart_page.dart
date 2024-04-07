@@ -31,14 +31,15 @@ class _CartPageState extends State<CartPage>{
           color: Colors.green,
           borderRadius: BorderRadius.all(Radius.circular(15))
         ),
-        child: const Row(
+        child: const Wrap(
+          spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             Icon(
               Icons.check_circle_outline,
               size: 12,
               color: Colors.white,
             ),
-            Gap(5),
             Text(
               'Buka',
               style: TextStyle(
@@ -57,14 +58,15 @@ class _CartPageState extends State<CartPage>{
         color: Colors.red,
         borderRadius: BorderRadius.all(Radius.circular(15))
       ),
-      child: const Row(
+      child: const Wrap(
+        spacing: 5,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           Icon(
             Icons.cancel_outlined,
             size: 12,
             color: Colors.white,
           ),
-          Gap(5),
           Text(
             'Tutup',
             style: TextStyle(

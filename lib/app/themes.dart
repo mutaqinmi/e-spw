@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
+const Color primaryColor = Color.fromARGB(255, 253, 143, 24);
+
 final ThemeData themes = ThemeData(
   brightness: Brightness.light,
-  primaryColor: const Color.fromARGB(255, 253, 143, 24),
+  primaryColor: primaryColor,
   bottomSheetTheme: const BottomSheetThemeData(
     surfaceTintColor: Colors.transparent,
   ),
@@ -12,12 +14,19 @@ final ThemeData themes = ThemeData(
   ),
   filledButtonTheme: const FilledButtonThemeData(
     style: ButtonStyle(
-      backgroundColor: MaterialStatePropertyAll(Color.fromARGB(255, 253, 143, 24)),
+      backgroundColor: MaterialStatePropertyAll(primaryColor),
     ),
+  ),
+  outlinedButtonTheme: const OutlinedButtonThemeData(
+    style: ButtonStyle(
+      side: MaterialStatePropertyAll(BorderSide(
+        color: primaryColor
+      ))
+    )
   ),
   colorScheme: const ColorScheme(
     brightness: Brightness.light,
-    primary: Color.fromARGB(255, 253, 143, 24),
+    primary: primaryColor,
     onPrimary: Colors.white,
     secondary: Color.fromARGB(255, 243, 221, 198),
     onSecondary: Color.fromARGB(255, 183, 110, 33),

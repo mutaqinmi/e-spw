@@ -1,3 +1,4 @@
+import 'package:espw/pages/shop_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -58,5 +59,12 @@ final routes = GoRouter(
         ),
       ]
     ),
+    GoRoute(
+      name: 'shop',
+      path: '/shop',
+      builder: (BuildContext context, GoRouterState state) => ShopPage(
+        shopID: state.uri.queryParameters['shopID'],
+      )
+    )
   ]
 );
