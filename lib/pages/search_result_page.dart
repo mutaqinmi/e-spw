@@ -1,6 +1,6 @@
 import 'package:espw/app/dummy_data.dart';
 import 'package:espw/pages/cart_page.dart';
-import 'package:espw/pages/shop_result.dart';
+import 'package:espw/widgets/shop_result.dart';
 import 'package:espw/widgets/product_result.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

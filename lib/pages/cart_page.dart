@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:espw/app/dummy_data.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -21,35 +22,6 @@ class _CartPageState extends State<CartPage>{
     super.initState();
     cartList = carts;
   }
-
-  // final List<Map> cartItem = [
-  //   {
-  //     'cartID': 'CART001',
-  //     'shopName': 'Fiesta Food',
-  //     'isOpen': true,
-  //     'productImage': 'https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-  //     'productName': 'Ayam Goreng',
-  //     'extra': [
-  //       'Pedas',
-  //       'Gurih'
-  //     ],
-  //     'price': 3000,
-  //   },
-  //   {
-  //     'cartID': 'CART002',
-  //     'shopName': 'Fiesta Food',
-  //     'isOpen': false,
-  //     'productImage': 'https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-  //     'productName': 'Ayam Goreng',
-  //     'extra': [
-  //       'Pedas',
-  //       'Gurih'
-  //     ],
-  //     'price': 3000,
-  //   }
-  // ].toList();
-
-  //TODO: Handling Range Error
 
   Widget _isOpen(bool isOpen){
     if(isOpen){
@@ -189,12 +161,12 @@ class _CartPageState extends State<CartPage>{
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
+                      Wrap(
+                        spacing: 5,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           const Icon(Icons.storefront),
-                          const Gap(5),
                           Text(item['product'][0]['shop_name']),
-                          const Gap(5),
                           _isOpen(item['product'][0]['is_open'])
                         ],
                       ),
@@ -209,8 +181,8 @@ class _CartPageState extends State<CartPage>{
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: Image.network(
-                          item['product'][0]['product_image'],
+                        child: CachedNetworkImage(
+                          imageUrl: item['product'][0]['product_image'],
                           width: 100,
                           height: 100,
                           fit: BoxFit.cover,

@@ -5,6 +5,7 @@ import 'package:espw/widgets/profile_picture.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gap/gap.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 // This is a dummy data that simulate API
 import 'package:espw/app/dummy_data.dart';
@@ -40,14 +41,12 @@ class _HomePageState extends State<HomePage> {
   Widget _banner({required BuildContext context, required String imageURL, void Function()? onTap}){
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      child: ClipRRect(
-        child: GestureDetector(
-          onTap: onTap,
-          child: Image.network(
-            imageURL,
-            fit: BoxFit.cover,
-          ),
-        )
+      child: GestureDetector(
+        onTap: onTap,
+        child: CachedNetworkImage(
+          imageUrl: imageURL,
+          fit: BoxFit.cover,
+        ),
       )
     );
   }
@@ -58,17 +57,14 @@ class _HomePageState extends State<HomePage> {
         _banner(
           context: context,
           imageURL: 'https://img.freepik.com/free-vector/hand-drawn-fast-food-sale-banner-template_23-2150992555.jpg?t=st=1711991574~exp=1711995174~hmac=4b0d453d2bfa45bbb32c55889576b1a011a16455d462cdc13aab000dae0226ca&w=900',
-          onTap: (){context.pushNamed('search');}
         ),
         _banner(
           context: context,
           imageURL: 'https://img.freepik.com/free-vector/flat-design-american-food-sale-banner_23-2149163587.jpg?t=st=1711991604~exp=1711995204~hmac=5de49a2ab6f0b442e7c2d6db47d1a5e55028e8efe8aa6438f9e793ad8d91fe75&w=900',
-          onTap: (){context.pushNamed('search');}
         ),
         _banner(
           context: context,
           imageURL: 'https://img.freepik.com/free-vector/flat-design-pizza-sale-banner_23-2149116013.jpg?t=st=1711991623~exp=1711995223~hmac=446528c1b3d4452aaa87fb4da8574e476b86b420b6708e9e8dca979fb8a41fa5&w=900',
-          onTap: (){context.pushNamed('search');}
         )
       ]
     );
@@ -118,7 +114,7 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         Icon(Icons.search),
                         Gap(10),
-                        Text('Telusuri produk ...')
+                        Text('Telusuri produk atau toko ...')
                       ],
                     ),
                   ),
@@ -253,6 +249,7 @@ class _HomePageState extends State<HomePage> {
               return ProductCard(
                 imageURL: product['product_image'],
                 productName: product['product_name'],
+                description: product['product_description'],
                 soldTotal: product['sold_total'],
                 price: product['price'],
                 rating: product['rating'],

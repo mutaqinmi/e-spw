@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -21,8 +22,8 @@ class ShopCard extends StatelessWidget{
             children: [
               ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(15)),
-                child: Image.network(
-                  imageURL,
+                child: CachedNetworkImage(
+                  imageUrl: imageURL,
                   width: double.infinity,
                   height: 120,
                   fit: BoxFit.cover,
@@ -52,7 +53,7 @@ class ShopCard extends StatelessWidget{
                     const Gap(15),
                     Row(
                       children: [
-                        Icon(Icons.star_outline, color: Theme.of(context).primaryColor,),
+                        Icon(Icons.star_rate_rounded, color: Theme.of(context).primaryColor,),
                         const Gap(5),
                         Text(rating.toString())
                       ],

@@ -12,7 +12,7 @@ class _NotificationPageState extends State<NotificationPage>{
   Widget build(BuildContext context){
     return const Scaffold(
       body: Center(
-        child: Text('Notification Page')
+        child: Text('Notification Page'),
       ),
     );
   }

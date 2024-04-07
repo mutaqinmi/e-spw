@@ -42,6 +42,7 @@ final List<Map> products = [
     'shop_name': 'Fiesta Food',
     'product_image': 'https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     'product_name': 'Ayam Goreng',
+    'product_description': 'Ayam crispy yang dibalut dengan tepung yang kriuk bikin teman makan mu ketagihan!',
     'stock': 20,
     'sold_total': 0,
     'price': 8000,
@@ -53,6 +54,7 @@ final List<Map> products = [
     'shop_name': 'Kedai Naasa',
     'product_image': 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?q=80&w=1364&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     'product_name': 'Es Teh Manis',
+    'product_description': 'Segarnya es dipadukan dengan manisnya teh membuat manisnya semanis dirimu',
     'stock': 50,
     'sold_total': 0,
     'price': 3000,
@@ -64,6 +66,7 @@ final List<Map> products = [
     'shop_name': 'Warung Kopi',
     'product_image': 'https://images.unsplash.com/photo-1529218991349-10f9728c3b32?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     'product_name': 'Creamy Pancake',
+    'product_description': 'Panekuk yang lembut dan dilumuri dengan saus yang siap bikin lidahmu tergoda',
     'stock': 20,
     'sold_total': 0,
     'price': 5000,
@@ -111,5 +114,31 @@ final List<Map> carts = [
         'is_open': false,
       }
     ],
+  }
+];
+
+final List<Map> ordersOnGoing = [
+  {
+    'orderID': 'ORDER001',
+    'shop_name': 'Warung Kopi',
+    'transaction_date': '7 April 2024',
+    'product_image': 'https://images.unsplash.com/photo-1529218991349-10f9728c3b32?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    'product_name': 'Creamy Pancake',
+    'qty': 3,
+    'price_total': 15000,
+    'is_finished': false,
+  },
+];
+
+final List<Map> ordersFinished = [
+  {
+    'orderID': 'ORDER002',
+    'shop_name': 'Kedai Naasa',
+    'transaction_date': '7 April 2024',
+    'product_image': 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?q=80&w=1364&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    'product_name': 'Es Teh Manis',
+    'qty': 1,
+    'price_total': 3000,
+    'is_finished': true,
   }
 ];

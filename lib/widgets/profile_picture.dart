@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class ProfilePicture extends StatelessWidget{
@@ -8,7 +9,7 @@ class ProfilePicture extends StatelessWidget{
   Widget _isContainProfilePicture(){
     if(imageURL.isNotEmpty){
       return CircleAvatar(
-        backgroundImage: NetworkImage(imageURL),
+        backgroundImage: CachedNetworkImageProvider(imageURL),
       );
     } else {
       return ClipRRect(
