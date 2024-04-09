@@ -14,7 +14,6 @@ class CartPage extends StatefulWidget{
 
 class _CartPageState extends State<CartPage>{
   final formatter = NumberFormat('###,###.###', 'id_ID');
-  int qty = 0;
 
   late List<Map> cartList;
   @override
@@ -276,8 +275,8 @@ class _CartPageState extends State<CartPage>{
                                           color: Colors.white,
                                         ),
                                         constraints: const BoxConstraints(
-                                            maxWidth: 50,
-                                            maxHeight: 50
+                                          maxWidth: 50,
+                                          maxHeight: 50
                                         ),
                                       ),
                                     ],
@@ -313,7 +312,6 @@ class _CartPageState extends State<CartPage>{
                 ),
                 Text(
                   'Rp. ${formatter.format(_totalPrice())}',
-                  // 'undefined',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600
@@ -327,7 +325,7 @@ class _CartPageState extends State<CartPage>{
             )
           ],
         ),
-      )
+      ),
     );
   }
 }

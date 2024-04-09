@@ -1,11 +1,9 @@
 import 'package:espw/app/dummy_data.dart';
-import 'package:espw/pages/cart_page.dart';
-import 'package:espw/widgets/shop_result.dart';
-import 'package:espw/widgets/product_result.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gap/gap.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:intl/intl.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class SearchResult extends StatefulWidget {
   const SearchResult({super.key, this.searchQuery});
@@ -64,7 +62,7 @@ class _SearchPageState extends State<SearchResult>{
             actions: [
               IconButton(
                 onPressed: (){
-                  PersistentNavBarNavigator.pushNewScreen(context, screen: const CartPage(), withNavBar: false);
+                  context.pushNamed('cart');
                 },
                 icon: const Icon(Icons.shopping_cart_outlined),
               ),
@@ -119,6 +117,186 @@ class _SearchPageState extends State<SearchResult>{
           );
         },
       ),
+    );
+  }
+}
+
+class ProductResult extends StatelessWidget{
+  const ProductResult({super.key, required this.imageURL, required this.shopName, required this.productName, required this.soldTotal, required this.price, required this.rating, this.onTap});
+  final String imageURL;
+  final String shopName;
+  final String productName;
+  final int soldTotal;
+  final int price;
+  final double rating;
+  final void Function()? onTap;
+
+  @override
+  Widget build(BuildContext context){
+    NumberFormat formatter = NumberFormat("###,###.##", "id_ID");
+
+    return SafeArea(
+      top: false,
+      bottom: false,
+      minimum: const EdgeInsets.only(left: 16, right: 16, top: 10),
+      child: Column(
+        children: [
+          GestureDetector(
+            onTap: onTap,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: CachedNetworkImage(
+                    imageUrl: imageURL,
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    shopName,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  Text(
+                                    productName,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600
+                                    ),
+                                  ),
+                                  Text(
+                                    'Terjual $soldTotal',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Gap(20),
+                              Text(
+                                'Rp. ${formatter.format(price)}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Gap(10),
+                        Row(
+                          children: [
+                            Icon(Icons.star_rate_rounded, color: Theme.of(context).primaryColor),
+                            Text(rating.toString())
+                          ],
+                        )
+                      ],
+                    )
+                  ),
+                )
+              ],
+            ),
+          ),
+          const Gap(10),
+          const Divider(
+            thickness: 0.2,
+          )
+        ],
+      )
+    );
+  }
+}
+
+class ShopResult extends StatelessWidget{
+  const ShopResult({super.key, required this.imageURL, required this.className, required this.shopName, this.onTap});
+  final String imageURL;
+  final String className;
+  final String shopName;
+  final void Function()? onTap;
+
+  @override
+  Widget build(BuildContext context){
+    return SafeArea(
+      top: false,
+      bottom: false,
+      minimum: const EdgeInsets.only(left: 16, right: 16, top: 10),
+      child: Column(
+        children: [
+          GestureDetector(
+            onTap: onTap,
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 25,
+                  backgroundImage: NetworkImage(
+                    imageURL
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            shopName,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600
+                            ),
+                          ),
+                          Text(className)
+                        ],
+                      ),
+                    ],
+                  )
+                ),
+              ],
+            ),
+          ),
+          const Gap(10),
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Placeholder(
+                fallbackHeight: 110,
+                fallbackWidth: 110,
+              ),
+              Placeholder(
+                fallbackHeight: 110,
+                fallbackWidth: 110,
+              ),
+              Placeholder(
+                fallbackHeight: 110,
+                fallbackWidth: 110,
+              )
+            ],
+          ),
+          const Gap(10),
+          const Divider(
+            thickness: 0.2,
+          )
+        ],
+      )
     );
   }
 }

@@ -1,11 +1,9 @@
-import 'package:espw/widgets/product_card.dart';
-import 'package:espw/widgets/shop_card.dart';
-import 'package:espw/widgets/carousel_banner.dart';
-import 'package:espw/widgets/profile_picture.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gap/gap.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:intl/intl.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 // This is a dummy data that simulate API
 import 'package:espw/app/dummy_data.dart';
@@ -18,6 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int currentPage = 0;
   bool _isOpen = false;
 
   bool _isUnder5K = false;
@@ -38,32 +37,16 @@ class _HomePageState extends State<HomePage> {
     productList = products;
   }
 
-  Widget _banner({required BuildContext context, required String imageURL, void Function()? onTap}){
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      child: GestureDetector(
-        onTap: onTap,
-        child: CachedNetworkImage(
-          imageUrl: imageURL,
-          fit: BoxFit.cover,
-        ),
-      )
-    );
-  }
-
   Widget _bannerList(BuildContext context){
-    return Carousel(
+    return const Carousel(
       banner: [
-        _banner(
-          context: context,
+        Banner(
           imageURL: 'https://img.freepik.com/free-vector/hand-drawn-fast-food-sale-banner-template_23-2150992555.jpg?t=st=1711991574~exp=1711995174~hmac=4b0d453d2bfa45bbb32c55889576b1a011a16455d462cdc13aab000dae0226ca&w=900',
         ),
-        _banner(
-          context: context,
+        Banner(
           imageURL: 'https://img.freepik.com/free-vector/flat-design-american-food-sale-banner_23-2149163587.jpg?t=st=1711991604~exp=1711995204~hmac=5de49a2ab6f0b442e7c2d6db47d1a5e55028e8efe8aa6438f9e793ad8d91fe75&w=900',
         ),
-        _banner(
-          context: context,
+        Banner(
           imageURL: 'https://img.freepik.com/free-vector/flat-design-pizza-sale-banner_23-2149116013.jpg?t=st=1711991623~exp=1711995223~hmac=446528c1b3d4452aaa87fb4da8574e476b86b420b6708e9e8dca979fb8a41fa5&w=900',
         )
       ]
@@ -82,20 +65,20 @@ class _HomePageState extends State<HomePage> {
             ),
             shadowColor: Colors.grey.withAlpha(50),
             pinned: true,
-            expandedHeight: 250,
+            expandedHeight: 240,
             flexibleSpace: FlexibleSpaceBar(
               collapseMode: CollapseMode.pin,
               background: _bannerList(context),
             ),
             bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(5),
+              preferredSize: const Size.fromHeight(0),
               child: AppBar(
                 surfaceTintColor: Colors.transparent,
                 backgroundColor: Colors.transparent,
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(bottom: Radius.circular(25)),
                 ),
-                toolbarHeight: 60,
+                toolbarHeight: 55,
                 title: SizedBox(
                   child: FilledButton(
                     style: const ButtonStyle(
@@ -421,8 +404,251 @@ class _HomePageState extends State<HomePage> {
               );
             },
           ),
-          const SliverToBoxAdapter(child: Gap(20))
         ],
+      ),
+    );
+  }
+}
+
+class ProfilePicture extends StatelessWidget{
+  const ProfilePicture({super.key, required this.imageURL, this.onTap});
+  final String imageURL;
+  final void Function()? onTap;
+
+  Widget _isContainProfilePicture(){
+    if(imageURL.isNotEmpty){
+      return CircleAvatar(
+        backgroundImage: CachedNetworkImageProvider(imageURL),
+      );
+    } else {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Image.asset('assets/image/profile.png', width: 40, height: 40, fit: BoxFit.cover),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context){
+    return Container(
+      margin: const EdgeInsets.only(right: 16),
+      child: GestureDetector(
+        onTap: onTap,
+        child: _isContainProfilePicture(),
+      ),
+    );
+  }
+}
+
+class Carousel extends StatelessWidget{
+  const Carousel({super.key, required this.banner});
+  final List<Widget> banner;
+
+  @override
+  Widget build(BuildContext context){
+    return CarouselSlider(
+      items: banner,
+      options: CarouselOptions(
+        viewportFraction: 1,
+        autoPlay: true,
+      ),
+    );
+  }
+}
+
+class Banner extends StatelessWidget{
+  const Banner({super.key, required this.imageURL, this.onTap});
+  final String imageURL;
+  final void Function()? onTap;
+
+  @override
+  Widget build(BuildContext context){
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: GestureDetector(
+        onTap: onTap,
+        child: CachedNetworkImage(
+          imageUrl: imageURL,
+          fit: BoxFit.cover,
+        ),
+      )
+    );
+  }
+}
+
+class ShopCard extends StatelessWidget{
+  const ShopCard({super.key, required this.imageURL, required this.className, required this.shopName, required this.rating, this.onTap});
+  final String imageURL;
+  final String className;
+  final String shopName;
+  final double rating;
+  final void Function()? onTap;
+
+  @override
+  Widget build(BuildContext context){
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        elevation: 4,
+        child: SizedBox(
+          width: 150,
+          child: Column(
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.all(Radius.circular(15)),
+                child: CachedNetworkImage(
+                  imageUrl: imageURL,
+                  width: double.infinity,
+                  height: 120,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      className,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
+                      shopName,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600
+                      ),
+                    ),
+                    const Gap(15),
+                    Row(
+                      children: [
+                        Icon(Icons.star_rate_rounded, color: Theme.of(context).primaryColor,),
+                        const Gap(5),
+                        Text(rating.toString())
+                      ],
+                    ),
+                  ],
+                )
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ProductCard extends StatelessWidget{
+  const ProductCard({super.key, required this.imageURL, required this.productName, required this.description, required this.soldTotal, required this.price, required this.rating, this.onTap});
+  final String imageURL;
+  final String productName;
+  final String description;
+  final int soldTotal;
+  final int price;
+  final double rating;
+  final void Function()? onTap;
+
+  @override
+  Widget build(BuildContext context){
+    NumberFormat formatter = NumberFormat("###,###.##", "id_ID");
+
+    return SafeArea(
+      top: false,
+      minimum: const EdgeInsets.only(left: 16, right: 16, bottom: 20),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Card(
+          elevation: 4,
+          child: Column(
+            children: [
+              Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: CachedNetworkImage(
+                      imageUrl: imageURL,
+                      width: double.infinity,
+                      height: 200,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        color: Colors.white
+                      ),
+                      child: Row(
+                        children: [
+                          Text(rating.toString()),
+                          Icon(Icons.star_rate_rounded, color: Theme.of(context).primaryColor,),
+                        ],
+                      )
+                    ),
+                  )
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            productName,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600
+                            ),
+                          ),
+                          Text(
+                            description,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Gap(20),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Rp. ${formatter.format(price)}',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600
+                          ),
+                        ),
+                        Text(
+                          'Terjual $soldTotal',
+                          style: const TextStyle(
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              )
+            ],
+          )
+        ),
       ),
     );
   }

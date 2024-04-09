@@ -1,84 +1,60 @@
 import 'package:flutter/material.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 // Pages
 import 'package:espw/pages/home_page.dart';
 import 'package:espw/pages/cart_page.dart';
 import 'package:espw/pages/notification_page.dart';
-import 'package:espw/pages/order_page.dart';
 
-class NavBar extends StatelessWidget {
+class NavBar extends StatefulWidget{
   const NavBar({super.key});
 
-  List<Widget> _screens(){
-    return const [
-      HomePage(),
-      CartPage(),
-      OrderPage(),
-      NotificationPage(),
-    ];
-  }
+  @override
+  State<NavBar> createState() => _NavBarState();
+}
 
-  List<PersistentBottomNavBarItem> _items(context){
-    return [
-      navBarItem(
-        context: context,
-        icon: Icons.home,
-        inactiveIcon: Icons.home_outlined,
-        title: 'Beranda'
-      ),
-      navBarItem(
-        context: context,
-        icon: Icons.shopping_cart,
-        inactiveIcon: Icons.shopping_cart_outlined,
-        title: 'Keranjang'
-      ),
-      navBarItem(
-        context: context,
-        icon: Icons.receipt_long,
-        inactiveIcon: Icons.receipt_long_outlined,
-        title: 'Pesanan'
-      ),
-      navBarItem(
-        context: context,
-        icon: Icons.notifications,
-        inactiveIcon: Icons.notifications_outlined,
-        title: 'Notifikasi'
-      ),
-    ];
-  }
+class _NavBarState extends State<NavBar>{
+  int currentPage = 0;
 
   @override
   Widget build(BuildContext context){
-    return PersistentTabView(
-      context,
-      navBarHeight: 60,
-      screens: _screens(),
-      items: _items(context),
-      itemAnimationProperties: const ItemAnimationProperties(
-        duration: Duration(milliseconds: 300),
-        curve: Curves.ease,
+    return Scaffold(
+      body: const [
+        HomePage(),
+        CartPage(),
+        NotificationPage(),
+        NotificationPage(),
+      ][currentPage],
+      bottomNavigationBar: NavigationBar(
+        height: 70,
+        selectedIndex: currentPage,
+        onDestinationSelected: (int index){
+          setState(() {
+            currentPage = index;
+          });
+        },
+        destinations: const [
+          NavigationDestination(
+            selectedIcon: Icon(Icons.home),
+            icon: Icon(Icons.home_outlined),
+            label: 'Beranda',
+          ),
+          NavigationDestination(
+            selectedIcon: Icon(Icons.shopping_cart),
+            icon: Icon(Icons.shopping_cart_outlined),
+            label: 'Keranjang',
+          ),
+          NavigationDestination(
+            selectedIcon: Icon(Icons.notifications),
+            icon: Icon(Icons.notifications_outlined),
+            label: 'Notifikasi',
+          ),
+          NavigationDestination(
+            selectedIcon: Icon(Icons.chat),
+            icon: Icon(Icons.chat_outlined),
+            label: 'Chat',
+          ),
+        ],
       ),
-      decoration: NavBarDecoration(
-          borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withAlpha(80),
-              blurRadius: 10,
-            )
-          ]
-      ),
-      navBarStyle: NavBarStyle.style3,
-    );
-  }
-
-  PersistentBottomNavBarItem navBarItem({required BuildContext context, required IconData icon, required IconData inactiveIcon, required String title}){
-    return PersistentBottomNavBarItem(
-      icon: Icon(icon),
-      inactiveIcon: Icon(inactiveIcon),
-      title: (title),
-      activeColorPrimary: Theme.of(context).primaryColor,
-      inactiveColorPrimary: Colors.grey,
     );
   }
 }

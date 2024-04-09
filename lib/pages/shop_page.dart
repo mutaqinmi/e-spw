@@ -1,12 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:espw/app/dummy_data.dart';
-import 'package:espw/pages/cart_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 class ShopPage extends StatefulWidget{
   const ShopPage({super.key, this.shopID});
@@ -49,8 +47,8 @@ class _ShopPageState extends State<ShopPage>{
             Text(
               'Buka',
               style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12
+                color: Colors.white,
+                fontSize: 12
               ),
             )
           ],
@@ -96,7 +94,7 @@ class _ShopPageState extends State<ShopPage>{
             actions: [
               IconButton(
                 onPressed: (){
-                  PersistentNavBarNavigator.pushNewScreen(context, screen: const CartPage());
+                  context.pushNamed('cart');
                 },
                 icon: const Icon(Icons.shopping_cart_outlined),
               )
