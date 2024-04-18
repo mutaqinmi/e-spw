@@ -93,11 +93,15 @@ class _ShopPageState extends State<ShopPage>{
             pinned: true,
             actions: [
               IconButton(
+                onPressed: (){},
+                icon: const Icon(Icons.info_outline),
+              ),
+              IconButton(
                 onPressed: (){
                   context.pushNamed('cart');
                 },
                 icon: const Icon(Icons.shopping_cart_outlined),
-              )
+              ),
             ],
             expandedHeight: 200,
             flexibleSpace: FlexibleSpaceBar(
@@ -173,15 +177,137 @@ class _ShopPageState extends State<ShopPage>{
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Deskripsi Toko',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600
-                        ),
+                      const Wrap(
+                        spacing: 5,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Text(
+                            'Unggulan',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600
+                            ),
+                          ),
+                          Icon(
+                            Icons.star,
+                            size: 16,
+                          )
+                        ],
                       ),
-                      Text(
-                        shopList[0]['description']
+                      const Text(
+                        'Yang paling disukai di toko ini.',
+                      ),
+                      const Gap(10),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Card(
+                          child: Column(
+                            children: [
+                              Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(15),
+                                    child: CachedNetworkImage(
+                                      imageUrl: productList[0]['product_image'],
+                                      width: double.infinity,
+                                      height: 200,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 10,
+                                    right: 10,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                      decoration: const BoxDecoration(
+                                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                                        color: Colors.white
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Text(productList[0]['rating'].toString()),
+                                          Icon(Icons.star_rate_rounded, color: Theme.of(context).primaryColor,),
+                                        ],
+                                      )
+                                    ),
+                                  ),
+                                  Positioned(
+                                    left: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    child: Container(
+                                      decoration: const BoxDecoration(
+                                        borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Colors.transparent,
+                                            Colors.black
+                                          ]
+                                        )
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    productList[0]['product_name'],
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight: FontWeight.w600,
+                                                      color: Colors.white
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    productList[0]['product_description'],
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                      color: Colors.white
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            const Gap(20),
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.end,
+                                              children: [
+                                                Text(
+                                                  'Rp. ${formatter.format(productList[0]['price'])}',
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.white
+                                                  ),
+                                                ),
+                                                Text(
+                                                  'Terjual ${productList[0]['sold_total']}',
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.white
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                       )
                     ],
                   ),

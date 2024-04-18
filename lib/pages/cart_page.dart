@@ -84,7 +84,7 @@ class _CartPageState extends State<CartPage>{
       builder: (BuildContext context) => AlertDialog(
         title: const Text('Hapus'),
         content: Text(
-            'Apakah anda yakin ingin menghapus $itemName dari keranjang?'
+          'Apakah anda yakin ingin menghapus $itemName dari keranjang?'
         ),
         actions: [
           TextButton(
@@ -222,6 +222,10 @@ class _CartPageState extends State<CartPage>{
                                     children: [
                                       IconButton(
                                         onPressed: (){
+                                          if(item['qty'] < 1){
+                                            _confirmDismiss(context, index, item['product'][0]['product_name'], true);
+                                          }
+
                                           if(item['product'][0]['is_open']){
                                             if(item['qty'] > 0){
                                               setState(() {
@@ -258,11 +262,11 @@ class _CartPageState extends State<CartPage>{
                                       ),
                                       IconButton(
                                         onPressed: (){
-                                          setState(() {
-                                            if(item['product'][0]['is_open']){
+                                          if(item['product'][0]['is_open']){
+                                            setState(() {
                                               item['qty']++;
-                                            }
-                                          });
+                                            });
+                                          }
                                         },
                                         visualDensity: VisualDensity.compact,
                                         style: ButtonStyle(
@@ -295,36 +299,46 @@ class _CartPageState extends State<CartPage>{
           );
         },
       ),
-      bottomNavigationBar: SafeArea(
-        minimum: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Total',
-                  style: TextStyle(
-                    fontSize: 12
+      bottomNavigationBar: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Total',
+                    style: TextStyle(
+                      fontSize: 12
+                    ),
                   ),
-                ),
-                Text(
-                  'Rp. ${formatter.format(_totalPrice())}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600
-                  ),
-                )
-              ],
+                  Text(
+                    'Rp. ${formatter.format(_totalPrice())}',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600
+                    ),
+                  )
+                ],
+              ),
             ),
-            FilledButton(
+          ),
+          SizedBox(
+            height: 65,
+            child: FilledButton(
               onPressed: (){},
+              style: const ButtonStyle(
+                shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.zero
+                ))
+              ),
               child: const Text('Checkout'),
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }

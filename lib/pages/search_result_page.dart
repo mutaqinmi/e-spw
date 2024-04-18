@@ -46,7 +46,7 @@ class _SearchPageState extends State<SearchResult>{
                   padding: MaterialStatePropertyAll(EdgeInsets.symmetric(horizontal: 15))
                 ),
                 onPressed: (){
-                  context.pushNamed('search');
+                  context.goNamed('search');
                 },
                 child: Row(
                   children: [

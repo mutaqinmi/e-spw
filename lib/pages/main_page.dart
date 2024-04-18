@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
@@ -12,7 +11,7 @@ class MainPage extends StatelessWidget{
       body: Center(
         child: Image.asset(
           "assets/image/online-shop.png",
-          width: 300,
+          width: 350,
         ),
       ),
       bottomNavigationBar: SafeArea(

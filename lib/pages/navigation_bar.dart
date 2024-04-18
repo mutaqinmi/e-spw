@@ -1,3 +1,4 @@
+import 'package:espw/pages/chat_page.dart';
 import 'package:flutter/material.dart';
 
 // Pages
@@ -22,9 +23,11 @@ class _NavBarState extends State<NavBar>{
         HomePage(),
         CartPage(),
         NotificationPage(),
-        NotificationPage(),
+        ChatPage(),
       ][currentPage],
       bottomNavigationBar: NavigationBar(
+        elevation: 20,
+        shadowColor: Colors.grey,
         height: 70,
         selectedIndex: currentPage,
         onDestinationSelected: (int index){

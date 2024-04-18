@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
             ),
             shadowColor: Colors.grey.withAlpha(50),
             pinned: true,
-            expandedHeight: 240,
+            expandedHeight: 250,
             flexibleSpace: FlexibleSpaceBar(
               collapseMode: CollapseMode.pin,
               background: _bannerList(context),
@@ -78,7 +78,7 @@ class _HomePageState extends State<HomePage> {
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(bottom: Radius.circular(25)),
                 ),
-                toolbarHeight: 55,
+                toolbarHeight: 50,
                 title: SizedBox(
                   child: FilledButton(
                     style: const ButtonStyle(
@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage> {
             child: SafeArea(
               top: false,
               bottom: false,
-              minimum: const EdgeInsets.symmetric(horizontal: 16),
+              minimum: const EdgeInsets.only(left: 16, right: 16, top: 10),
               child: Row(
                 children: [
                   Column(
@@ -489,7 +489,7 @@ class ShopCard extends StatelessWidget{
     return GestureDetector(
       onTap: onTap,
       child: Card(
-        elevation: 4,
+        elevation: 2,
         child: SizedBox(
           width: 150,
           child: Column(
@@ -593,59 +593,81 @@ class ProductCard extends StatelessWidget{
                         ],
                       )
                     ),
+                  ),
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black
+                          ]
+                        )
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    productName,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white
+                                    ),
+                                  ),
+                                  Text(
+                                    description,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Gap(20),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  'Rp. ${formatter.format(price)}',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white
+                                  ),
+                                ),
+                                Text(
+                                  'Terjual $soldTotal',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.white
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
                   )
                 ],
               ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            productName,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600
-                            ),
-                          ),
-                          Text(
-                            description,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Gap(20),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          'Rp. ${formatter.format(price)}',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600
-                          ),
-                        ),
-                        Text(
-                          'Terjual $soldTotal',
-                          style: const TextStyle(
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              )
             ],
           )
         ),

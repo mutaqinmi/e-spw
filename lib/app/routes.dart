@@ -60,15 +60,13 @@ final routes = GoRouter(
           name: 'search',
           path: 'search',
           builder: (BuildContext context, GoRouterState state) => const SearchPage(),
-          routes: [
-            GoRoute(
-              name: 'searchResult',
-              path: 'searchResult',
-              builder: (BuildContext context, GoRouterState state) => SearchResult(
-                searchQuery: state.uri.queryParameters['search'],
-              )
-            )
-          ]
+        ),
+        GoRoute(
+          name: 'searchResult',
+          path: 'searchResult',
+          builder: (BuildContext context, GoRouterState state) => SearchResult(
+            searchQuery: state.uri.queryParameters['search'],
+          )
         ),
         GoRoute(
           name: 'cart',

@@ -92,7 +92,7 @@ final List<Map> carts = [
       'Pedas',
       'Gurih'
     ],
-    'qty': 0,
+    'qty': 1,
     'product': [
       {
         'productID': 'PPLG0101',
@@ -107,24 +107,24 @@ final List<Map> carts = [
       }
     ]
   },
-  {
-    'cartID': 'CART002',
-    'extra': [],
-    'qty': 0,
-    'product': [
-      {
-        'productID': 'TJKT20201',
-        'shop_name': 'Kedai Naasa',
-        'product_image': 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?q=80&w=1364&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        'product_name': 'Es Teh Manis',
-        'stock': 50,
-        'sold_total': 0,
-        'price': 3000,
-        'rating': 4.9,
-        'is_open': false,
-      }
-    ],
-  }
+  // {
+  //   'cartID': 'CART002',
+  //   'extra': [],
+  //   'qty': 0,
+  //   'product': [
+  //     {
+  //       'productID': 'TJKT20201',
+  //       'shop_name': 'Kedai Naasa',
+  //       'product_image': 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?q=80&w=1364&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  //       'product_name': 'Es Teh Manis',
+  //       'stock': 50,
+  //       'sold_total': 0,
+  //       'price': 3000,
+  //       'rating': 4.9,
+  //       'is_open': false,
+  //     }
+  //   ],
+  // }
 ];
 
 final List<Map> ordersOnGoing = [
