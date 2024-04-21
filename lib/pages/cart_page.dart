@@ -329,7 +329,9 @@ class _CartPageState extends State<CartPage>{
           SizedBox(
             height: 65,
             child: FilledButton(
-              onPressed: (){},
+              onPressed: (){
+                context.pushNamed('checkout');
+              },
               style: const ButtonStyle(
                 shape: MaterialStatePropertyAll(RoundedRectangleBorder(
                   borderRadius: BorderRadius.zero

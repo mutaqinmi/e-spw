@@ -24,6 +24,9 @@ final ThemeData themes = ThemeData(
       ))
     )
   ),
+  badgeTheme: const BadgeThemeData(
+    backgroundColor: primaryColor,
+  ),
   colorScheme: const ColorScheme(
     brightness: Brightness.light,
     primary: primaryColor,

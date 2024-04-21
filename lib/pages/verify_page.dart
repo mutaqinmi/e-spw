@@ -25,7 +25,7 @@ class _VerifyState extends State<Verify> {
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: true,
+        foregroundColor: Theme.of(context).primaryColor,
         title: const Text(
           'Verifikasi',
           style: TextStyle(
@@ -104,29 +104,34 @@ class _VerifyState extends State<Verify> {
                 onSaved: (value){_password = value!;},
               ),
             ),
-            const Gap(30),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: FilledButton(
-                style: ButtonStyle(
-                  shape: MaterialStatePropertyAll(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    )
-                  ),
-                ),
-                child: const Text(
-                  'Masuk',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                onPressed: (){_submit();},
-              ),
-            ),
           ],
         ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: MediaQuery.of(context).viewInsets,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+          child: SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: FilledButton(
+              style: ButtonStyle(
+                shape: MaterialStatePropertyAll(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  )
+                ),
+              ),
+              child: const Text(
+                'Masuk',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              onPressed: (){_submit();},
+            ),
+          ),
+        )
       )
     );
   }

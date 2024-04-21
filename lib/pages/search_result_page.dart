@@ -16,11 +16,13 @@ class SearchResult extends StatefulWidget {
 class _SearchPageState extends State<SearchResult>{
   late List<Map> productList;
   late List<Map> shopList;
+  late int cartBadge;
   @override
   void initState() {
     super.initState();
     productList = products;
     shopList = shop;
+    cartBadge = carts.length;
   }
 
   @override
@@ -60,11 +62,16 @@ class _SearchPageState extends State<SearchResult>{
               ),
             ),
             actions: [
-              IconButton(
-                onPressed: (){
-                  context.pushNamed('cart');
-                },
-                icon: const Icon(Icons.shopping_cart_outlined),
+              Badge(
+                isLabelVisible: cartBadge == 0 ? false : true,
+                offset: const Offset(-8, 8),
+                label: Text(cartBadge.toString()),
+                child: IconButton(
+                  onPressed: (){
+                    context.pushNamed('cart');
+                  },
+                  icon: const Icon(Icons.shopping_cart_outlined),
+                ),
               ),
             ],
             bottom: const TabBar(

@@ -1,11 +1,14 @@
 import 'package:espw/app/dummy_data.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:gap/gap.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class OrderPage extends StatefulWidget{
-  const OrderPage({super.key});
+  const OrderPage({super.key, required this.initialIndex});
+  final String? initialIndex;
 
   @override
   State<OrderPage> createState() => _OrderPageState();
@@ -24,6 +27,7 @@ class _OrderPageState extends State<OrderPage>{
   @override
   Widget build(BuildContext context){
     return DefaultTabController(
+      initialIndex: widget.initialIndex == null ? 0 : int.parse(widget.initialIndex.toString()),
       length: 2,
       child: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerChildIsScrolled) => [
@@ -109,55 +113,28 @@ class OrderItem extends StatelessWidget{
   final int qty;
   final bool isFinished;
 
-  Widget _isFinished(bool isFinished){
+  Widget _isFinished(BuildContext context, bool isFinished){
     if(isFinished){
       return Wrap(
         spacing: 10,
         children: [
-          SizedBox(
-            width: 135,
-            child: OutlinedButton(
-              onPressed: (){},
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Beli lagi'),
-                ],
-              ),
-            ),
+          OutlinedButton(
+            onPressed: (){
+              context.goNamed('shop');
+            },
+            child: const Text('Beli lagi'),
           ),
-          SizedBox(
-            width: 110,
-            child: FilledButton(
-              onPressed: (){},
-              child: const Wrap(
-                alignment: WrapAlignment.center,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 5,
-                children: [
-                  Icon(Icons.star_rate_rounded),
-                  Text('Rate'),
-                ],
-              ),
-            ),
+          FilledButton(
+            onPressed: (){_rateOrder(context);},
+            child: const Text('Beri penilaian'),
           ),
         ],
       );
     }
 
-    return SizedBox(
-      width: 170,
-      child: FilledButton(
-        onPressed: (){},
-        child: const Wrap(
-          spacing: 5,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Icon(Icons.chat_outlined),
-            Text('Chat penjual'),
-          ],
-        ),
-      ),
+    return FilledButton(
+      onPressed: (){},
+      child: const Text('Chat penjual'),
     );
   }
 
@@ -236,12 +213,63 @@ class OrderItem extends StatelessWidget{
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              _isFinished(isFinished)
+              _isFinished(context, isFinished)
             ],
           ),
           const Gap(20)
         ],
       ),
+    );
+  }
+
+  _rateOrder(BuildContext context){
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (context){
+        return SingleChildScrollView(
+          child: Padding(
+            padding: MediaQuery.of(context).viewInsets,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              width: double.infinity,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 30),
+                    child: RatingBar(
+                      itemSize: 30,
+                      ratingWidget: RatingWidget(
+                        full: Icon(Icons.star, color: Theme.of(context).primaryColor),
+                        half: Icon(Icons.star_half, color: Theme.of(context).primaryColor),
+                        empty: Icon(Icons.star_outline, color: Theme.of(context).primaryColor)
+                      ),
+                      onRatingUpdate: (rating){},
+                    ),
+                  ),
+                  TextFormField(
+                    maxLines: 5,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(15))
+                      ),
+                      hintText: 'Ceritakan tentang produk yang anda beli ...'
+                    ),
+                  ),
+                  const Gap(20),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      onPressed: (){},
+                      child: const Text('Beri penilaian'),
+                    )
+                  )
+                ],
+              ),
+            ),
+          )
+        );
+      }
     );
   }
 }

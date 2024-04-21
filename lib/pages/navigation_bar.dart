@@ -1,3 +1,4 @@
+import 'package:espw/app/dummy_data.dart';
 import 'package:espw/pages/chat_page.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +16,16 @@ class NavBar extends StatefulWidget{
 
 class _NavBarState extends State<NavBar>{
   int currentPage = 0;
+
+  late int cartBadge;
+  final int notificationBadge = 0;
+  final int chatBadge = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    cartBadge = carts.length;
+  }
 
   @override
   Widget build(BuildContext context){
@@ -35,25 +46,49 @@ class _NavBarState extends State<NavBar>{
             currentPage = index;
           });
         },
-        destinations: const [
-          NavigationDestination(
+        destinations: [
+          const NavigationDestination(
             selectedIcon: Icon(Icons.home),
             icon: Icon(Icons.home_outlined),
             label: 'Beranda',
           ),
           NavigationDestination(
-            selectedIcon: Icon(Icons.shopping_cart),
-            icon: Icon(Icons.shopping_cart_outlined),
+            selectedIcon: Badge(
+              isLabelVisible: cartBadge == 0 ? false : true,
+              label: Text(cartBadge.toString()),
+              child: const Icon(Icons.shopping_cart),
+            ),
+            icon: Badge(
+              isLabelVisible: cartBadge == 0 ? false : true,
+              label: Text(cartBadge.toString()),
+              child: const Icon(Icons.shopping_cart_outlined),
+            ),
             label: 'Keranjang',
           ),
           NavigationDestination(
-            selectedIcon: Icon(Icons.notifications),
-            icon: Icon(Icons.notifications_outlined),
+            selectedIcon: Badge(
+              isLabelVisible: notificationBadge == 0 ? false : true,
+              label: Text(notificationBadge.toString()),
+              child: const Icon(Icons.notifications),
+            ),
+            icon: Badge(
+              isLabelVisible: notificationBadge == 0 ? false : true,
+              label: Text(notificationBadge.toString()),
+              child: const Icon(Icons.notifications_outlined),
+            ),
             label: 'Notifikasi',
           ),
           NavigationDestination(
-            selectedIcon: Icon(Icons.chat),
-            icon: Icon(Icons.chat_outlined),
+            selectedIcon: Badge(
+              isLabelVisible: notificationBadge == 0 ? false : true,
+              label: Text(notificationBadge.toString()),
+              child: const Icon(Icons.chat),
+            ),
+            icon: Badge(
+              isLabelVisible: notificationBadge == 0 ? false : true,
+              label: Text(notificationBadge.toString()),
+              child: const Icon(Icons.chat_outlined),
+            ),
             label: 'Chat',
           ),
         ],

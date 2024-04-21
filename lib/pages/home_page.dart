@@ -79,33 +79,39 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: BorderRadius.vertical(bottom: Radius.circular(25)),
                 ),
                 toolbarHeight: 50,
-                title: SizedBox(
-                  child: FilledButton(
-                    style: const ButtonStyle(
-                      side: MaterialStatePropertyAll(BorderSide(
-                        color: Color.fromARGB(255, 155, 155, 155),
-                        width: 0.5
-                      )),
-                      backgroundColor: MaterialStatePropertyAll(Color.fromARGB(255, 240, 240, 240)),
-                      foregroundColor: MaterialStatePropertyAll(Color.fromARGB(255, 155, 155, 155)),
-                      padding: MaterialStatePropertyAll(EdgeInsets.symmetric(horizontal: 15))
-                    ),
-                    onPressed: (){
-                      context.pushNamed('search');
-                    },
-                    child: const Row(
-                      children: [
-                        Icon(Icons.search),
-                        Gap(10),
-                        Text('Telusuri produk atau toko ...')
-                      ],
+                title: Hero(
+                  tag: 'search',
+                  child: SizedBox(
+                    child: FilledButton(
+                      style: const ButtonStyle(
+                        side: MaterialStatePropertyAll(BorderSide(
+                          color: Color.fromARGB(255, 155, 155, 155),
+                          width: 0.5
+                        )),
+                        backgroundColor: MaterialStatePropertyAll(Color.fromARGB(255, 240, 240, 240)),
+                        foregroundColor: MaterialStatePropertyAll(Color.fromARGB(255, 155, 155, 155)),
+                        padding: MaterialStatePropertyAll(EdgeInsets.symmetric(horizontal: 15))
+                      ),
+                      onPressed: (){
+                        context.pushNamed('search');
+                      },
+                      child: const Row(
+                        children: [
+                          Icon(Icons.search),
+                          Gap(10),
+                          Text('Telusuri produk atau toko ...')
+                        ],
+                      ),
                     ),
                   ),
                 ),
-                actions: const [
+                actions: [
                   ProfilePicture(
                     imageURL: 'https://images.unsplash.com/photo-1531891437562-4301cf35b7e4?q=80&w=1364&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                  )
+                    onTap: (){
+                      context.pushNamed('profile');
+                    },
+                  ),
                 ],
               ),
             ),
@@ -401,6 +407,7 @@ class _HomePageState extends State<HomePage> {
                 soldTotal: product['sold_total'],
                 price: product['price'],
                 rating: product['rating'],
+                onTap: (){context.pushNamed('shop');},
               );
             },
           ),
@@ -417,13 +424,18 @@ class ProfilePicture extends StatelessWidget{
 
   Widget _isContainProfilePicture(){
     if(imageURL.isNotEmpty){
-      return CircleAvatar(
-        backgroundImage: CachedNetworkImageProvider(imageURL),
+      return Hero(
+        tag: 'profile',
+        child: CircleAvatar(
+          backgroundImage: CachedNetworkImageProvider(imageURL),
+        ),
       );
     } else {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Image.asset('assets/image/profile.png', width: 40, height: 40, fit: BoxFit.cover),
+      return Hero(
+        tag: 'profile',
+        child: CircleAvatar(
+          backgroundImage: CachedNetworkImageProvider(imageURL),
+        ),
       );
     }
   }
