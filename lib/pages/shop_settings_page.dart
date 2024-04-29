@@ -16,34 +16,39 @@ class ShopSettingsPage extends StatelessWidget{
           ),
         ),
       ),
-      body: SafeArea(
-        minimum: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      body: const SafeArea(
+        minimum: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Column(
           children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.storefront_outlined,
-                  color: Theme.of(context).primaryColor,
-                ),
-                const Gap(10),
-                const Text(
-                  'Tentang Toko'
-                )
-              ],
-            ),
-            const Gap(10),
-            const ItemButton(
+            ItemButton(
               itemTitle: 'Informasi',
             ),
-            const ItemButton(
+            ItemButton(
               itemTitle: 'Banner',
             ),
-            const ItemButton(
+            ItemButton(
               itemTitle: 'Jadwal Operasional',
             ),
-            const ItemButton(
+            ItemButton(
               itemTitle: 'Poster Promosi Toko',
+            ),
+            Divider(
+              thickness: 0.25,
+            ),
+            ItemButton(
+              itemTitle: 'Tambah dan Ubah Lokasi',
+            ),
+            ItemButton(
+              itemTitle: 'Atur Notifikasi Penjual',
+            ),
+            Divider(
+              thickness: 0.25,
+            ),
+            ItemButton(
+              itemTitle: 'Hapus Toko',
+            ),
+            ItemButton(
+              itemTitle: 'Keluar Toko',
             ),
           ],
         ),
