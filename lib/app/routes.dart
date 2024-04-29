@@ -58,34 +58,39 @@ final routes = GoRouter(
       name: 'home',
       path: '/home',
       builder: (BuildContext context, GoRouterState state) => const NavBar(),
-      // onExit: (BuildContext context) async {
-      //   final bool? confirmDialog = await showDialog(
-      //     context: context,
-      //     builder: (BuildContext context) => AlertDialog(
-      //       content: const Text('Apakah anda yakin ingin keluar?'),
-      //       actions: [
-      //         TextButton(
-      //           onPressed: (){
-      //             context.pop(false);
-      //           },
-      //           child: const Text('Batal'),
-      //         ),
-      //         ElevatedButton(
-      //           style: ButtonStyle(
-      //             backgroundColor: MaterialStatePropertyAll(Theme.of(context).primaryColor),
-      //             foregroundColor: const MaterialStatePropertyAll(Colors.white)
-      //           ),
-      //           onPressed: (){
-      //             context.pop(true);
-      //           },
-      //           child: const Text('Keluar'),
-      //         ),
-      //       ],
-      //     )
-      //   );
-      //
-      //   return confirmDialog ?? false;
-      // },
+      onExit: (BuildContext context, GoRouterState state) async {
+        bool? confirmDialog;
+        if(state.uri.path == '/home'){
+          confirmDialog = await showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              content: const Text('Apakah anda yakin ingin keluar?'),
+              actions: [
+                TextButton(
+                  onPressed: (){
+                    context.pop(false);
+                  },
+                  child: const Text('Batal'),
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(Theme.of(context).primaryColor),
+                    foregroundColor: const MaterialStatePropertyAll(Colors.white)
+                  ),
+                  onPressed: (){
+                    context.pop(true);
+                  },
+                  child: const Text('Keluar'),
+                ),
+              ],
+            )
+          );
+        } else {
+          return true;
+        }
+
+        return confirmDialog ?? false;
+      },
       routes: [
         GoRoute(
           name: 'search',
