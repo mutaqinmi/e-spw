@@ -1,10 +1,17 @@
+import 'package:espw/pages/add_product_page.dart';
+import 'package:espw/pages/change_password.dart';
 import 'package:espw/pages/chat_dialog_page.dart';
 import 'package:espw/pages/checkout_page.dart';
 import 'package:espw/pages/create_shop_page.dart';
+import 'package:espw/pages/favorite_page.dart';
 import 'package:espw/pages/join_shop_page.dart';
 import 'package:espw/pages/login_shop_page.dart';
 import 'package:espw/pages/order_page.dart';
+import 'package:espw/pages/order_status_page.dart';
+import 'package:espw/pages/product_page.dart';
 import 'package:espw/pages/profile_page.dart';
+import 'package:espw/pages/shop_settings_page.dart';
+import 'package:espw/pages/shopdash_page.dart';
 import 'package:espw/pages/upload_profile_image_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -146,6 +153,45 @@ final routes = GoRouter(
                   builder: (BuildContext context, GoRouterState state) => const JoinShopPage(),
                 )
               ]
+            ),
+            GoRoute(
+              name: 'shop-dash',
+              path: 'shop-dash',
+              builder: (BuildContext context, GoRouterState state) => const ShopDashPage(),
+              routes: [
+                GoRoute(
+                  name: 'order-status',
+                  path: 'order-status',
+                  builder: (BuildContext context, GoRouterState state) => OrderStatusPage(
+                    initialIndex: state.uri.queryParameters['initial_index'],
+                  ),
+                ),
+                GoRoute(
+                  name: 'add-product',
+                  path: 'add-product',
+                  builder: (BuildContext context, GoRouterState state) => const AddProductPage(),
+                ),
+                GoRoute(
+                  name: 'product',
+                  path: 'product',
+                  builder: (BuildContext context, GoRouterState state) => const ProductPage(),
+                )
+              ]
+            ),
+            GoRoute(
+              name: 'change-password',
+              path: 'change-password',
+              builder: (BuildContext context, GoRouterState state) => const ChangePassword(),
+            ),
+            GoRoute(
+              name: 'favorite',
+              path: 'favorite',
+              builder: (BuildContext context, GoRouterState state) => const FavoritePage(),
+            ),
+            GoRoute(
+              name: 'shop-settings',
+              path: 'shop-settings',
+              builder: (BuildContext context, GoRouterState state) => const ShopSettingsPage(),
             )
           ]
         ),
@@ -154,7 +200,7 @@ final routes = GoRouter(
           path: 'shop',
           builder: (BuildContext context, GoRouterState state) => ShopPage(
             shopID: state.uri.queryParameters['shopID'],
-          )
+          ),
         ),
       ],
     ),

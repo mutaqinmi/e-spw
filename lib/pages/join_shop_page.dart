@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
 
 class JoinShopPage extends StatelessWidget{
@@ -48,7 +49,9 @@ class JoinShopPage extends StatelessWidget{
             width: double.infinity,
             height: 50,
             child: FilledButton(
-              onPressed: (){},
+              onPressed: (){
+                context.goNamed('shop-dash');
+              },
               child: const Text('Gabung'),
             ),
           ),

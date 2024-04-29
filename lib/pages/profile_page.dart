@@ -205,7 +205,9 @@ class _ProfilePageState extends State<ProfilePage>{
                 SizedBox(
                   width: double.infinity,
                   child: GestureDetector(
-                    onTap: (){},
+                    onTap: (){
+                      context.pushNamed('favorite');
+                    },
                     child: const Card(
                       surfaceTintColor: Colors.transparent,
                       shape: RoundedRectangleBorder(
@@ -238,11 +240,11 @@ class _ProfilePageState extends State<ProfilePage>{
                   padding: EdgeInsets.only(left: 10, top: 15, bottom: 5),
                   child: Text('Pengaturan Akun'),
                 ),
-                const SizedBox(
+                SizedBox(
                   width: double.infinity,
                   child: Card(
                     surfaceTintColor: Colors.transparent,
-                    shape: RoundedRectangleBorder(
+                    shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                       side: BorderSide(
                         color: Colors.grey,
@@ -254,8 +256,11 @@ class _ProfilePageState extends State<ProfilePage>{
                         MenuButton(
                           icon: Icons.password,
                           label: 'Ubah Kata Sandi',
+                          onPressed: (){
+                            context.pushNamed('change-password');
+                          },
                         ),
-                        MenuButton(
+                        const MenuButton(
                           icon: Icons.location_on_outlined,
                           label: 'Alamat Utama',
                         ),

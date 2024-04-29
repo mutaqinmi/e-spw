@@ -79,29 +79,26 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: BorderRadius.vertical(bottom: Radius.circular(25)),
                 ),
                 toolbarHeight: 50,
-                title: Hero(
-                  tag: 'search',
-                  child: SizedBox(
-                    child: FilledButton(
-                      style: const ButtonStyle(
-                        side: MaterialStatePropertyAll(BorderSide(
-                          color: Color.fromARGB(255, 155, 155, 155),
-                          width: 0.5
-                        )),
-                        backgroundColor: MaterialStatePropertyAll(Color.fromARGB(255, 240, 240, 240)),
-                        foregroundColor: MaterialStatePropertyAll(Color.fromARGB(255, 155, 155, 155)),
-                        padding: MaterialStatePropertyAll(EdgeInsets.symmetric(horizontal: 15))
-                      ),
-                      onPressed: (){
-                        context.pushNamed('search');
-                      },
-                      child: const Row(
-                        children: [
-                          Icon(Icons.search),
-                          Gap(10),
-                          Text('Telusuri produk atau toko ...')
-                        ],
-                      ),
+                title: SizedBox(
+                  child: FilledButton(
+                    style: const ButtonStyle(
+                      side: MaterialStatePropertyAll(BorderSide(
+                        color: Color.fromARGB(255, 155, 155, 155),
+                        width: 0.5
+                      )),
+                      backgroundColor: MaterialStatePropertyAll(Color.fromARGB(255, 240, 240, 240)),
+                      foregroundColor: MaterialStatePropertyAll(Color.fromARGB(255, 155, 155, 155)),
+                      padding: MaterialStatePropertyAll(EdgeInsets.symmetric(horizontal: 15))
+                    ),
+                    onPressed: (){
+                      context.pushNamed('search');
+                    },
+                    child: const Row(
+                      children: [
+                        Icon(Icons.search),
+                        Gap(10),
+                        Text('Telusuri produk atau toko ...')
+                      ],
                     ),
                   ),
                 ),
@@ -145,9 +142,10 @@ class _HomePageState extends State<HomePage> {
                       Wrap(
                         spacing: 5,
                         children: [
-                          const ChoiceChip(
-                            label: Text('Semua Toko'),
+                          ChoiceChip(
+                            label: const Text('Semua Toko'),
                             selected: true,
+                            onSelected: (bool selected){},
                           ),
                           ChoiceChip(
                             label: const Text('Toko yang Buka'),

@@ -236,17 +236,44 @@ class OrderItem extends StatelessWidget{
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 30),
-                    child: RatingBar(
-                      itemSize: 30,
-                      ratingWidget: RatingWidget(
-                        full: Icon(Icons.star, color: Theme.of(context).primaryColor),
-                        half: Icon(Icons.star_half, color: Theme.of(context).primaryColor),
-                        empty: Icon(Icons.star_outline, color: Theme.of(context).primaryColor)
-                      ),
-                      onRatingUpdate: (rating){},
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text('Pelayanan Toko'),
+                        RatingBar(
+                          itemSize: 26,
+                          ratingWidget: RatingWidget(
+                            full: Icon(Icons.star, color: Theme.of(context).primaryColor),
+                            half: Icon(Icons.star_half, color: Theme.of(context).primaryColor),
+                            empty: Icon(Icons.star_outline, color: Theme.of(context).primaryColor)
+                          ),
+                          onRatingUpdate: (rating){},
+                        ),
+                      ],
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text('Kepuasan Produk'),
+                        RatingBar(
+                          itemSize: 26,
+                          ratingWidget: RatingWidget(
+                            full: Icon(Icons.star, color: Theme.of(context).primaryColor),
+                            half: Icon(Icons.star_half, color: Theme.of(context).primaryColor),
+                            empty: Icon(Icons.star_outline, color: Theme.of(context).primaryColor)
+                          ),
+                          onRatingUpdate: (rating){},
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Gap(10),
                   TextFormField(
                     maxLines: 5,
                     decoration: const InputDecoration(

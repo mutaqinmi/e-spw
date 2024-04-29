@@ -131,31 +131,28 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Theme.of(context).primaryColor,
-        title: Hero(
-          tag: 'search',
-          child: SizedBox(
-            height: 40,
-            child: Form(
-              child: TextFormField(
-                key: _formKeyField,
-                autofocus: true,
-                style: const TextStyle(
-                  fontSize: 14
-                ),
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  hintText: 'Telusuri produk atau toko ...',
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 15),
-                  suffixIcon: const Icon(Icons.search)
-                ),
-                onSaved: (value){_search = value!;},
-                onEditingComplete: (){_submit(context);},
+        title: SizedBox(
+          height: 40,
+          child: Form(
+            child: TextFormField(
+              key: _formKeyField,
+              autofocus: true,
+              style: const TextStyle(
+                fontSize: 14
               ),
-            )
-          ),
-        )
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                hintText: 'Telusuri produk atau toko ...',
+                contentPadding: const EdgeInsets.symmetric(horizontal: 15),
+                suffixIcon: const Icon(Icons.search)
+              ),
+              onSaved: (value){_search = value!;},
+              onEditingComplete: (){_submit(context);},
+            ),
+          )
+        ),
       ),
       body: SafeArea(
         top: false,

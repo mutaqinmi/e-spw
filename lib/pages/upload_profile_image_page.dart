@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class UploadProfileImagePage extends StatelessWidget{
   const UploadProfileImagePage({super.key});
@@ -12,7 +13,9 @@ class UploadProfileImagePage extends StatelessWidget{
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: TextButton(
-              onPressed: (){},
+              onPressed: (){
+                context.goNamed('shop-dash');
+              },
               child: const Text(
                 'Lewati',
                 style: TextStyle(
@@ -62,7 +65,9 @@ class UploadProfileImagePage extends StatelessWidget{
             width: double.infinity,
             height: 50,
             child: FilledButton(
-              onPressed: (){},
+              onPressed: (){
+                context.goNamed('shop-dash');
+              },
               child: const Text('Selesai!'),
             ),
           ),

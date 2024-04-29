@@ -13,7 +13,7 @@ class LoginShopPage extends StatelessWidget{
       ),
       body: Center(
         child: SafeArea(
-          minimum: EdgeInsets.symmetric(horizontal: 16),
+          minimum: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +10,20 @@ class CreateShopPage extends StatefulWidget{
 }
 
 class _CreateShopPageState extends State<CreateShopPage>{
+  String? kelasValue = 'XI PPLG';
+  String? jurusanValue = 'Pengembangan Perangkat Lunak dan Gim';
+
+  List<String> kelas = [
+    'XI PPLG',
+    'XI TJKT 1',
+    'XI TJKT 2'
+  ];
+
+  List<String> jurusan = [
+    'Pengembangan Perangkat Lunak dan Gim',
+    'Teknik Jaringan Komputer dan Telekomunikasi',
+  ];
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -55,30 +68,42 @@ class _CreateShopPageState extends State<CreateShopPage>{
                   children: [
                     Expanded(
                       flex: 1,
-                      child: TextFormField(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10))
-                          ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                          hintText: 'Kelas',
-                          labelText: 'Kelas'
-                        ),
-                      ),
+                      child: DropdownButton(
+                        icon: const Icon(Icons.arrow_drop_down),
+                        isExpanded: true,
+                        value: kelasValue,
+                        onChanged: (selected){
+                          setState(() {
+                            kelasValue = selected!;
+                          });
+                        },
+                        items: kelas.map((item){
+                          return DropdownMenuItem(
+                            value: item,
+                            child: Text(item),
+                          );
+                        }).toList()
+                      )
                     ),
                     const Gap(15),
                     Expanded(
                       flex: 2,
-                      child: TextFormField(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10))
-                          ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                          hintText: 'Program Keahlian',
-                          labelText: 'Program Keahlian'
-                        ),
-                      ),
+                      child: DropdownButton(
+                          icon: const Icon(Icons.arrow_drop_down),
+                          isExpanded: true,
+                          value: jurusanValue,
+                          onChanged: (selected){
+                            setState(() {
+                              jurusanValue = selected!;
+                            });
+                          },
+                          items: jurusan.map((item){
+                            return DropdownMenuItem(
+                              value: item,
+                              child: Text(item, overflow: TextOverflow.ellipsis),
+                            );
+                          }).toList()
+                      )
                     )
                   ],
                 ),
