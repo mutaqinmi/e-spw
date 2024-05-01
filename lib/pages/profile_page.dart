@@ -56,7 +56,9 @@ class _ProfilePageState extends State<ProfilePage>{
                   ),
                 ),
                 IconButton(
-                  onPressed: (){},
+                  onPressed: (){
+                    context.pushNamed('edit-profile');
+                  },
                   icon: const Icon(Icons.edit_outlined),
                 )
               ],

@@ -3,6 +3,7 @@ import 'package:espw/pages/change_password.dart';
 import 'package:espw/pages/chat_dialog_page.dart';
 import 'package:espw/pages/checkout_page.dart';
 import 'package:espw/pages/create_shop_page.dart';
+import 'package:espw/pages/edit_profile_page.dart';
 import 'package:espw/pages/favorite_page.dart';
 import 'package:espw/pages/join_shop_page.dart';
 import 'package:espw/pages/login_shop_page.dart';
@@ -16,8 +17,6 @@ import 'package:espw/pages/upload_profile_image_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-// Pages
 import 'package:espw/pages/signin_page.dart';
 import 'package:espw/pages/search_page.dart';
 import 'package:espw/pages/navigation_bar.dart';
@@ -197,6 +196,11 @@ final routes = GoRouter(
               name: 'shop-settings',
               path: 'shop-settings',
               builder: (BuildContext context, GoRouterState state) => const ShopSettingsPage(),
+            ),
+            GoRoute(
+              name: 'edit-profile',
+              path: 'edit-profile',
+              builder: (BuildContext context, GoRouterState state) => const EditProfilePage(),
             )
           ]
         ),

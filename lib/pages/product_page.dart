@@ -9,8 +9,6 @@ class ProductPage extends StatefulWidget{
 }
 
 class _ProductPageState extends State<ProductPage>{
-  bool _allProduct = true;
-
   @override
   Widget build(BuildContext context){
     return Scaffold(

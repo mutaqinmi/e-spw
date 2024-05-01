@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 
 class ShopSettingsPage extends StatelessWidget{
   const ShopSettingsPage({super.key});
