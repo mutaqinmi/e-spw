@@ -115,12 +115,12 @@ class _SignInPageState extends State<SignInPage>{
                   ),
                   validator: (value){
                     if(value!.isEmpty){
-                      return 'Isi form terlebih dahulu!';
+                      return 'Isi NIS terlebih dahulu!';
                     }
 
                     return null;
                   },
-                  onSaved: (value){_nis = value!;},
+                  onSaved: (value){_nis = value!;}
                 ),
               ),
               const Gap(10),

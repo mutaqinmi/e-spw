@@ -6,6 +6,7 @@ import 'package:espw/pages/create_shop_page.dart';
 import 'package:espw/pages/edit_profile_page.dart';
 import 'package:espw/pages/favorite_page.dart';
 import 'package:espw/pages/join_shop_page.dart';
+import 'package:espw/pages/login_failed.dart';
 import 'package:espw/pages/login_shop_page.dart';
 import 'package:espw/pages/order_page.dart';
 import 'package:espw/pages/order_status_page.dart';
@@ -51,6 +52,11 @@ final routes = GoRouter(
           path: 'verify',
           builder: (BuildContext context, GoRouterState state) => const Verify(),
         ),
+        GoRoute(
+          name: 'login-failed',
+          path: 'login-failed',
+          builder: (BuildContext context, GoRouterState state) => const LoginFailed(),
+        )
       ]
     ),
     GoRoute(
