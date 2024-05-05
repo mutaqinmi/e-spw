@@ -1,12 +1,12 @@
+import 'dart:convert';
+import 'package:espw/app/controllers.dart';
+import 'package:espw/widgets/bottom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gap/gap.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-
-// This is a dummy data that simulate API
-import 'package:espw/app/dummy_data.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -28,13 +28,17 @@ class _HomePageState extends State<HomePage> {
   bool _isDrink = false;
   bool _isOther = false;
 
-  late List<Map> shopList;
-  late List<Map> productList;
+  List shopList = [];
+  List productList = [];
   @override
   void initState() {
     super.initState();
-    shopList = shop;
-    productList = products;
+    shop().then((res) => setState(() {
+      shopList = json.decode(res.body)['data'];
+    }));
+    products().then((res) => setState(() {
+      productList = json.decode(res.body)['data'];
+    }));
   }
 
   Widget _bannerList(BuildContext context){
@@ -56,361 +60,373 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            surfaceTintColor: Colors.transparent,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(bottom: Radius.circular(25)),
-            ),
-            shadowColor: Colors.grey.withAlpha(50),
-            pinned: true,
-            expandedHeight: 250,
-            flexibleSpace: FlexibleSpaceBar(
-              collapseMode: CollapseMode.pin,
-              background: _bannerList(context),
-            ),
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(0),
-              child: AppBar(
-                surfaceTintColor: Colors.transparent,
-                backgroundColor: Colors.transparent,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(bottom: Radius.circular(25)),
-                ),
-                toolbarHeight: 50,
-                title: SizedBox(
-                  child: FilledButton(
-                    style: const ButtonStyle(
-                      side: MaterialStatePropertyAll(BorderSide(
-                        color: Color.fromARGB(255, 155, 155, 155),
-                        width: 0.5
-                      )),
-                      backgroundColor: MaterialStatePropertyAll(Color.fromARGB(255, 240, 240, 240)),
-                      foregroundColor: MaterialStatePropertyAll(Color.fromARGB(255, 155, 155, 155)),
-                      padding: MaterialStatePropertyAll(EdgeInsets.symmetric(horizontal: 15))
+      body: RefreshIndicator(
+        onRefresh: (){
+          return Future.delayed(const Duration(seconds: 1), (){
+            shop().then((res) => setState(() {
+              shopList = json.decode(res.body)['data'];
+            }));
+            products().then((res) => setState(() {
+              productList = json.decode(res.body)['data'];
+            }));
+          });
+        },
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              surfaceTintColor: Colors.transparent,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(25)),
+              ),
+              shadowColor: Colors.grey.withAlpha(50),
+              pinned: true,
+              expandedHeight: 250,
+              flexibleSpace: FlexibleSpaceBar(
+                collapseMode: CollapseMode.pin,
+                background: _bannerList(context),
+              ),
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(0),
+                child: AppBar(
+                  surfaceTintColor: Colors.transparent,
+                  backgroundColor: Colors.transparent,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(25)),
+                  ),
+                  toolbarHeight: 50,
+                  title: SizedBox(
+                    child: FilledButton(
+                      style: const ButtonStyle(
+                        side: MaterialStatePropertyAll(BorderSide(
+                          color: Color.fromARGB(255, 155, 155, 155),
+                          width: 0.5
+                        )),
+                        backgroundColor: MaterialStatePropertyAll(Color.fromARGB(255, 240, 240, 240)),
+                        foregroundColor: MaterialStatePropertyAll(Color.fromARGB(255, 155, 155, 155)),
+                        padding: MaterialStatePropertyAll(EdgeInsets.symmetric(horizontal: 15))
+                      ),
+                      onPressed: (){
+                        context.pushNamed('search');
+                      },
+                      child: const Row(
+                        children: [
+                          Icon(Icons.search),
+                          Gap(10),
+                          Text('Telusuri produk atau toko ...')
+                        ],
+                      ),
                     ),
-                    onPressed: (){
-                      context.pushNamed('search');
-                    },
-                    child: const Row(
+                  ),
+                  actions: [
+                    ProfilePicture(
+                      imageURL: 'https://images.unsplash.com/photo-1531891437562-4301cf35b7e4?q=80&w=1364&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                      onTap: (){
+                        context.pushNamed('profile');
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: SafeArea(
+                top: false,
+                bottom: false,
+                minimum: const EdgeInsets.only(left: 16, right: 16, top: 10),
+                child: Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.search),
-                        Gap(10),
-                        Text('Telusuri produk atau toko ...')
+                        Text(
+                          'Toko',
+                          style: TextStyle(
+                            fontSize: 24,
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.w600
+                          ),
+                        ),
+                        const Text(
+                          'Jelajahi semua toko',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w300
+                          ),
+                        ),
+                        const Gap(5),
+                        Wrap(
+                          spacing: 5,
+                          children: [
+                            ChoiceChip(
+                              label: const Text('Semua Toko'),
+                              selected: true,
+                              onSelected: (bool selected){},
+                            ),
+                            ChoiceChip(
+                              label: const Text('Toko yang Buka'),
+                              selected: _isOpen,
+                              onSelected: (bool selected){
+                                setState(() {
+                                  _isOpen = !_isOpen;
+                                });
+                              },
+                            )
+                          ],
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                height: 250,
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: shopList.length,
+                  itemBuilder: (BuildContext context, int index){
+                    final shop = shopList[index];
+                    return ShopCard(
+                      imageURL: 'http://$baseUrl/assets/public/${shop['banner_toko']}',
+                      className: shop['kelas'],
+                      shopName: shop['nama_toko'],
+                      rating: double.parse(shop['rating_toko']),
+                      onTap: (){
+                        context.pushNamed('shop', queryParameters: {'shopID': shop['id_toko']});
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: SafeArea(
+                top: false,
+                bottom: false,
+                minimum: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Explore',
+                          style: TextStyle(
+                            fontSize: 24,
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.w600
+                          ),
+                        ),
+                        Text(
+                          'Semua menu (${productList.length})',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w300
+                          ),
+                        ),
                       ],
                     ),
-                  ),
-                ),
-                actions: [
-                  ProfilePicture(
-                    imageURL: 'https://images.unsplash.com/photo-1531891437562-4301cf35b7e4?q=80&w=1364&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                    onTap: (){
-                      context.pushNamed('profile');
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: SafeArea(
-              top: false,
-              bottom: false,
-              minimum: const EdgeInsets.only(left: 16, right: 16, top: 10),
-              child: Row(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Toko',
-                        style: TextStyle(
-                          fontSize: 24,
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.w600
-                        ),
-                      ),
-                      const Text(
-                        'Jelajahi semua toko',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w300
-                        ),
-                      ),
-                      const Gap(5),
-                      Wrap(
-                        spacing: 5,
-                        children: [
-                          ChoiceChip(
-                            label: const Text('Semua Toko'),
-                            selected: true,
-                            onSelected: (bool selected){},
-                          ),
-                          ChoiceChip(
-                            label: const Text('Toko yang Buka'),
-                            selected: _isOpen,
-                            onSelected: (bool selected){
-                              setState(() {
-                                _isOpen = !_isOpen;
-                              });
-                            },
-                          )
-                        ],
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Container(
-              height: 250,
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                scrollDirection: Axis.horizontal,
-                itemCount: shopList.length,
-                itemBuilder: (BuildContext context, int index){
-                  final shop = shopList[index];
-                  return ShopCard(
-                    imageURL: shop['profile_picture'],
-                    className: shop['class'],
-                    shopName: shop['name'],
-                    rating: shop['rating'],
-                    onTap: (){
-                      context.pushNamed('shop');
-                    },
-                  );
-                },
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: SafeArea(
-              top: false,
-              bottom: false,
-              minimum: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Explore',
-                        style: TextStyle(
-                          fontSize: 24,
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.w600
-                        ),
-                      ),
-                      Text(
-                        'Semua menu (${productList.length})',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w300
-                        ),
-                      ),
-                    ],
-                  ),
-                  ElevatedButton(
-                    onPressed: (){
-                      showModalBottomSheet(
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (context){
-                          return SingleChildScrollView(
-                            child: SafeArea(
-                              minimum: const EdgeInsets.all(16),
-                              child: SizedBox(
-                                width: double.infinity,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      'Filter',
-                                      style: TextStyle(
-                                        fontSize: 26,
-                                        fontWeight: FontWeight.w600
+                    ElevatedButton(
+                      onPressed: (){
+                        showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (context){
+                            return SingleChildScrollView(
+                              child: SafeArea(
+                                minimum: const EdgeInsets.all(16),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Filter',
+                                        style: TextStyle(
+                                          fontSize: 26,
+                                          fontWeight: FontWeight.w600
+                                        ),
                                       ),
-                                    ),
-                                    const Gap(20),
-                                    const Text(
-                                      'Harga',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600
+                                      const Gap(20),
+                                      const Text(
+                                        'Harga',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600
+                                        ),
                                       ),
-                                    ),
-                                    StatefulBuilder(
-                                      builder: (BuildContext context, StateSetter setState){
-                                        return Wrap(
-                                          spacing: 5,
-                                          children: [
-                                            ChoiceChip(
-                                              label: const Text('Dibawah 5K'),
-                                              selected: _isUnder5K,
-                                              onSelected: (bool selected){
-                                                setState(() {
-                                                  _isUnder5K = !_isUnder5K;
-                                                });
-                                              },
-                                            ),
-                                            ChoiceChip(
-                                              label: const Text('Dibawah 10K'),
-                                              selected: _isUnder10K,
-                                              onSelected: (bool selected){
-                                                setState(() {
-                                                  _isUnder10K = !_isUnder10K;
-                                                });
-                                              },
-                                            ),
-                                            ChoiceChip(
-                                              label: const Text('Diatas 10K'),
-                                              selected: _isAbove10K,
-                                              onSelected: (bool selected){
-                                                setState(() {
-                                                  _isAbove10K = !_isAbove10K;
-                                                });
-                                              },
-                                            )
-                                          ],
-                                        );
-                                      },
-                                    ),
-                                    const Gap(15),
-                                    const Text(
-                                      'Rating',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600
-                                      ),
-                                    ),
-                                    StatefulBuilder(
-                                      builder: (BuildContext context, StateSetter setState){
-                                        return Wrap(
-                                          spacing: 5,
-                                          children: [
-                                            ChoiceChip(
-                                              label: const Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Text('Diatas 4.0'),
-                                                  Gap(5),
-                                                  Icon(Icons.star_half)
-                                                ],
+                                      StatefulBuilder(
+                                        builder: (BuildContext context, StateSetter setState){
+                                          return Wrap(
+                                            spacing: 5,
+                                            children: [
+                                              ChoiceChip(
+                                                label: const Text('Dibawah 5K'),
+                                                selected: _isUnder5K,
+                                                onSelected: (bool selected){
+                                                  setState(() {
+                                                    _isUnder5K = !_isUnder5K;
+                                                  });
+                                                },
                                               ),
-                                              selected: _lowestRating,
-                                              onSelected: (bool selected){
-                                                setState(() {
-                                                  _lowestRating = !_lowestRating;
-                                                });
-                                              },
-                                            ),
-                                            ChoiceChip(
-                                              label: const Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Text('Diatas 4.5'),
-                                                  Gap(5),
-                                                  Icon(Icons.star)
-                                                ],
+                                              ChoiceChip(
+                                                label: const Text('Dibawah 10K'),
+                                                selected: _isUnder10K,
+                                                onSelected: (bool selected){
+                                                  setState(() {
+                                                    _isUnder10K = !_isUnder10K;
+                                                  });
+                                                },
                                               ),
-                                              selected: _highestRating,
-                                              onSelected: (bool selected){
-                                                setState(() {
-                                                  _highestRating = !_highestRating;
-                                                });
-                                              },
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    ),
-                                    const Gap(15),
-                                    const Text(
-                                      'Jenis',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600
+                                              ChoiceChip(
+                                                label: const Text('Diatas 10K'),
+                                                selected: _isAbove10K,
+                                                onSelected: (bool selected){
+                                                  setState(() {
+                                                    _isAbove10K = !_isAbove10K;
+                                                  });
+                                                },
+                                              )
+                                            ],
+                                          );
+                                        },
                                       ),
-                                    ),
-                                    StatefulBuilder(
-                                      builder: (BuildContext context, StateSetter setState){
-                                        return Wrap(
-                                          spacing: 5,
-                                          children: [
-                                            ChoiceChip(
-                                              label: const Text('Makanan'),
-                                              selected: _isFood,
-                                              onSelected: (bool selected){
-                                                setState(() {
-                                                  _isFood = !_isFood;
-                                                });
-                                              },
-                                            ),
-                                            ChoiceChip(
-                                              label: const Text('Minuman'),
-                                              selected: _isDrink,
-                                              onSelected: (bool selected){
-                                                setState(() {
-                                                  _isDrink = !_isDrink;
-                                                });
-                                              },
-                                            ),
-                                            ChoiceChip(
-                                              label: const Text('Lainnya'),
-                                              selected: _isOther,
-                                              onSelected: (bool selected){
-                                                setState(() {
-                                                  _isOther = !_isOther;
-                                                });
-                                              },
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    ),
-                                  ],
+                                      const Gap(15),
+                                      const Text(
+                                        'Rating',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600
+                                        ),
+                                      ),
+                                      StatefulBuilder(
+                                        builder: (BuildContext context, StateSetter setState){
+                                          return Wrap(
+                                            spacing: 5,
+                                            children: [
+                                              ChoiceChip(
+                                                label: const Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Text('Diatas 4.0'),
+                                                    Gap(5),
+                                                    Icon(Icons.star_half)
+                                                  ],
+                                                ),
+                                                selected: _lowestRating,
+                                                onSelected: (bool selected){
+                                                  setState(() {
+                                                    _lowestRating = !_lowestRating;
+                                                  });
+                                                },
+                                              ),
+                                              ChoiceChip(
+                                                label: const Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Text('Diatas 4.5'),
+                                                    Gap(5),
+                                                    Icon(Icons.star)
+                                                  ],
+                                                ),
+                                                selected: _highestRating,
+                                                onSelected: (bool selected){
+                                                  setState(() {
+                                                    _highestRating = !_highestRating;
+                                                  });
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                      const Gap(15),
+                                      const Text(
+                                        'Jenis',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600
+                                        ),
+                                      ),
+                                      StatefulBuilder(
+                                        builder: (BuildContext context, StateSetter setState){
+                                          return Wrap(
+                                            spacing: 5,
+                                            children: [
+                                              ChoiceChip(
+                                                label: const Text('Makanan'),
+                                                selected: _isFood,
+                                                onSelected: (bool selected){
+                                                  setState(() {
+                                                    _isFood = !_isFood;
+                                                  });
+                                                },
+                                              ),
+                                              ChoiceChip(
+                                                label: const Text('Minuman'),
+                                                selected: _isDrink,
+                                                onSelected: (bool selected){
+                                                  setState(() {
+                                                    _isDrink = !_isDrink;
+                                                  });
+                                                },
+                                              ),
+                                              ChoiceChip(
+                                                label: const Text('Lainnya'),
+                                                selected: _isOther,
+                                                onSelected: (bool selected){
+                                                  setState(() {
+                                                    _isOther = !_isOther;
+                                                  });
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                        }
-                      );
-                    },
-                    child: const Row(
-                      children: [
-                        Icon(Icons.tune),
-                        Gap(10),
-                        Text('Filter')
-                      ],
-                    ),
-                  )
-                ],
-              )
+                            );
+                          }
+                        );
+                      },
+                      child: const Row(
+                        children: [
+                          Icon(Icons.tune),
+                          Gap(10),
+                          Text('Filter')
+                        ],
+                      ),
+                    )
+                  ],
+                )
+              ),
             ),
-          ),
-          SliverList.builder(
-            itemCount: productList.length,
-            itemBuilder: (BuildContext context, int index){
-              final product = productList[index];
-              return ProductCard(
-                imageURL: product['product_image'],
-                productName: product['product_name'],
-                description: product['product_description'],
-                soldTotal: product['sold_total'],
-                price: product['price'],
-                rating: product['rating'],
-                onTap: (){context.pushNamed('shop');},
-              );
-            },
-          ),
-        ],
-      ),
+            SliverList.builder(
+              itemCount: productList.length,
+              itemBuilder: (BuildContext context, int index){
+                final product = productList[index];
+                return ProductCard(
+                  imageURL: 'http://$baseUrl/assets/public/${product['gambar_produk']}',
+                  productName: product['nama_produk'],
+                  description: product['deskripsi_produk'],
+                  soldTotal: product['jumlah_terjual'],
+                  price: product['harga'],
+                  rating: double.parse(product['rating_produk']),
+                  onTap: (){context.pushNamed('shop', queryParameters: {'shopID': product['toko']});},
+                );
+              },
+            ),
+          ],
+        ),
+      )
     );
   }
 }

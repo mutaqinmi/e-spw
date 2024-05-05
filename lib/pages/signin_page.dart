@@ -142,7 +142,7 @@ class _SignInPageState extends State<SignInPage>{
                       letterSpacing: 2,
                     ),
                   ),
-                  onPressed: (){_submit();},
+                  onPressed: () => _submit(),
                 )
               )
             ],

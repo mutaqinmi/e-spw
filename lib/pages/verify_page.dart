@@ -128,7 +128,7 @@ class _VerifyState extends State<Verify> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              onPressed: (){_submit();},
+              onPressed: () => _submit(),
             ),
           ),
         )

@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'package:espw/app/dummy_data.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:espw/app/controllers.dart';
 
 class SearchResult extends StatefulWidget {
   const SearchResult({super.key, this.searchQuery});
@@ -14,15 +16,18 @@ class SearchResult extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchResult>{
-  late List<Map> productList;
-  late List<Map> shopList;
-  late int cartBadge;
+  List productList = [];
+  List shopList = [];
+  final int cartBadge = 0;
   @override
   void initState() {
     super.initState();
-    productList = products;
-    shopList = shop;
-    cartBadge = carts.length;
+    search(widget.searchQuery!).then((res) => {
+      setState(() {
+        productList = json.decode(res.body)['dataProduk'];
+        shopList = json.decode(res.body)['dataToko'];
+      })
+    });
   }
 
   @override
@@ -99,12 +104,13 @@ class _SearchPageState extends State<SearchResult>{
         itemBuilder: (BuildContext context, int index){
           final product = productList[index];
           return ProductResult(
-            imageURL: product['product_image'],
-            shopName: product['shop_name'],
-            productName: product['product_name'],
-            soldTotal: product['sold_total'],
-            price: product['price'],
-            rating: product['rating'],
+            imageURL: 'http://$baseUrl/assets/public/${product['gambar_produk']}',
+            shopName: product['nama_toko'],
+            productName: product['nama_produk'],
+            soldTotal: product['jumlah_terjual'],
+            price: product['harga'],
+            rating: double.parse(product['rating_produk']),
+            onTap: () => context.pushNamed('shop', queryParameters: {'shopID': product['id_toko']})
           );
         },
       ),
@@ -118,9 +124,9 @@ class _SearchPageState extends State<SearchResult>{
         itemBuilder: (BuildContext context, int index){
           final shop = shopList[index];
           return ShopResult(
-            imageURL: shop['profile_picture'],
-            className: shop['class'],
-            shopName: shop['name'],
+            imageURL: 'http://$baseUrl/assets/public/${shop['banner_toko']}',
+            className: shop['kelas'],
+            shopName: shop['nama_toko'],
           );
         },
       ),

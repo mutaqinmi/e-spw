@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:espw/app/dummy_data.dart';
+import 'package:espw/widgets/bottom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:espw/app/controllers.dart';
 
 class CartPage extends StatefulWidget{
   const CartPage({super.key});
@@ -15,11 +17,36 @@ class CartPage extends StatefulWidget{
 class _CartPageState extends State<CartPage>{
   final formatter = NumberFormat('###,###.###', 'id_ID');
 
-  late List<Map> cartList;
+  List cartList = [];
   @override
   void initState() {
     super.initState();
-    cartList = carts;
+    carts().then((res) => {
+      setState((){
+        cartList = json.decode(res.body)['data'];
+      })
+    });
+  }
+
+  void _deleteFromCart(BuildContext context, int idKeranjang){
+    deleteCart(idKeranjang).then((res) => {
+      if(res.statusCode == 200){
+        successSnackBar(
+          context: context,
+          content: 'Produk berhasil dihapus!'
+        ),
+      }
+    });
+  }
+
+  void _addQty(int qty, int idKeranjang){
+    qty++;
+    updateCart(idKeranjang, qty);
+  }
+
+  void _removeQty(int qty, int idKeranjang){
+    qty--;
+    updateCart(idKeranjang, qty);
   }
 
   Widget _isOpen(bool isOpen){
@@ -78,7 +105,7 @@ class _CartPageState extends State<CartPage>{
     );
   }
 
-  Future<bool?> _confirmDismiss(BuildContext context, int index, String itemName, bool isButton){
+  Future<bool?> _confirmDismiss(BuildContext context, int idKeranjang, String itemName){
     return showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -89,24 +116,13 @@ class _CartPageState extends State<CartPage>{
         actions: [
           TextButton(
             onPressed: (){
-              if(isButton){
-                context.pop();
-              } else {
-                context.pop(false);
-              }
+              context.pop(false);
             },
             child: const Text('Batal'),
           ),
           FilledButton(
             onPressed: (){
-              if(isButton){
-                setState(() {
-                  cartList.removeAt(index);
-                });
-                context.pop();
-              } else {
-                context.pop(true);
-              }
+              context.pop(true);
             },
             child: const Text('Hapus'),
           )
@@ -118,7 +134,7 @@ class _CartPageState extends State<CartPage>{
   double _totalPrice(){
     double totalPrice = 0.0;
     for(int i = 0; i < cartList.length; i++){
-      totalPrice += cartList[i]['product'][0]['price'] * cartList[i]['qty'];
+      totalPrice += cartList[i]['harga'] * cartList[i]['qty'];
     }
     return totalPrice;
   }
@@ -126,178 +142,220 @@ class _CartPageState extends State<CartPage>{
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Keranjang',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600
-          ),
-        ),
-      ),
-      body: ListView.builder(
-        itemCount: cartList.length,
-        itemBuilder: (BuildContext context, int index){
-          final item = cartList[index];
-          return Dismissible(
-            key: Key(item['cartID']),
-            background: Container(
-              decoration: const BoxDecoration(
-                color: Colors.red
-              ),
-              child: const Center(
-                child: Icon(Icons.delete, color: Colors.white),
+      body: CustomScrollView(
+        slivers: [
+          const SliverAppBar(
+            pinned: true,
+            title: Text(
+              'Keranjang',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600
               ),
             ),
-            confirmDismiss: (DismissDirection dismissDirection) => _confirmDismiss(context, index, item['product'][0]['product_name'], false),
-            onDismissed: (DismissDirection dismissDirection){
-              setState(() {
-                cartList.removeAt(index);
-              });
-            },
+          ),
+          const SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(vertical: 5),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Wrap(
-                        spacing: 5,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          const Icon(Icons.storefront),
-                          Text(item['product'][0]['shop_name']),
-                          _isOpen(item['product'][0]['is_open'])
-                        ],
-                      ),
-                      IconButton(
-                        onPressed: (){_confirmDismiss(context, index, item['product'][0]['product_name'], true);},
-                        icon: const Icon(Icons.delete_outline, color: Colors.red),
-                      )
-                    ],
+                  Text(
+                    'Swipe untuk menghapus item dari keranjang',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontStyle: FontStyle.italic
+                    ),
                   ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: CachedNetworkImage(
-                          imageUrl: item['product'][0]['product_image'],
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 15),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                item['product'][0]['product_name'],
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600
-                                ),
-                              ),
-                              Text(
-                                item['extra'].join(', '),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const Gap(25),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Rp. ${formatter.format(item['product'][0]['price'])}',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600
-                                    ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        onPressed: (){
-                                          if(item['qty'] < 1){
-                                            _confirmDismiss(context, index, item['product'][0]['product_name'], true);
-                                          }
-
-                                          if(item['product'][0]['is_open']){
-                                            if(item['qty'] > 0){
-                                              setState(() {
-                                                item['qty']--;
-                                              });
-                                            }
-                                          }
-                                        },
-                                        visualDensity: VisualDensity.compact,
-                                        style: ButtonStyle(
-                                          backgroundColor: MaterialStatePropertyAll(Theme.of(context).primaryColor),
-                                          padding: const MaterialStatePropertyAll(EdgeInsets.zero),
-                                        ),
-                                        icon: const Icon(
-                                          Icons.remove,
-                                          size: 20,
-                                          color: Colors.white,
-                                        ),
-                                        constraints: const BoxConstraints(
-                                          maxWidth: 50,
-                                          maxHeight: 50
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 30,
-                                        child: Center(
-                                          child: Text(
-                                            item['qty'].toString(),
-                                            style: const TextStyle(
-                                              fontSize: 16
-                                            ),
-                                          ),
-                                        )
-                                      ),
-                                      IconButton(
-                                        onPressed: (){
-                                          if(item['product'][0]['is_open']){
-                                            setState(() {
-                                              item['qty']++;
-                                            });
-                                          }
-                                        },
-                                        visualDensity: VisualDensity.compact,
-                                        style: ButtonStyle(
-                                          backgroundColor: MaterialStatePropertyAll(Theme.of(context).primaryColor),
-                                          padding: const MaterialStatePropertyAll(EdgeInsets.zero),
-                                        ),
-                                        icon: const Icon(
-                                          Icons.add,
-                                          size: 20,
-                                          color: Colors.white,
-                                        ),
-                                        constraints: const BoxConstraints(
-                                          maxWidth: 50,
-                                          maxHeight: 50
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                        )
-                      )
-                    ],
+                  Gap(10),
+                  Divider(
+                    color: Colors.grey,
+                    thickness: 0.5,
+                    indent: 16,
+                    endIndent: 16,
                   )
                 ],
               ),
             )
-          );
-        },
+          ),
+          SliverList.builder(
+            itemCount: cartList.length,
+            itemBuilder: (BuildContext context, int index){
+              final item = cartList[index];
+              return Dismissible(
+                key: Key(item['id_keranjang'].toString()),
+                background: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.red
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.only(left: 30),
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete, color: Colors.white)
+                      ],
+                    ),
+                  )
+                ),
+                secondaryBackground: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.red
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.only(right: 30),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Icon(Icons.delete, color: Colors.white)
+                      ],
+                    ),
+                  )
+                ),
+                confirmDismiss: (DismissDirection dismissDirection) => _confirmDismiss(context, item['id_keranjang'], item['nama_produk']),
+                onDismissed: (DismissDirection dismissDirection){
+                  _deleteFromCart(context, item['id_keranjang']);
+                  setState(() {
+                    cartList.removeAt(index);
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Wrap(
+                          spacing: 5,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            const Icon(Icons.storefront),
+                            Text(item['nama_toko']),
+                            _isOpen(item['is_open'])
+                          ],
+                        ),
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: CachedNetworkImage(
+                              imageUrl: 'http://$baseUrl/assets/public/${item['gambar_produk']}',
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 15),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    item['nama_produk'],
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600
+                                    ),
+                                  ),
+                                  // Text(
+                                  //   item['extra'].join(', '),
+                                  //   overflow: TextOverflow.ellipsis,
+                                  // ),
+                                  const Gap(40),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Rp. ${formatter.format(item['harga'])}',
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600
+                                        ),
+                                      ),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            onPressed: (){
+                                              if(item['is_open']){
+                                                if(item['qty'] > 1){
+                                                  _removeQty(item['qty'], item['id_keranjang']);
+                                                  setState(() {
+                                                    item['qty']--;
+                                                  });
+                                                }
+                                              }
+                                            },
+                                            visualDensity: VisualDensity.compact,
+                                            style: ButtonStyle(
+                                              backgroundColor: MaterialStatePropertyAll(Theme.of(context).primaryColor),
+                                              padding: const MaterialStatePropertyAll(EdgeInsets.zero),
+                                            ),
+                                            icon: const Icon(
+                                              Icons.remove,
+                                              size: 20,
+                                              color: Colors.white,
+                                            ),
+                                            constraints: const BoxConstraints(
+                                              maxWidth: 50,
+                                              maxHeight: 50
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 30,
+                                            child: Center(
+                                              child: Text(
+                                                item['qty'].toString(),
+                                                style: const TextStyle(
+                                                  fontSize: 16
+                                                ),
+                                              ),
+                                            )
+                                          ),
+                                          IconButton(
+                                            onPressed: (){
+                                              if(item['is_open']){
+                                                _addQty(item['qty'], item['id_keranjang']);
+                                                setState(() {
+                                                  item['qty']++;
+                                                });
+                                              }
+                                            },
+                                            visualDensity: VisualDensity.compact,
+                                            style: ButtonStyle(
+                                              backgroundColor: MaterialStatePropertyAll(Theme.of(context).primaryColor),
+                                              padding: const MaterialStatePropertyAll(EdgeInsets.zero),
+                                            ),
+                                            icon: const Icon(
+                                              Icons.add,
+                                              size: 20,
+                                              color: Colors.white,
+                                            ),
+                                            constraints: const BoxConstraints(
+                                              maxWidth: 50,
+                                              maxHeight: 50
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                            )
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                )
+              );
+            },
+          ),
+        ],
       ),
       bottomNavigationBar: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

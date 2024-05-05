@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:espw/widgets/bottom_snack_bar.dart';
@@ -8,15 +7,35 @@ import 'package:http/http.dart' as http;
 
 // initializing global variable
 final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-const String _baseUrl = '192.168.115.242:8000';
+const String baseUrl = '192.168.244.242:8000';
+
+Future<http.Response> postData(String apiURL, Map body) async {
+  final url = Uri.http(baseUrl, apiURL);
+  var response = await http.post(url, body: body, headers: {
+    'Content-Type': 'application/x-www-form-urlencoded'
+  });
+
+  return response;
+}
+
+Future<http.Response> getData(String apiURL) async {
+  final url = Uri.http(baseUrl, apiURL);
+  var response = await http.get(url);
+
+  return response;
+}
 
 void signIn(BuildContext context, String nis) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.http(_baseUrl, '/api/login');
-  var response = await http.post(url, body: {
+  // final url = Uri.http(baseUrl, '/api/login');
+  // var response = await http.post(url, body: {
+  //   'nis': nis
+  // }, headers: {
+  //   'Content-Type': 'application/x-www-form-urlencoded'
+  // });
+
+  final response = await postData('/api/login', {
     'nis': nis
-  }, headers: {
-    'Content-Type': 'application/x-www-form-urlencoded'
   });
 
   if(!context.mounted) return;
@@ -58,11 +77,15 @@ void verify(BuildContext context, String passwordText) async {
 
 void logout(BuildContext context) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.http(_baseUrl, '/api/logout');
-  var response = await http.post(url, body: {
+  // final url = Uri.http(baseUrl, '/api/logout');
+  // var response = await http.post(url, body: {
+  //   'token': prefs.getString('token')
+  // }, headers: {
+  //   'Content-Type': 'application/x-www-form-urlencoded'
+  // });
+
+  final response = await postData('/api/logout', {
     'token': prefs.getString('token')
-  }, headers: {
-    'Content-Type': 'application/x-www-form-urlencoded'
   });
 
   if(response.statusCode == 200){
@@ -71,4 +94,66 @@ void logout(BuildContext context) async {
     prefs.setBool('isAuthenticated', false);
     context.goNamed('signin');
   }
+}
+
+Future<http.Response> shop() async {
+  final response = await getData('/api/shop');
+  return response;
+}
+
+Future<http.Response> products() async {
+  final response = await getData('/api/products');
+  return response;
+}
+
+Future<http.Response> shopById(String? shop_id) async {
+  final response = await getData('/api/shop/$shop_id');
+  return response;
+}
+
+Future<http.Response> search(String query) async {
+  final response = await postData('/api/search', {
+    'query': query
+  });
+  return response;
+}
+
+Future<http.Response> addToCart(String id_produk, int qty) async {
+  final SharedPreferences prefs = await _prefs;
+  final response = await postData('/api/add-to-cart', {
+    'id': id_produk,
+    'qty': qty.toString(),
+    'token': prefs.getString('token')
+  });
+  return response;
+}
+
+Future<http.Response> carts() async {
+  final SharedPreferences prefs = await _prefs;
+  final token = prefs.getString('token');
+  final response = await postData('/api/cart', {
+    'token': token
+  });
+  return response;
+}
+
+Future<http.Response> deleteCart(int idKeranjang) async {
+  final SharedPreferences prefs = await _prefs;
+  final token = prefs.getString('token');
+  final response = await postData('/api/cart/delete', {
+    'id': idKeranjang.toString(),
+    'token': token
+  });
+  return response;
+}
+
+Future<http.Response> updateCart(int idKeranjang, int qty) async {
+  final SharedPreferences prefs = await _prefs;
+  final token = prefs.getString('token');
+  final response = await postData('/api/cart/update', {
+    'id': idKeranjang.toString(),
+    'qty': qty.toString(),
+    'token': token
+  });
+  return response;
 }

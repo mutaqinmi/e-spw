@@ -1,4 +1,6 @@
-import 'package:espw/app/dummy_data.dart';
+import 'dart:convert';
+
+import 'package:espw/app/controllers.dart';
 import 'package:espw/pages/chat_page.dart';
 import 'package:flutter/material.dart';
 
@@ -17,15 +19,19 @@ class NavBar extends StatefulWidget{
 class _NavBarState extends State<NavBar>{
   int currentPage = 0;
 
-  late int cartBadge;
+  final int cartBadge = 0;
   final int notificationBadge = 0;
   final int chatBadge = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    cartBadge = carts.length;
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   carts().then((res) => {
+  //     setState((){
+  //       cartBadge = json.decode(res.body)['data'].length;
+  //     })
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context){
