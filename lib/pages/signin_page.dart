@@ -40,7 +40,7 @@ class _SignInPageState extends State<SignInPage>{
                       padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height / 10),
                       child: Image.asset(
                         "assets/image/login-page.png",
-                        width: 350,
+                        width: 300,
                       ),
                     )
                   ),
@@ -105,7 +105,7 @@ class _SignInPageState extends State<SignInPage>{
                 child: TextFormField(
                   key: _signInKey,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  keyboardType: TextInputType.datetime,
+                  keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10))

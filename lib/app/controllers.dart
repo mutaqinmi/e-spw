@@ -7,10 +7,10 @@ import 'package:http/http.dart' as http;
 
 // initializing global variable
 final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-const String baseUrl = '192.168.244.242:8000';
+const String baseUrl = 'lucky-premium-redfish.ngrok-free.app';
 
 Future<http.Response> postData(String apiURL, Map body) async {
-  final url = Uri.http(baseUrl, apiURL);
+  final url = Uri.https(baseUrl, apiURL);
   var response = await http.post(url, body: body, headers: {
     'Content-Type': 'application/x-www-form-urlencoded'
   });
@@ -19,7 +19,7 @@ Future<http.Response> postData(String apiURL, Map body) async {
 }
 
 Future<http.Response> getData(String apiURL) async {
-  final url = Uri.http(baseUrl, apiURL);
+  final url = Uri.https(baseUrl, apiURL);
   var response = await http.get(url);
 
   return response;
@@ -27,13 +27,6 @@ Future<http.Response> getData(String apiURL) async {
 
 void signIn(BuildContext context, String nis) async {
   final SharedPreferences prefs = await _prefs;
-  // final url = Uri.http(baseUrl, '/api/login');
-  // var response = await http.post(url, body: {
-  //   'nis': nis
-  // }, headers: {
-  //   'Content-Type': 'application/x-www-form-urlencoded'
-  // });
-
   final response = await postData('/api/login', {
     'nis': nis
   });
@@ -41,7 +34,7 @@ void signIn(BuildContext context, String nis) async {
   if(!context.mounted) return;
   if(response.statusCode == 200){
     prefs.setInt('nis', json.decode(response.body)['data']['nis']);
-    prefs.setString('nama', json.decode(response.body)['data']['nama']);
+    prefs.setString('nama', json.decode(response.body)['data']['nama_siswa']);
     prefs.setString('kelas', json.decode(response.body)['data']['kelas']);
     prefs.setString('password', json.decode(response.body)['data']['password']);
     prefs.setString('telepon', json.decode(response.body)['data']['telepon']);
@@ -106,8 +99,8 @@ Future<http.Response> products() async {
   return response;
 }
 
-Future<http.Response> shopById(String? shop_id) async {
-  final response = await getData('/api/shop/$shop_id');
+Future<http.Response> shopById(String? shopId) async {
+  final response = await getData('/api/shop/$shopId');
   return response;
 }
 
@@ -118,10 +111,10 @@ Future<http.Response> search(String query) async {
   return response;
 }
 
-Future<http.Response> addToCart(String id_produk, int qty) async {
+Future<http.Response> addToCart(String idProduk, int qty) async {
   final SharedPreferences prefs = await _prefs;
   final response = await postData('/api/add-to-cart', {
-    'id': id_produk,
+    'id': idProduk,
     'qty': qty.toString(),
     'token': prefs.getString('token')
   });

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:espw/app/dummy_data.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gap/gap.dart';
@@ -104,7 +103,7 @@ class _SearchPageState extends State<SearchResult>{
         itemBuilder: (BuildContext context, int index){
           final product = productList[index];
           return ProductResult(
-            imageURL: 'http://$baseUrl/assets/public/${product['gambar_produk']}',
+            imageURL: 'http://$baseUrl/assets/public/${product['foto_produk']}',
             shopName: product['nama_toko'],
             productName: product['nama_produk'],
             soldTotal: product['jumlah_terjual'],

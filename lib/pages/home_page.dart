@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:espw/app/controllers.dart';
-import 'package:espw/widgets/bottom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gap/gap.dart';
@@ -414,7 +413,7 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (BuildContext context, int index){
                 final product = productList[index];
                 return ProductCard(
-                  imageURL: 'http://$baseUrl/assets/public/${product['gambar_produk']}',
+                  imageURL: 'http://$baseUrl/assets/public/${product['foto_produk']}',
                   productName: product['nama_produk'],
                   description: product['deskripsi_produk'],
                   soldTotal: product['jumlah_terjual'],

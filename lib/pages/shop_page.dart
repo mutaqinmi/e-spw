@@ -101,21 +101,6 @@ class _ShopPageState extends State<ShopPage>{
     }
   }
 
-  // @override
-  // Widget build(BuildContext context){
-  //   return Scaffold(
-  //     body: Center(
-  //       child: ElevatedButton(
-  //         onPressed: (){
-  //           // shopById(widget.shopID).then((res) => print(json.decode(res.body)['data']));
-  //           print(shopList);
-  //         },
-  //         child: const Text('Fetch Data')
-  //       )
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -256,7 +241,7 @@ class _ShopPageState extends State<ShopPage>{
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(15),
                                         child: CachedNetworkImage(
-                                          imageUrl: 'http://$baseUrl/assets/public/${shopList[0]['gambar_produk']}',
+                                          imageUrl: 'http://$baseUrl/assets/public/${shopList[0]['foto_produk']}',
                                           width: double.infinity,
                                           height: 200,
                                           fit: BoxFit.cover,
@@ -398,7 +383,7 @@ class _ShopPageState extends State<ShopPage>{
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: CachedNetworkImage(
-                                imageUrl: 'http://$baseUrl/assets/public/${product['gambar_produk']}',
+                                imageUrl: 'http://$baseUrl/assets/public/${product['foto_produk']}',
                                 width: 100,
                                 height: 100,
                                 fit: BoxFit.cover,
@@ -499,7 +484,7 @@ class _ShopPageState extends State<ShopPage>{
                         ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: CachedNetworkImage(
-                            imageUrl: 'http://$baseUrl/assets/public/${shopList[index]['gambar_produk']}',
+                            imageUrl: 'http://$baseUrl/assets/public/${shopList[index]['foto_produk']}',
                             width: 100,
                             height: 100,
                             fit: BoxFit.cover,

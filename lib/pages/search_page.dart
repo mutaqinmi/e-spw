@@ -105,7 +105,7 @@ class _SearchPageState extends State<SearchPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        content: const Text('Apakah anda yakin ingin menghapus riwayat pencarian?'),
+        content: const Text('Apakah anda yakin ingin menghapus riwayat penelusuran?'),
         actions: [
           TextButton(
             onPressed: (){
