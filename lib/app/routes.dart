@@ -79,8 +79,8 @@ final routes = GoRouter(
                 ),
                 ElevatedButton(
                   style: ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(Theme.of(context).primaryColor),
-                    foregroundColor: const MaterialStatePropertyAll(Colors.white)
+                    backgroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColor),
+                    foregroundColor: const WidgetStatePropertyAll(Colors.white)
                   ),
                   onPressed: (){
                     context.pop(true);

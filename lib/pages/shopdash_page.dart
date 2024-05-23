@@ -192,12 +192,12 @@ class _ShopDashPageState extends State<ShopDashPage>{
                   Expanded(
                     child: TextButton(
                       style: const ButtonStyle(
-                        shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                        shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero
                         )),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
-                        padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                        overlayColor: MaterialStatePropertyAll(Colors.transparent)
+                        foregroundColor: WidgetStatePropertyAll(Colors.black),
+                        padding: WidgetStatePropertyAll(EdgeInsets.zero),
+                        overlayColor: WidgetStatePropertyAll(Colors.transparent)
                       ),
                       onPressed: (){
                         context.pushNamed('order-status', queryParameters: {'initial_index': '1'});
@@ -217,12 +217,12 @@ class _ShopDashPageState extends State<ShopDashPage>{
                   Expanded(
                     child: TextButton(
                       style: const ButtonStyle(
-                        shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                        shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero
                         )),
-                        foregroundColor: MaterialStatePropertyAll(Colors.black),
-                        padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                        overlayColor: MaterialStatePropertyAll(Colors.transparent)
+                        foregroundColor: WidgetStatePropertyAll(Colors.black),
+                        padding: WidgetStatePropertyAll(EdgeInsets.zero),
+                        overlayColor: WidgetStatePropertyAll(Colors.transparent)
                       ),
                       onPressed: (){
                         context.pushNamed('order-status', queryParameters: {'initial_index': '2'});

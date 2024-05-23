@@ -18,14 +18,14 @@ class _HomePageState extends State<HomePage> {
   int currentPage = 0;
   bool _isOpen = false;
 
-  bool _isUnder5K = false;
-  bool _isUnder10K = false;
-  bool _isAbove10K = false;
-  bool _highestRating = false;
-  bool _lowestRating = false;
-  bool _isFood = false;
-  bool _isDrink = false;
-  bool _isOther = false;
+  // bool _isUnder5K = false;
+  // bool _isUnder10K = false;
+  // bool _isAbove10K = false;
+  // bool _highestRating = false;
+  // bool _lowestRating = false;
+  // bool _isFood = false;
+  // bool _isDrink = false;
+  // bool _isOther = false;
 
   List shopList = [];
   List productList = [];
@@ -96,13 +96,13 @@ class _HomePageState extends State<HomePage> {
                   title: SizedBox(
                     child: FilledButton(
                       style: const ButtonStyle(
-                        side: MaterialStatePropertyAll(BorderSide(
-                          color: Color.fromARGB(255, 155, 155, 155),
-                          width: 0.5
+                        side: WidgetStatePropertyAll(BorderSide(
+                            color: Color.fromARGB(255, 155, 155, 155),
+                            width: 0.5
                         )),
-                        backgroundColor: MaterialStatePropertyAll(Color.fromARGB(255, 240, 240, 240)),
-                        foregroundColor: MaterialStatePropertyAll(Color.fromARGB(255, 155, 155, 155)),
-                        padding: MaterialStatePropertyAll(EdgeInsets.symmetric(horizontal: 15))
+                        backgroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 240, 240, 240)),
+                        foregroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 155, 155, 155)),
+                        padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 15))
                       ),
                       onPressed: (){
                         context.pushNamed('search');
@@ -118,7 +118,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   actions: [
                     ProfilePicture(
-                      imageURL: 'https://images.unsplash.com/photo-1531891437562-4301cf35b7e4?q=80&w=1364&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                      imageURL: 'https://$baseUrl/assets/images/profile.png',
                       onTap: (){
                         context.pushNamed('profile');
                       },
@@ -189,12 +189,12 @@ class _HomePageState extends State<HomePage> {
                   itemBuilder: (BuildContext context, int index){
                     final shop = shopList[index];
                     return ShopCard(
-                      imageURL: 'http://$baseUrl/assets/public/${shop['banner_toko']}',
-                      className: shop['kelas'],
-                      shopName: shop['nama_toko'],
-                      rating: double.parse(shop['rating_toko']),
+                      imageURL: 'http://$baseUrl/assets/public/${shop['toko']['banner_toko']}',
+                      className: shop['kelas']['kelas'],
+                      shopName: shop['toko']['nama_toko'],
+                      rating: double.parse(shop['toko']['rating_toko']),
                       onTap: (){
-                        context.pushNamed('shop', queryParameters: {'shopID': shop['id_toko']});
+                        context.pushNamed('shop', queryParameters: {'shopID': shop['toko']['id_toko']});
                       },
                     );
                   },
@@ -230,180 +230,180 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
-                    ElevatedButton(
-                      onPressed: (){
-                        showModalBottomSheet(
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (context){
-                            return SingleChildScrollView(
-                              child: SafeArea(
-                                minimum: const EdgeInsets.all(16),
-                                child: SizedBox(
-                                  width: double.infinity,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Filter',
-                                        style: TextStyle(
-                                          fontSize: 26,
-                                          fontWeight: FontWeight.w600
-                                        ),
-                                      ),
-                                      const Gap(20),
-                                      const Text(
-                                        'Harga',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w600
-                                        ),
-                                      ),
-                                      StatefulBuilder(
-                                        builder: (BuildContext context, StateSetter setState){
-                                          return Wrap(
-                                            spacing: 5,
-                                            children: [
-                                              ChoiceChip(
-                                                label: const Text('Dibawah 5K'),
-                                                selected: _isUnder5K,
-                                                onSelected: (bool selected){
-                                                  setState(() {
-                                                    _isUnder5K = !_isUnder5K;
-                                                  });
-                                                },
-                                              ),
-                                              ChoiceChip(
-                                                label: const Text('Dibawah 10K'),
-                                                selected: _isUnder10K,
-                                                onSelected: (bool selected){
-                                                  setState(() {
-                                                    _isUnder10K = !_isUnder10K;
-                                                  });
-                                                },
-                                              ),
-                                              ChoiceChip(
-                                                label: const Text('Diatas 10K'),
-                                                selected: _isAbove10K,
-                                                onSelected: (bool selected){
-                                                  setState(() {
-                                                    _isAbove10K = !_isAbove10K;
-                                                  });
-                                                },
-                                              )
-                                            ],
-                                          );
-                                        },
-                                      ),
-                                      const Gap(15),
-                                      const Text(
-                                        'Rating',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w600
-                                        ),
-                                      ),
-                                      StatefulBuilder(
-                                        builder: (BuildContext context, StateSetter setState){
-                                          return Wrap(
-                                            spacing: 5,
-                                            children: [
-                                              ChoiceChip(
-                                                label: const Row(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: [
-                                                    Text('Diatas 4.0'),
-                                                    Gap(5),
-                                                    Icon(Icons.star_half)
-                                                  ],
-                                                ),
-                                                selected: _lowestRating,
-                                                onSelected: (bool selected){
-                                                  setState(() {
-                                                    _lowestRating = !_lowestRating;
-                                                  });
-                                                },
-                                              ),
-                                              ChoiceChip(
-                                                label: const Row(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: [
-                                                    Text('Diatas 4.5'),
-                                                    Gap(5),
-                                                    Icon(Icons.star)
-                                                  ],
-                                                ),
-                                                selected: _highestRating,
-                                                onSelected: (bool selected){
-                                                  setState(() {
-                                                    _highestRating = !_highestRating;
-                                                  });
-                                                },
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      ),
-                                      const Gap(15),
-                                      const Text(
-                                        'Jenis',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w600
-                                        ),
-                                      ),
-                                      StatefulBuilder(
-                                        builder: (BuildContext context, StateSetter setState){
-                                          return Wrap(
-                                            spacing: 5,
-                                            children: [
-                                              ChoiceChip(
-                                                label: const Text('Makanan'),
-                                                selected: _isFood,
-                                                onSelected: (bool selected){
-                                                  setState(() {
-                                                    _isFood = !_isFood;
-                                                  });
-                                                },
-                                              ),
-                                              ChoiceChip(
-                                                label: const Text('Minuman'),
-                                                selected: _isDrink,
-                                                onSelected: (bool selected){
-                                                  setState(() {
-                                                    _isDrink = !_isDrink;
-                                                  });
-                                                },
-                                              ),
-                                              ChoiceChip(
-                                                label: const Text('Lainnya'),
-                                                selected: _isOther,
-                                                onSelected: (bool selected){
-                                                  setState(() {
-                                                    _isOther = !_isOther;
-                                                  });
-                                                },
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          }
-                        );
-                      },
-                      child: const Row(
-                        children: [
-                          Icon(Icons.tune),
-                          Gap(10),
-                          Text('Filter')
-                        ],
-                      ),
-                    )
+                    // ElevatedButton(
+                    //   onPressed: (){
+                    //     showModalBottomSheet(
+                    //       isScrollControlled: true,
+                    //       context: context,
+                    //       builder: (context){
+                    //         return SingleChildScrollView(
+                    //           child: SafeArea(
+                    //             minimum: const EdgeInsets.all(16),
+                    //             child: SizedBox(
+                    //               width: double.infinity,
+                    //               child: Column(
+                    //                 crossAxisAlignment: CrossAxisAlignment.start,
+                    //                 children: [
+                    //                   const Text(
+                    //                     'Filter',
+                    //                     style: TextStyle(
+                    //                       fontSize: 26,
+                    //                       fontWeight: FontWeight.w600
+                    //                     ),
+                    //                   ),
+                    //                   const Gap(20),
+                    //                   const Text(
+                    //                     'Harga',
+                    //                     style: TextStyle(
+                    //                       fontSize: 18,
+                    //                       fontWeight: FontWeight.w600
+                    //                     ),
+                    //                   ),
+                    //                   StatefulBuilder(
+                    //                     builder: (BuildContext context, StateSetter setState){
+                    //                       return Wrap(
+                    //                         spacing: 5,
+                    //                         children: [
+                    //                           ChoiceChip(
+                    //                             label: const Text('Dibawah 5K'),
+                    //                             selected: _isUnder5K,
+                    //                             onSelected: (bool selected){
+                    //                               setState(() {
+                    //                                 _isUnder5K = !_isUnder5K;
+                    //                               });
+                    //                             },
+                    //                           ),
+                    //                           ChoiceChip(
+                    //                             label: const Text('Dibawah 10K'),
+                    //                             selected: _isUnder10K,
+                    //                             onSelected: (bool selected){
+                    //                               setState(() {
+                    //                                 _isUnder10K = !_isUnder10K;
+                    //                               });
+                    //                             },
+                    //                           ),
+                    //                           ChoiceChip(
+                    //                             label: const Text('Diatas 10K'),
+                    //                             selected: _isAbove10K,
+                    //                             onSelected: (bool selected){
+                    //                               setState(() {
+                    //                                 _isAbove10K = !_isAbove10K;
+                    //                               });
+                    //                             },
+                    //                           )
+                    //                         ],
+                    //                       );
+                    //                     },
+                    //                   ),
+                    //                   const Gap(15),
+                    //                   const Text(
+                    //                     'Rating',
+                    //                     style: TextStyle(
+                    //                       fontSize: 18,
+                    //                       fontWeight: FontWeight.w600
+                    //                     ),
+                    //                   ),
+                    //                   StatefulBuilder(
+                    //                     builder: (BuildContext context, StateSetter setState){
+                    //                       return Wrap(
+                    //                         spacing: 5,
+                    //                         children: [
+                    //                           ChoiceChip(
+                    //                             label: const Row(
+                    //                               mainAxisSize: MainAxisSize.min,
+                    //                               children: [
+                    //                                 Text('Diatas 4.0'),
+                    //                                 Gap(5),
+                    //                                 Icon(Icons.star_half)
+                    //                               ],
+                    //                             ),
+                    //                             selected: _lowestRating,
+                    //                             onSelected: (bool selected){
+                    //                               setState(() {
+                    //                                 _lowestRating = !_lowestRating;
+                    //                               });
+                    //                             },
+                    //                           ),
+                    //                           ChoiceChip(
+                    //                             label: const Row(
+                    //                               mainAxisSize: MainAxisSize.min,
+                    //                               children: [
+                    //                                 Text('Diatas 4.5'),
+                    //                                 Gap(5),
+                    //                                 Icon(Icons.star)
+                    //                               ],
+                    //                             ),
+                    //                             selected: _highestRating,
+                    //                             onSelected: (bool selected){
+                    //                               setState(() {
+                    //                                 _highestRating = !_highestRating;
+                    //                               });
+                    //                             },
+                    //                           ),
+                    //                         ],
+                    //                       );
+                    //                     },
+                    //                   ),
+                    //                   const Gap(15),
+                    //                   const Text(
+                    //                     'Jenis',
+                    //                     style: TextStyle(
+                    //                       fontSize: 18,
+                    //                       fontWeight: FontWeight.w600
+                    //                     ),
+                    //                   ),
+                    //                   StatefulBuilder(
+                    //                     builder: (BuildContext context, StateSetter setState){
+                    //                       return Wrap(
+                    //                         spacing: 5,
+                    //                         children: [
+                    //                           ChoiceChip(
+                    //                             label: const Text('Makanan'),
+                    //                             selected: _isFood,
+                    //                             onSelected: (bool selected){
+                    //                               setState(() {
+                    //                                 _isFood = !_isFood;
+                    //                               });
+                    //                             },
+                    //                           ),
+                    //                           ChoiceChip(
+                    //                             label: const Text('Minuman'),
+                    //                             selected: _isDrink,
+                    //                             onSelected: (bool selected){
+                    //                               setState(() {
+                    //                                 _isDrink = !_isDrink;
+                    //                               });
+                    //                             },
+                    //                           ),
+                    //                           ChoiceChip(
+                    //                             label: const Text('Lainnya'),
+                    //                             selected: _isOther,
+                    //                             onSelected: (bool selected){
+                    //                               setState(() {
+                    //                                 _isOther = !_isOther;
+                    //                               });
+                    //                             },
+                    //                           ),
+                    //                         ],
+                    //                       );
+                    //                     },
+                    //                   ),
+                    //                 ],
+                    //               ),
+                    //             ),
+                    //           ),
+                    //         );
+                    //       }
+                    //     );
+                    //   },
+                    //   child: const Row(
+                    //     children: [
+                    //       Icon(Icons.tune),
+                    //       Gap(10),
+                    //       Text('Filter')
+                    //     ],
+                    //   ),
+                    // )
                   ],
                 )
               ),
@@ -413,13 +413,13 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (BuildContext context, int index){
                 final product = productList[index];
                 return ProductCard(
-                  imageURL: 'http://$baseUrl/assets/public/${product['foto_produk']}',
-                  productName: product['nama_produk'],
-                  description: product['deskripsi_produk'],
-                  soldTotal: product['jumlah_terjual'],
-                  price: product['harga'],
-                  rating: double.parse(product['rating_produk']),
-                  onTap: (){context.pushNamed('shop', queryParameters: {'shopID': product['toko']});},
+                  imageURL: 'http://$baseUrl/assets/public/${product['produk']['foto_produk']}',
+                  productName: product['produk']['nama_produk'],
+                  description: product['produk']['deskripsi_produk'],
+                  soldTotal: product['produk']['jumlah_terjual'],
+                  price: int.parse(product['produk']['harga']),
+                  rating: double.parse(product['produk']['rating_produk']),
+                  onTap: (){context.pushNamed('shop', queryParameters: {'shopID': product['produk']['id_toko']});},
                 );
               },
             ),
@@ -440,14 +440,14 @@ class ProfilePicture extends StatelessWidget{
       return Hero(
         tag: 'profile',
         child: CircleAvatar(
-          backgroundImage: CachedNetworkImageProvider(imageURL),
+          backgroundImage: NetworkImage(imageURL),
         ),
       );
     } else {
-      return Hero(
+      return const Hero(
         tag: 'profile',
         child: CircleAvatar(
-          backgroundImage: CachedNetworkImageProvider(imageURL),
+          backgroundImage: NetworkImage('https://$baseUrl/assets/images/profile.png'),
         ),
       );
     }

@@ -129,7 +129,7 @@ class _SignInPageState extends State<SignInPage>{
                 height: 50,
                 child: FilledButton(
                   style: ButtonStyle(
-                    shape: MaterialStatePropertyAll(
+                    shape: WidgetStatePropertyAll(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
                       )

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 const Color primaryColor = Color.fromARGB(255, 253, 143, 24);
+const Color secondaryColor = Color.fromARGB(255, 183, 110, 33);
 
 final ThemeData themes = ThemeData(
   brightness: Brightness.light,
@@ -14,12 +15,12 @@ final ThemeData themes = ThemeData(
   ),
   filledButtonTheme: const FilledButtonThemeData(
     style: ButtonStyle(
-      backgroundColor: MaterialStatePropertyAll(primaryColor),
+      backgroundColor: WidgetStatePropertyAll(primaryColor),
     ),
   ),
   outlinedButtonTheme: const OutlinedButtonThemeData(
     style: ButtonStyle(
-      side: MaterialStatePropertyAll(BorderSide(
+      side: WidgetStatePropertyAll(BorderSide(
         color: primaryColor
       ))
     )
@@ -35,8 +36,6 @@ final ThemeData themes = ThemeData(
     onSecondary: Color.fromARGB(255, 183, 110, 33),
     error: Colors.red,
     onError: Colors.white,
-    background: Colors.white,
-    onBackground: Colors.black,
     surface: Colors.white,
     onSurface: Colors.black,
   ),

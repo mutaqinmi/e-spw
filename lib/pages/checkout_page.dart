@@ -273,7 +273,7 @@ class _CheckoutPageState extends State<CheckoutPage>{
             child: FilledButton(
               onPressed: (){},
               style: const ButtonStyle(
-                shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                   borderRadius: BorderRadius.zero
                 ))
               ),

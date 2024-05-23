@@ -134,7 +134,7 @@ class _CartPageState extends State<CartPage>{
   double _totalPrice(){
     double totalPrice = 0.0;
     for(int i = 0; i < cartList.length; i++){
-      totalPrice += cartList[i]['harga'] * cartList[i]['qty'];
+      totalPrice += int.parse(cartList[i]['produk']['harga']) * cartList[i]['keranjang']['jumlah'];
     }
     return totalPrice;
   }
@@ -183,7 +183,7 @@ class _CartPageState extends State<CartPage>{
             itemBuilder: (BuildContext context, int index){
               final item = cartList[index];
               return Dismissible(
-                key: Key(item['id_keranjang'].toString()),
+                key: Key(item['keranjang']['id_keranjang'].toString()),
                 background: Container(
                   decoration: const BoxDecoration(
                     color: Colors.red
@@ -211,9 +211,9 @@ class _CartPageState extends State<CartPage>{
                     ),
                   )
                 ),
-                confirmDismiss: (DismissDirection dismissDirection) => _confirmDismiss(context, item['id_keranjang'], item['nama_produk']),
+                confirmDismiss: (DismissDirection dismissDirection) => _confirmDismiss(context, item['keranjang']['id_keranjang'], item['produk']['nama_produk']),
                 onDismissed: (DismissDirection dismissDirection){
-                  _deleteFromCart(context, item['id_keranjang']);
+                  _deleteFromCart(context, item['keranjang']['id_keranjang']);
                   setState(() {
                     cartList.removeAt(index);
                   });
@@ -230,8 +230,8 @@ class _CartPageState extends State<CartPage>{
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
                             const Icon(Icons.storefront),
-                            Text(item['nama_toko']),
-                            _isOpen(item['is_open'])
+                            Text(item['toko']['nama_toko']),
+                            _isOpen(item['toko']['is_open'])
                           ],
                         ),
                       ),
@@ -241,7 +241,7 @@ class _CartPageState extends State<CartPage>{
                           ClipRRect(
                             borderRadius: BorderRadius.circular(10),
                             child: CachedNetworkImage(
-                              imageUrl: 'http://$baseUrl/assets/public/${item['foto_produk']}',
+                              imageUrl: 'http://$baseUrl/assets/public/${item['produk']['foto_produk']}',
                               width: 100,
                               height: 100,
                               fit: BoxFit.cover,
@@ -255,7 +255,7 @@ class _CartPageState extends State<CartPage>{
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    item['nama_produk'],
+                                    item['produk']['nama_produk'],
                                     style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w600
@@ -270,7 +270,7 @@ class _CartPageState extends State<CartPage>{
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        'Rp. ${formatter.format(item['harga'])}',
+                                        'Rp. ${formatter.format(int.parse(item['produk']['harga']))}',
                                         style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600
@@ -280,19 +280,19 @@ class _CartPageState extends State<CartPage>{
                                         children: [
                                           IconButton(
                                             onPressed: (){
-                                              if(item['is_open']){
-                                                if(item['qty'] > 1){
-                                                  _removeQty(item['qty'], item['id_keranjang']);
+                                              if(item['toko']['is_open']){
+                                                if(item['keranjang']['jumlah'] > 1){
+                                                  _removeQty(item['keranjang']['jumlah'], item['keranjang']['id_keranjang']);
                                                   setState(() {
-                                                    item['qty']--;
+                                                    item['keranjang']['jumlah']--;
                                                   });
                                                 }
                                               }
                                             },
                                             visualDensity: VisualDensity.compact,
                                             style: ButtonStyle(
-                                              backgroundColor: MaterialStatePropertyAll(Theme.of(context).primaryColor),
-                                              padding: const MaterialStatePropertyAll(EdgeInsets.zero),
+                                              backgroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColor),
+                                              padding: const WidgetStatePropertyAll(EdgeInsets.zero),
                                             ),
                                             icon: const Icon(
                                               Icons.remove,
@@ -308,7 +308,7 @@ class _CartPageState extends State<CartPage>{
                                             width: 30,
                                             child: Center(
                                               child: Text(
-                                                item['qty'].toString(),
+                                                item['keranjang']['jumlah'].toString(),
                                                 style: const TextStyle(
                                                   fontSize: 16
                                                 ),
@@ -317,17 +317,17 @@ class _CartPageState extends State<CartPage>{
                                           ),
                                           IconButton(
                                             onPressed: (){
-                                              if(item['is_open']){
-                                                _addQty(item['qty'], item['id_keranjang']);
+                                              if(item['toko']['is_open']){
+                                                _addQty(item['keranjang']['jumlah'], item['keranjang']['id_keranjang']);
                                                 setState(() {
-                                                  item['qty']++;
+                                                  item['keranjang']['jumlah']++;
                                                 });
                                               }
                                             },
                                             visualDensity: VisualDensity.compact,
                                             style: ButtonStyle(
-                                              backgroundColor: MaterialStatePropertyAll(Theme.of(context).primaryColor),
-                                              padding: const MaterialStatePropertyAll(EdgeInsets.zero),
+                                              backgroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColor),
+                                              padding: const WidgetStatePropertyAll(EdgeInsets.zero),
                                             ),
                                             icon: const Icon(
                                               Icons.add,
@@ -391,7 +391,7 @@ class _CartPageState extends State<CartPage>{
                 context.pushNamed('checkout');
               },
               style: const ButtonStyle(
-                shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                   borderRadius: BorderRadius.zero
                 ))
               ),

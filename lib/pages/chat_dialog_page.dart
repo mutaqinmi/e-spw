@@ -91,8 +91,8 @@ class _ChatState extends State<Chat>{
                 icon: const Icon(Icons.send),
                 iconSize: 18,
                 style: ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll(Theme.of(context).primaryColor),
-                  foregroundColor: const MaterialStatePropertyAll(Colors.white)
+                  backgroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColor),
+                  foregroundColor: const WidgetStatePropertyAll(Colors.white)
                 ),
               ),
             ],

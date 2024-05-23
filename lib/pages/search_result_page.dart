@@ -44,12 +44,12 @@ class _SearchPageState extends State<SearchResult>{
             title: SizedBox(
               child: FilledButton(
                 style: const ButtonStyle(
-                  side: MaterialStatePropertyAll(BorderSide(
+                  side: WidgetStatePropertyAll(BorderSide(
                     color: Color.fromARGB(255, 115, 115, 115),
                   )),
-                  backgroundColor: MaterialStatePropertyAll(Colors.white),
-                  foregroundColor: MaterialStatePropertyAll(Color.fromARGB(255, 115, 115, 115)),
-                  padding: MaterialStatePropertyAll(EdgeInsets.symmetric(horizontal: 15))
+                  backgroundColor: WidgetStatePropertyAll(Colors.white),
+                  foregroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 115, 115, 115)),
+                  padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 15))
                 ),
                 onPressed: (){
                   context.goNamed('search');
@@ -79,6 +79,7 @@ class _SearchPageState extends State<SearchResult>{
               ),
             ],
             bottom: const TabBar(
+              dividerColor: Colors.transparent,
               tabs: [
                 Tab(text: 'Produk'),
                 Tab(text: 'Toko')
@@ -98,37 +99,59 @@ class _SearchPageState extends State<SearchResult>{
 
   Widget _productResult(){
     return Scaffold(
-      body: ListView.builder(
-        itemCount: productList.length,
-        itemBuilder: (BuildContext context, int index){
-          final product = productList[index];
-          return ProductResult(
-            imageURL: 'http://$baseUrl/assets/public/${product['foto_produk']}',
-            shopName: product['nama_toko'],
-            productName: product['nama_produk'],
-            soldTotal: product['jumlah_terjual'],
-            price: product['harga'],
-            rating: double.parse(product['rating_produk']),
-            onTap: () => context.pushNamed('shop', queryParameters: {'shopID': product['id_toko']})
+      body: FutureBuilder(
+        future: products(),
+        builder: (BuildContext context, AsyncSnapshot response){
+          if(response.hasData || response.connectionState == ConnectionState.done){
+            return ListView.builder(
+              itemCount: productList.length,
+              itemBuilder: (BuildContext context, int index){
+                final product = productList[index];
+                return ProductResult(
+                  imageURL: 'http://$baseUrl/assets/public/${product['produk']['foto_produk']}',
+                  shopName: product['toko']['nama_toko'],
+                  productName: product['produk']['nama_produk'],
+                  soldTotal: product['produk']['jumlah_terjual'],
+                  price: int.parse(product['produk']['harga']),
+                  rating: double.parse(product['produk']['rating_produk']),
+                  onTap: () => context.pushNamed('shop', queryParameters: {'shopID': product['toko']['id_toko']})
+                );
+              },
+            );
+          }
+
+          return const Center(
+            child: CircularProgressIndicator(),
           );
         },
-      ),
+      )
     );
   }
 
   Widget _shopResult(){
     return Scaffold(
-      body: ListView.builder(
-        itemCount: shopList.length,
-        itemBuilder: (BuildContext context, int index){
-          final shop = shopList[index];
-          return ShopResult(
-            imageURL: 'http://$baseUrl/assets/public/${shop['banner_toko']}',
-            className: shop['kelas'],
-            shopName: shop['nama_toko'],
+      body: FutureBuilder(
+        future: shop(),
+        builder: (BuildContext context, AsyncSnapshot response){
+          if(response.hasData || response.connectionState == ConnectionState.done){
+            return ListView.builder(
+              itemCount: shopList.length,
+              itemBuilder: (BuildContext context, int index){
+                final shop = shopList[index];
+                return ShopResult(
+                  imageURL: 'http://$baseUrl/assets/public/${shop['toko']['banner_toko']}',
+                  className: shop['kelas']['kelas'],
+                  shopName: shop['toko']['nama_toko'],
+                );
+              },
+            );
+          }
+
+          return const Center(
+            child: CircularProgressIndicator(),
           );
         },
-      ),
+      )
     );
   }
 }
