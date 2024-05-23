@@ -5,7 +5,8 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 
 class ShopDashPage extends StatefulWidget{
-  const ShopDashPage({super.key});
+  const ShopDashPage({super.key, required this.idToko});
+  final String idToko;
 
   @override
   State<ShopDashPage> createState() => _ShopDashPageState();

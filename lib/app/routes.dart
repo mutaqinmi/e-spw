@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:espw/app/controllers.dart';
 import 'package:espw/pages/add_product_page.dart';
 import 'package:espw/pages/change_password.dart';
 import 'package:espw/pages/chat_dialog_page.dart';
@@ -6,6 +9,7 @@ import 'package:espw/pages/create_shop_page.dart';
 import 'package:espw/pages/edit_profile_page.dart';
 import 'package:espw/pages/favorite_page.dart';
 import 'package:espw/pages/join_shop_page.dart';
+import 'package:espw/pages/locatetoshop_page.dart';
 import 'package:espw/pages/login_failed.dart';
 import 'package:espw/pages/login_shop_page.dart';
 import 'package:espw/pages/order_page.dart';
@@ -144,6 +148,14 @@ final routes = GoRouter(
               name: 'login-shop',
               path: 'login-shop',
               builder: (BuildContext context, GoRouterState state) => const LoginShopPage(),
+              redirect: (BuildContext context, GoRouterState state) async {
+                final dataKelompok = await kelompok();
+                if(json.decode(dataKelompok.body)['data'].isNotEmpty){
+                  return '/home/profile/shop-dash?id_toko=${json.decode(dataKelompok.body)['data'].first['kelompok']['id_toko']}';
+                }
+
+                return null;
+              },
               routes: [
                 GoRoute(
                   name: 'create-shop',
@@ -153,7 +165,12 @@ final routes = GoRouter(
                     GoRoute(
                       name: 'upload-profile-image',
                       path: 'upload-profile-image',
-                      builder: (BuildContext context, GoRouterState state) => const UploadProfileImagePage(),
+                      builder: (BuildContext context, GoRouterState state) => UploadProfileImagePage(
+                        namaToko: state.uri.queryParameters['nama_toko'],
+                        kelas: state.uri.queryParameters['kelas'],
+                        deskripsiToko: state.uri.queryParameters['deskripsi_toko'],
+                        kategoriToko: state.uri.queryParameters['kategori_toko'],
+                      ),
                     )
                   ]
                 ),
@@ -161,13 +178,20 @@ final routes = GoRouter(
                   name: 'join-shop',
                   path: 'join-shop',
                   builder: (BuildContext context, GoRouterState state) => const JoinShopPage(),
+                ),
+                GoRoute(
+                  name: 'locate-shop',
+                  path: 'locate-shop',
+                  builder: (BuildContext context, GoRouterState state) => const LocatePage(),
                 )
               ]
             ),
             GoRoute(
               name: 'shop-dash',
               path: 'shop-dash',
-              builder: (BuildContext context, GoRouterState state) => const ShopDashPage(),
+              builder: (BuildContext context, GoRouterState state) => ShopDashPage(
+                idToko: state.uri.queryParameters['id_toko']!
+              ),
               routes: [
                 GoRoute(
                   name: 'order-status',
@@ -185,7 +209,7 @@ final routes = GoRouter(
                   name: 'product',
                   path: 'product',
                   builder: (BuildContext context, GoRouterState state) => const ProductPage(),
-                )
+                ),
               ]
             ),
             GoRoute(

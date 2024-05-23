@@ -1,8 +1,13 @@
+import 'package:espw/app/controllers.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+// import 'package:go_router/go_router.dart';
 
 class UploadProfileImagePage extends StatelessWidget{
-  const UploadProfileImagePage({super.key});
+  const UploadProfileImagePage({super.key, required this.namaToko, required this.kelas, required this.deskripsiToko, required this.kategoriToko});
+  final String? namaToko;
+  final String? kelas;
+  final String? deskripsiToko;
+  final String? kategoriToko;
 
   @override
   Widget build(BuildContext context){
@@ -13,9 +18,7 @@ class UploadProfileImagePage extends StatelessWidget{
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: TextButton(
-              onPressed: (){
-                context.goNamed('shop-dash');
-              },
+              onPressed: () => createShop(context, namaToko!, kelas!, deskripsiToko!, kategoriToko!),
               child: const Text(
                 'Lewati',
                 style: TextStyle(
@@ -65,9 +68,7 @@ class UploadProfileImagePage extends StatelessWidget{
             width: double.infinity,
             height: 50,
             child: FilledButton(
-              onPressed: (){
-                context.goNamed('shop-dash');
-              },
+              onPressed: (){},
               child: const Text('Selesai!'),
             ),
           ),

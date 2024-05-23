@@ -8,9 +8,7 @@ class LoginShopPage extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      appBar: AppBar(
-        foregroundColor: Theme.of(context).primaryColor,
-      ),
+      appBar: AppBar(),
       body: Center(
         child: SafeArea(
           minimum: const EdgeInsets.symmetric(horizontal: 16),

@@ -13,7 +13,7 @@ void signIn(BuildContext context, String nis) async {
   final SharedPreferences prefs = await _prefs;
   final url = Uri.https(baseUrl, '/api/login');
   final response = await http.post(url, body: json.encode({
-    'nis': nis
+    'nis': int.parse(nis)
   }), headers: {
     'Content-Type': 'application/json',
   });
@@ -70,11 +70,51 @@ void logout(BuildContext context) async {
   }
 }
 
+Future<http.Response> kelas() async {
+  final url = Uri.https(baseUrl, '/api/kelas');
+  final response = await http.get(url);
+
+  return response;
+}
+
 Future<http.Response> shop() async {
   final SharedPreferences prefs = await _prefs;
   final url = Uri.https(baseUrl, '/api/shop');
   final response = await http.get(url, headers: {
     'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  return response;
+}
+
+void createShop(BuildContext context, String namaToko, String kelas, String deskripsiToko, String kategoriToko) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/shop/create');
+  final response = await http.post(url, body: json.encode({
+    "nama_toko": namaToko,
+    "id_kelas": kelas,
+    "deskripsi_toko": deskripsiToko,
+    "kategori_toko": kategoriToko
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  if(!context.mounted) return;
+  if(response.statusCode == 200){
+    context.goNamed('login-shop');
+    successSnackBar(
+      context: context,
+      content: 'Toko berhasil dibuat!'
+    );
+  }
+}
+
+Future<http.Response> kelompok() async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/kelompok');
+  final response = await http.get(url, headers: {
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   return response;
