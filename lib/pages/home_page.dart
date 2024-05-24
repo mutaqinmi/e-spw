@@ -189,7 +189,7 @@ class _HomePageState extends State<HomePage> {
                   itemBuilder: (BuildContext context, int index){
                     final shop = shopList[index];
                     return ShopCard(
-                      imageURL: 'http://$baseUrl/assets/public/${shop['toko']['banner_toko']}',
+                      imageURL: 'https://$baseUrl/assets/${shop['toko']['banner_toko'].isEmpty ? 'images/shop-profile.png' : 'public/${shop['toko']['banner_toko']}'}',
                       className: shop['kelas']['kelas'],
                       shopName: shop['toko']['nama_toko'],
                       rating: double.parse(shop['toko']['rating_toko']),
@@ -413,7 +413,7 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (BuildContext context, int index){
                 final product = productList[index];
                 return ProductCard(
-                  imageURL: 'http://$baseUrl/assets/public/${product['produk']['foto_produk']}',
+                  imageURL: 'https://$baseUrl/assets/public/${product['produk']['foto_produk']}',
                   productName: product['produk']['nama_produk'],
                   description: product['produk']['deskripsi_produk'],
                   soldTotal: product['produk']['jumlah_terjual'],

@@ -129,9 +129,7 @@ class _ShopDashPageState extends State<ShopDashPage>{
                                   ),
                                   const Gap(20),
                                   GestureDetector(
-                                    onTap: (){
-                                      context.pushNamed('login-shop');
-                                    },
+                                    onTap: () => context.pushNamed('login-shop', queryParameters: {'isRedirect': 'false'}),
                                     child: Container(
                                       color: Colors.transparent,
                                       child: const Row(

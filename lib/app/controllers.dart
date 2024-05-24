@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:espw/widgets/bottom_snack_bar.dart';
@@ -87,18 +88,26 @@ Future<http.Response> shop() async {
   return response;
 }
 
-void createShop(BuildContext context, String namaToko, String kelas, String deskripsiToko, String kategoriToko) async {
+void createShop(
+    {required BuildContext context,
+    required String namaToko,
+    required String kelas,
+    required String deskripsiToko,
+    required String kategoriToko,
+    File? bannerToko}) async {
   final SharedPreferences prefs = await _prefs;
   final url = Uri.https(baseUrl, '/api/shop/create');
-  final response = await http.post(url, body: json.encode({
-    "nama_toko": namaToko,
-    "id_kelas": kelas,
-    "deskripsi_toko": deskripsiToko,
-    "kategori_toko": kategoriToko
-  }), headers: {
-    'Content-Type': 'application/json',
+  final request = http.MultipartRequest('POST', url);
+  request.headers.addAll({
     'Authorization': 'Bearer ${prefs.get('token')}'
   });
+  request.fields['nama_toko'] = namaToko;
+  request.fields['id_kelas'] = kelas;
+  request.fields['deskripsi_toko'] = deskripsiToko;
+  request.fields['kategori_toko'] = kategoriToko;
+  request.files.add(http.MultipartFile.fromBytes('banner_toko', File(bannerToko!.path).readAsBytesSync(), filename: bannerToko.path));
+
+  final response = await request.send();
 
   if(!context.mounted) return;
   if(response.statusCode == 200){

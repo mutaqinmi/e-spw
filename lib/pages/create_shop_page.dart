@@ -31,7 +31,8 @@ class _CreateShopPageState extends State<CreateShopPage>{
         'nama_toko': _namaToko,
         'kelas': _kelasValue,
         'deskripsi_toko': _deskripsiToko,
-        'kategori_toko': _kategoriToko
+        'kategori_toko': _kategoriToko,
+        'isRedirect': 'false',
       });
     }
   }

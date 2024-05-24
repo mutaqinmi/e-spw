@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:espw/app/controllers.dart';
 import 'package:espw/pages/add_product_page.dart';
 import 'package:espw/pages/change_password.dart';
@@ -9,7 +8,6 @@ import 'package:espw/pages/create_shop_page.dart';
 import 'package:espw/pages/edit_profile_page.dart';
 import 'package:espw/pages/favorite_page.dart';
 import 'package:espw/pages/join_shop_page.dart';
-import 'package:espw/pages/locatetoshop_page.dart';
 import 'package:espw/pages/login_failed.dart';
 import 'package:espw/pages/login_shop_page.dart';
 import 'package:espw/pages/order_page.dart';
@@ -149,8 +147,13 @@ final routes = GoRouter(
               path: 'login-shop',
               builder: (BuildContext context, GoRouterState state) => const LoginShopPage(),
               redirect: (BuildContext context, GoRouterState state) async {
+                final String? isRedirect = state.uri.queryParameters['isRedirect'];
                 final dataKelompok = await kelompok();
                 if(json.decode(dataKelompok.body)['data'].isNotEmpty){
+                  if(isRedirect == 'false'){
+                    return null;
+                  }
+
                   return '/home/profile/shop-dash?id_toko=${json.decode(dataKelompok.body)['data'].first['kelompok']['id_toko']}';
                 }
 
@@ -179,11 +182,6 @@ final routes = GoRouter(
                   path: 'join-shop',
                   builder: (BuildContext context, GoRouterState state) => const JoinShopPage(),
                 ),
-                GoRoute(
-                  name: 'locate-shop',
-                  path: 'locate-shop',
-                  builder: (BuildContext context, GoRouterState state) => const LocatePage(),
-                )
               ]
             ),
             GoRoute(

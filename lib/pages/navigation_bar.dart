@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:espw/pages/chat_page.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +21,24 @@ class _NavBarState extends State<NavBar>{
   final int notificationBadge = 0;
   final int chatBadge = 0;
 
+  void checkConnectivity() async {
+    final List<ConnectivityResult> connectivity = await Connectivity().checkConnectivity();
+    if(!mounted) return;
+    if(connectivity.contains(ConnectivityResult.mobile) || connectivity.contains(ConnectivityResult.wifi)){
+      return null;
+    }
+
+    return showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        child: const Center(
+          child: Text('Tidak ada internet!'),
+        ),
+      )
+    );
+  }
+
   // @override
   // void initState() {
   //   super.initState();
@@ -32,6 +51,8 @@ class _NavBarState extends State<NavBar>{
 
   @override
   Widget build(BuildContext context){
+    checkConnectivity();
+
     return Scaffold(
       body: const [
         HomePage(),

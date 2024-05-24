@@ -108,7 +108,7 @@ class _SearchPageState extends State<SearchResult>{
               itemBuilder: (BuildContext context, int index){
                 final product = productList[index];
                 return ProductResult(
-                  imageURL: 'http://$baseUrl/assets/public/${product['produk']['foto_produk']}',
+                  imageURL: 'https://$baseUrl/assets/public/${product['produk']['foto_produk']}',
                   shopName: product['toko']['nama_toko'],
                   productName: product['produk']['nama_produk'],
                   soldTotal: product['produk']['jumlah_terjual'],

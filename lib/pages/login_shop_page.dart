@@ -49,9 +49,7 @@ class LoginShopPage extends StatelessWidget{
               width: double.infinity,
               height: 50,
               child: FilledButton(
-                onPressed: (){
-                  context.pushNamed('create-shop');
-                },
+                onPressed: () => context.pushNamed('create-shop', queryParameters: {'isRedirect': 'false'}),
                 child: const Text('Buat Toko Sekarang!'),
               ),
             ),
