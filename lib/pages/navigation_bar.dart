@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:espw/pages/home_page.dart';
 import 'package:espw/pages/cart_page.dart';
 import 'package:espw/pages/notification_page.dart';
+import 'package:gap/gap.dart';
 
 class NavBar extends StatefulWidget{
   const NavBar({super.key});
@@ -33,21 +34,32 @@ class _NavBarState extends State<NavBar>{
       builder: (BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         child: const Center(
-          child: Text('Tidak ada internet!'),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.wifi_off_outlined,
+                size: 200,
+              ),
+              Gap(10),
+              Text(
+                'Tidak ada koneksi internet!',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 20
+                ),
+              ),
+              Gap(5),
+              Text(
+                'Periksa koneksi internet anda dan coba lagi!'
+              ),
+            ],
+          ),
         ),
       )
     );
   }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   carts().then((res) => {
-  //     setState((){
-  //       cartBadge = json.decode(res.body)['data'].length;
-  //     })
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context){

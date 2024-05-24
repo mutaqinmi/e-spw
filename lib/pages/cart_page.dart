@@ -173,11 +173,48 @@ class _CartPageState extends State<CartPage>{
                     thickness: 0.5,
                     indent: 16,
                     endIndent: 16,
-                  )
+                  ),
                 ],
               ),
             )
           ),
+          cartList.isEmpty ?
+          const SliverToBoxAdapter(
+            child: SafeArea(
+              minimum: EdgeInsets.symmetric(horizontal: 16),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.remove_shopping_cart_outlined,
+                      size: 150,
+                      color: Colors.grey,
+                    ),
+                    Gap(10),
+                    Text(
+                      'Keranjang kamu masih kosong!',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    Gap(5),
+                    Text(
+                      'Explore berbagai macam produk dan tambahkan ke keranjang!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            )
+          ) :
           SliverList.builder(
             itemCount: cartList.length,
             itemBuilder: (BuildContext context, int index){
