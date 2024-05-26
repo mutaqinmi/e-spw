@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:espw/app/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -85,7 +84,7 @@ class _CreateShopPageState extends State<CreateShopPage>{
                                   borderRadius: BorderRadius.all(Radius.circular(10))
                                 ),
                                 contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                                hintText: 'Nama Toko',
+                                hintText: 'e.g. Kedai Barista',
                                 labelText: 'Nama Toko'
                               ),
                               validator: (value){
@@ -129,7 +128,7 @@ class _CreateShopPageState extends State<CreateShopPage>{
                             borderRadius: BorderRadius.all(Radius.circular(10))
                           ),
                           contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                          hintText: 'Kategori Toko',
+                          hintText: 'e.g. Makanan dan Minuman',
                           labelText: 'Kategori Toko',
                         ),
                         validator: (value){
@@ -150,7 +149,7 @@ class _CreateShopPageState extends State<CreateShopPage>{
                             borderRadius: BorderRadius.all(Radius.circular(10))
                           ),
                           contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                          hintText: 'Deskripsi Toko',
+                          hintText: 'e.g. Kedai kopi paling nikmat kala senja',
                           labelText: 'Deskripsi Toko'
                         ),
                         onSaved: (value){_deskripsiToko = value!;},

@@ -26,9 +26,7 @@ class _ProductPageState extends State<ProductPage>{
             ),
             actions: [
               IconButton(
-                onPressed: (){
-                  context.pushNamed('add-product');
-                },
+                onPressed: () => context.pushNamed('add-product'),
                 icon: const Icon(Icons.add),
               )
             ],

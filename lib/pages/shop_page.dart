@@ -118,13 +118,11 @@ class _ShopPageState extends State<ShopPage>{
   Widget build(BuildContext context){
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: (){
-          return Future.delayed(const Duration(seconds: 1), (){
-            shopById(widget.shopID).then((res) => setState(() {
-              shopList = json.decode(res.body)['data'];
-            }));
-          });
-        },
+        onRefresh: () => Future.delayed(const Duration(seconds: 1), (){
+          shopById(widget.shopID).then((res) => setState(() {
+            shopList = json.decode(res.body)['data'];
+          }));
+        }),
         child: FutureBuilder(
           future: shopById(widget.shopID),
           builder: (BuildContext context, AsyncSnapshot response){
@@ -144,9 +142,7 @@ class _ShopPageState extends State<ShopPage>{
                         offset: const Offset(-8, 8),
                         label: Text(cartBadge.toString()),
                         child: IconButton(
-                          onPressed: (){
-                            context.pushNamed('cart');
-                          },
+                          onPressed: () => context.pushNamed('cart'),
                           icon: const Icon(Icons.shopping_cart_outlined),
                         ),
                       ),
@@ -247,7 +243,7 @@ class _ShopPageState extends State<ShopPage>{
                               ),
                               const Gap(10),
                               GestureDetector(
-                                onTap: (){_showAddToCart(0);},
+                                onTap: () => _showAddToCart(0),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
                                   child: Card(
@@ -442,7 +438,7 @@ class _ShopPageState extends State<ShopPage>{
                                                 ),
                                               ),
                                               OutlinedButton(
-                                                onPressed: (){_showAddToCart(index);},
+                                                onPressed: () => _showAddToCart(index),
                                                 style: const ButtonStyle(
                                                   visualDensity: VisualDensity.compact
                                                 ),
@@ -648,10 +644,8 @@ class _ShopPageState extends State<ShopPage>{
           ),
         );
       }
-    ).whenComplete(() {
-      setState(() {
-        qty = 0;
-      });
-    });
+    ).whenComplete(() => setState(() {
+      qty = 0;
+    }));
   }
 }

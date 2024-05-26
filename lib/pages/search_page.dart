@@ -149,7 +149,7 @@ class _SearchPageState extends State<SearchPage> {
                 suffixIcon: const Icon(Icons.search)
               ),
               onSaved: (value){_search = value!;},
-              onEditingComplete: (){_submit(context);},
+              onEditingComplete: () => _submit(context),
             ),
           )
         ),
@@ -172,7 +172,7 @@ class _SearchPageState extends State<SearchPage> {
                   ),
                 ),
                 IconButton(
-                  onPressed: (){_deleteSearchingHistory();},
+                  onPressed: () => _deleteSearchingHistory(),
                   icon: const Icon(Icons.delete_outline, color: Colors.red),
                 )
               ],

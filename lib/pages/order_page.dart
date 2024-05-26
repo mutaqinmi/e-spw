@@ -119,13 +119,11 @@ class OrderItem extends StatelessWidget{
         spacing: 10,
         children: [
           OutlinedButton(
-            onPressed: (){
-              context.goNamed('shop');
-            },
+            onPressed: () => context.goNamed('shop'),
             child: const Text('Beli lagi'),
           ),
           FilledButton(
-            onPressed: (){_rateOrder(context);},
+            onPressed: () => _rateOrder(context),
             child: const Text('Beri penilaian'),
           ),
         ],
@@ -188,8 +186,8 @@ class OrderItem extends StatelessWidget{
                       Text(
                         productName,
                         style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600
                         ),
                       ),
                       Text(

@@ -60,16 +60,14 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context){
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: (){
-          return Future.delayed(const Duration(seconds: 1), (){
-            shop().then((res) => setState(() {
-              shopList = json.decode(res.body)['data'];
-            }));
-            products().then((res) => setState(() {
-              productList = json.decode(res.body)['data'];
-            }));
-          });
-        },
+        onRefresh: () => Future.delayed(const Duration(seconds: 1), (){
+          shop().then((res) => setState(() {
+            shopList = json.decode(res.body)['data'];
+          }));
+          products().then((res) => setState(() {
+            productList = json.decode(res.body)['data'];
+          }));
+        }),
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
@@ -97,16 +95,14 @@ class _HomePageState extends State<HomePage> {
                     child: FilledButton(
                       style: const ButtonStyle(
                         side: WidgetStatePropertyAll(BorderSide(
-                            color: Color.fromARGB(255, 155, 155, 155),
-                            width: 0.5
+                          color: Color.fromARGB(255, 155, 155, 155),
+                          width: 0.5
                         )),
                         backgroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 240, 240, 240)),
                         foregroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 155, 155, 155)),
                         padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 15))
                       ),
-                      onPressed: (){
-                        context.pushNamed('search');
-                      },
+                      onPressed: () => context.pushNamed('search'),
                       child: const Row(
                         children: [
                           Icon(Icons.search),
@@ -119,9 +115,7 @@ class _HomePageState extends State<HomePage> {
                   actions: [
                     ProfilePicture(
                       imageURL: 'https://$baseUrl/assets/images/profile.png',
-                      onTap: (){
-                        context.pushNamed('profile');
-                      },
+                      onTap: () => context.pushNamed('profile'),
                     ),
                   ],
                 ),
@@ -182,20 +176,33 @@ class _HomePageState extends State<HomePage> {
               child: Container(
                 height: 250,
                 padding: const EdgeInsets.symmetric(vertical: 10),
-                child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: shopList.length,
-                  itemBuilder: (BuildContext context, int index){
-                    final shop = shopList[index];
-                    return ShopCard(
-                      imageURL: 'https://$baseUrl/assets/${shop['toko']['banner_toko'].isEmpty ? 'images/shop-profile.png' : 'public/${shop['toko']['banner_toko']}'}',
-                      className: shop['kelas']['kelas'],
-                      shopName: shop['toko']['nama_toko'],
-                      rating: double.parse(shop['toko']['rating_toko']),
-                      onTap: (){
-                        context.pushNamed('shop', queryParameters: {'shopID': shop['toko']['id_toko']});
-                      },
+                child: FutureBuilder(
+                  future: shop(),
+                  builder: (BuildContext context, AsyncSnapshot response){
+                    if(response.hasData && response.connectionState == ConnectionState.done){
+                      return ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: shopList.length,
+                        itemBuilder: (BuildContext context, int index){
+                          final shop = shopList[index];
+                          return ShopCard(
+                            imageURL: 'https://$baseUrl/assets/${shop['toko']['banner_toko'].isEmpty ? 'images/shop-profile.png' : 'public/${shop['toko']['banner_toko']}'}',
+                            className: shop['kelas']['kelas'],
+                            shopName: shop['toko']['nama_toko'],
+                            rating: double.parse(shop['toko']['rating_toko']),
+                            onTap: () => context.pushNamed('shop', queryParameters: {'shopID': shop['toko']['id_toko']}),
+                          );
+                        },
+                      );
+                    } else if (response.connectionState == ConnectionState.waiting){
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    return const Center(
+                      child: Text('Gagal memuat!'),
                     );
                   },
                 ),
@@ -408,21 +415,52 @@ class _HomePageState extends State<HomePage> {
                 )
               ),
             ),
-            SliverList.builder(
-              itemCount: productList.length,
-              itemBuilder: (BuildContext context, int index){
-                final product = productList[index];
-                return ProductCard(
-                  imageURL: 'https://$baseUrl/assets/public/${product['produk']['foto_produk']}',
-                  productName: product['produk']['nama_produk'],
-                  description: product['produk']['deskripsi_produk'],
-                  soldTotal: product['produk']['jumlah_terjual'],
-                  price: int.parse(product['produk']['harga']),
-                  rating: double.parse(product['produk']['rating_produk']),
-                  onTap: (){context.pushNamed('shop', queryParameters: {'shopID': product['produk']['id_toko']});},
+            FutureBuilder(
+              future: products(),
+              builder: (BuildContext context, AsyncSnapshot response){
+                if(response.hasData && response.connectionState == ConnectionState.done){
+                  return SliverList.builder(
+                    itemCount: productList.length,
+                    itemBuilder: (BuildContext context, int index){
+                      final product = productList[index];
+                      return ProductCard(
+                        imageURL: 'https://$baseUrl/assets/public/${product['produk']['foto_produk']}',
+                        productName: product['produk']['nama_produk'],
+                        description: product['produk']['deskripsi_produk'],
+                        soldTotal: product['produk']['jumlah_terjual'],
+                        price: int.parse(product['produk']['harga']),
+                        rating: double.parse(product['produk']['rating_produk']),
+                        onTap: () => context.pushNamed('shop', queryParameters: {'shopID': product['produk']['id_toko']}),
+                      );
+                    },
+                  );
+                } else if (response.connectionState == ConnectionState.waiting){
+                  return const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                      child: Center(
+                        child: CircularProgressIndicator()
+                      ),
+                    )
+                  );
+                }
+
+                return const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                    child: Center(
+                      child: Text(
+                        'Produk tidak ditemukan!',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontStyle: FontStyle.italic
+                        ),
+                      ),
+                    ),
+                  )
                 );
               },
-            ),
+            )
           ],
         ),
       )

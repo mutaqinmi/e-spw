@@ -1,23 +1,36 @@
+import 'package:espw/widgets/bottom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:espw/app/controllers.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class Verify extends StatefulWidget {
-  const Verify({super.key});
+class VerifyPassword extends StatefulWidget {
+  const VerifyPassword({super.key});
 
   @override
-  State<Verify> createState() => _VerifyState();
+  State<VerifyPassword> createState() => _VerifyPasswordState();
 }
 
-class _VerifyState extends State<Verify> {
+class _VerifyPasswordState extends State<VerifyPassword> {
   final _formFieldKey = GlobalKey<FormFieldState>();
   bool _obscureText = true;
   String _password = '';
 
-  void _submit(){
+  void _submit() async {
     if(_formFieldKey.currentState!.validate()){
       _formFieldKey.currentState!.save();
-      verify(context, _password);
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? password = prefs.getString('password');
+
+      if(!mounted) return;
+      if(_password == password){
+        context.goNamed('change-password');
+      } else {
+        alertSnackBar(
+          context: context,
+          content: 'Password salah!'
+        );
+      }
     }
   }
 
@@ -120,7 +133,7 @@ class _VerifyState extends State<Verify> {
                 ),
               ),
               child: const Text(
-                'Masuk',
+                'Verifikasi',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                 ),

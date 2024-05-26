@@ -1,3 +1,4 @@
+import 'package:espw/widgets/check_connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
@@ -11,18 +12,36 @@ class SignInPage extends StatefulWidget{
 }
 
 class _SignInPageState extends State<SignInPage>{
+  Widget _buttonChild = const Text(
+    "AYO MULAI!",
+    style: TextStyle(
+      fontWeight: FontWeight.w600,
+      letterSpacing: 2,
+    ),
+  );
   final _signInKey = GlobalKey<FormFieldState>();
   String _nis = '';
 
   void _submit(){
     if(_signInKey.currentState!.validate()){
       _signInKey.currentState!.save();
+      setState(() {
+        _buttonChild = const SizedBox(
+          width: 22,
+          height: 22,
+          child: CircularProgressIndicator(
+            color: Colors.white,
+          ),
+        );
+      });
       signIn(context, _nis);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    checkConnectivity(context);
+
     return Scaffold(
       bottomNavigationBar: SingleChildScrollView(
         padding: MediaQuery.of(context).viewInsets,
@@ -135,13 +154,7 @@ class _SignInPageState extends State<SignInPage>{
                       )
                     ),
                   ),
-                  child: const Text(
-                    "AYO MULAI!",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 2,
-                    ),
-                  ),
+                  child: _buttonChild,
                   onPressed: () => _submit(),
                 )
               )

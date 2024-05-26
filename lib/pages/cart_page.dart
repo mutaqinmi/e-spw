@@ -154,6 +154,8 @@ class _CartPageState extends State<CartPage>{
               ),
             ),
           ),
+          cartList.isEmpty ?
+          const Row() :
           const SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 5),
@@ -298,10 +300,6 @@ class _CartPageState extends State<CartPage>{
                                       fontWeight: FontWeight.w600
                                     ),
                                   ),
-                                  // Text(
-                                  //   item['extra'].join(', '),
-                                  //   overflow: TextOverflow.ellipsis,
-                                  // ),
                                   const Gap(40),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -424,9 +422,7 @@ class _CartPageState extends State<CartPage>{
           SizedBox(
             height: 65,
             child: FilledButton(
-              onPressed: (){
-                context.pushNamed('checkout');
-              },
+              onPressed: () => context.pushNamed('checkout'),
               style: const ButtonStyle(
                 shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                   borderRadius: BorderRadius.zero

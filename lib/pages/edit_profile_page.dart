@@ -1,13 +1,23 @@
 // import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:io';
 import 'package:espw/app/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class EditProfilePage extends StatelessWidget{
+class EditProfilePage extends StatefulWidget{
   const EditProfilePage({super.key});
 
-  Future<List> getUserData() async {
+  @override
+  State<EditProfilePage> createState() => _EditProfilePageState();
+}
+
+class _EditProfilePageState extends State<EditProfilePage>{
+  File? filePath;
+
+  Future<List> _getUserData() async {
     List userData = [];
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final nis = prefs.getInt('nis');
@@ -25,6 +35,34 @@ class EditProfilePage extends StatelessWidget{
     });
 
     return userData;
+  }
+
+  Future<File> _getImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    File? file = File(image!.path);
+    file = await _cropImage(imageFile: file);
+    setState(() {
+      filePath = file;
+    });
+    return file!;
+  }
+
+  Future<File?> _cropImage({required File imageFile}) async {
+    CroppedFile? croppedImage = await ImageCropper().cropImage(
+      sourcePath: imageFile.path,
+      cropStyle: CropStyle.circle,
+      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Edit',
+          lockAspectRatio: true,
+          hideBottomControls: true
+        )
+      ]
+    );
+    if(croppedImage == null) return null;
+    return File(croppedImage.path);
   }
 
   @override
@@ -53,7 +91,7 @@ class EditProfilePage extends StatelessWidget{
                     ),
                   ),
                   TextButton(
-                    onPressed: (){},
+                    onPressed: () => _getImage(),
                     child: const Text('Ubah Foto Profil'),
                   )
                 ],
@@ -82,7 +120,7 @@ class EditProfilePage extends StatelessWidget{
                         ),
                       ),
                       FutureBuilder(
-                        future: getUserData(),
+                        future: _getUserData(),
                         builder: (BuildContext context, AsyncSnapshot response){
                           if(response.hasData){
                             return Expanded(
@@ -122,7 +160,7 @@ class EditProfilePage extends StatelessWidget{
                         ),
                       ),
                       FutureBuilder(
-                        future: getUserData(),
+                        future: _getUserData(),
                         builder: (BuildContext context, AsyncSnapshot response){
                           if(response.hasData){
                             return Expanded(
@@ -176,7 +214,7 @@ class EditProfilePage extends StatelessWidget{
                         ),
                       ),
                       FutureBuilder(
-                        future: getUserData(),
+                        future: _getUserData(),
                         builder: (BuildContext context, AsyncSnapshot response){
                           if(response.hasData){
                             return Expanded(
@@ -216,7 +254,7 @@ class EditProfilePage extends StatelessWidget{
                         ),
                       ),
                       FutureBuilder(
-                        future: getUserData(),
+                        future: _getUserData(),
                         builder: (BuildContext context, AsyncSnapshot response){
                           if(response.hasData){
                             return Expanded(

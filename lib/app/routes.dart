@@ -4,6 +4,7 @@ import 'package:espw/pages/add_product_page.dart';
 import 'package:espw/pages/change_password.dart';
 import 'package:espw/pages/chat_dialog_page.dart';
 import 'package:espw/pages/checkout_page.dart';
+import 'package:espw/pages/choose_shop.dart';
 import 'package:espw/pages/create_shop_page.dart';
 import 'package:espw/pages/edit_profile_page.dart';
 import 'package:espw/pages/favorite_page.dart';
@@ -17,6 +18,7 @@ import 'package:espw/pages/profile_page.dart';
 import 'package:espw/pages/shop_settings_page.dart';
 import 'package:espw/pages/shopdash_page.dart';
 import 'package:espw/pages/upload_profile_image_page.dart';
+import 'package:espw/pages/verify_password_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -149,12 +151,12 @@ final routes = GoRouter(
               redirect: (BuildContext context, GoRouterState state) async {
                 final String? isRedirect = state.uri.queryParameters['isRedirect'];
                 final dataKelompok = await kelompok();
-                if(json.decode(dataKelompok.body)['data'].isNotEmpty){
-                  if(isRedirect == 'false'){
-                    return null;
-                  }
+                if(isRedirect == 'false'){
+                  return null;
+                }
 
-                  return '/home/profile/shop-dash?id_toko=${json.decode(dataKelompok.body)['data'].first['kelompok']['id_toko']}';
+                if(json.decode(dataKelompok.body)['data'].isNotEmpty){
+                  return '/home/profile/login-shop/choose-shop';
                 }
 
                 return null;
@@ -182,6 +184,11 @@ final routes = GoRouter(
                   path: 'join-shop',
                   builder: (BuildContext context, GoRouterState state) => const JoinShopPage(),
                 ),
+                GoRoute(
+                  name: 'choose-shop',
+                  path: 'choose-shop',
+                  builder: (BuildContext context, GoRouterState state) => const ChooseShop(),
+                )
               ]
             ),
             GoRoute(
@@ -209,6 +216,11 @@ final routes = GoRouter(
                   builder: (BuildContext context, GoRouterState state) => const ProductPage(),
                 ),
               ]
+            ),
+            GoRoute(
+              name: 'verify-password',
+              path: 'verify-password',
+              builder: (BuildContext context, GoRouterState state) => const VerifyPassword(),
             ),
             GoRoute(
               name: 'change-password',

@@ -152,3 +152,56 @@ final List<Map> ordersFinished = [
     'is_finished': true,
   }
 ];
+
+// Widget hello(){
+//   return GestureDetector(
+//     onTap: () => context.pushNamed('login-shop', queryParameters: {'isRedirect': 'false'}),
+//     child: Container(
+//       color: Colors.transparent,
+//       child: const Row(
+//         children: [
+//           CircleAvatar(
+//             radius: 30,
+//             backgroundColor: Colors.transparent,
+//             child: Icon(Icons.add, color: Colors.black),
+//           ),
+//           Gap(10),
+//           Expanded(
+//             child: Text(
+//               'Tambahkan Toko',
+//             ),
+//           ),
+//         ],
+//       ),
+//     ),
+//   )
+//
+//   Row(
+//     children: [
+//       CircleAvatar(
+//         radius: 30,
+//         backgroundImage: CachedNetworkImageProvider(
+//             'https://$baseUrl/assets/public/${shopList[index]['toko']['banner_toko']}'
+//         ),
+//       ),
+//       const Gap(10),
+//       Expanded(
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             Text(
+//               shopList[index]['toko']['nama_toko'],
+//               style: const TextStyle(
+//                   fontSize: 18,
+//                   fontWeight: FontWeight.w600
+//               ),
+//             ),
+//             Text(
+//                 shopList[index]['kelas']['kelas']
+//             )
+//           ],
+//         ),
+//       ),
+//     ],
+//   )
+// }

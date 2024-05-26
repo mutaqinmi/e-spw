@@ -21,12 +21,10 @@ class _SearchPageState extends State<SearchResult>{
   @override
   void initState() {
     super.initState();
-    search(widget.searchQuery!).then((res) => {
-      setState(() {
-        productList = json.decode(res.body)['dataProduk'];
-        shopList = json.decode(res.body)['dataToko'];
-      })
-    });
+    search(widget.searchQuery!).then((res) => setState(() {
+      productList = json.decode(res.body)['dataProduk'];
+      shopList = json.decode(res.body)['dataToko'];
+    }));
   }
 
   @override
@@ -51,9 +49,7 @@ class _SearchPageState extends State<SearchResult>{
                   foregroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 115, 115, 115)),
                   padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 15))
                 ),
-                onPressed: (){
-                  context.goNamed('search');
-                },
+                onPressed: () => context.goNamed('search'),
                 child: Row(
                   children: [
                     const Icon(Icons.search),
@@ -71,9 +67,7 @@ class _SearchPageState extends State<SearchResult>{
                 offset: const Offset(-8, 8),
                 label: Text(cartBadge.toString()),
                 child: IconButton(
-                  onPressed: (){
-                    context.pushNamed('cart');
-                  },
+                  onPressed: () => context.pushNamed('cart'),
                   icon: const Icon(Icons.shopping_cart_outlined),
                 ),
               ),
@@ -100,9 +94,9 @@ class _SearchPageState extends State<SearchResult>{
   Widget _productResult(){
     return Scaffold(
       body: FutureBuilder(
-        future: products(),
+        future: search(widget.searchQuery!),
         builder: (BuildContext context, AsyncSnapshot response){
-          if(response.hasData || response.connectionState == ConnectionState.done){
+          if(response.hasData && response.connectionState == ConnectionState.done && json.decode(response.data.body)['dataProduk'].isNotEmpty){
             return ListView.builder(
               itemCount: productList.length,
               itemBuilder: (BuildContext context, int index){
@@ -118,10 +112,14 @@ class _SearchPageState extends State<SearchResult>{
                 );
               },
             );
+          } else if (response.connectionState == ConnectionState.waiting){
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
 
           return const Center(
-            child: CircularProgressIndicator(),
+            child: Text('Produk tidak ditemukan!'),
           );
         },
       )
@@ -131,9 +129,9 @@ class _SearchPageState extends State<SearchResult>{
   Widget _shopResult(){
     return Scaffold(
       body: FutureBuilder(
-        future: shop(),
+        future: search(widget.searchQuery!),
         builder: (BuildContext context, AsyncSnapshot response){
-          if(response.hasData || response.connectionState == ConnectionState.done){
+          if(response.hasData && response.connectionState == ConnectionState.done && json.decode(response.data.body)['dataToko'].isNotEmpty){
             return ListView.builder(
               itemCount: shopList.length,
               itemBuilder: (BuildContext context, int index){
@@ -145,10 +143,14 @@ class _SearchPageState extends State<SearchResult>{
                 );
               },
             );
+          } else if (response.connectionState == ConnectionState.waiting){
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
 
           return const Center(
-            child: CircularProgressIndicator(),
+            child: Text('Toko tidak ditemukan!'),
           );
         },
       )

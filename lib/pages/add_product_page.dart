@@ -13,7 +13,6 @@ class _AddProductPageState extends State<AddProductPage>{
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
-        foregroundColor: Theme.of(context).primaryColor,
         title: const Text(
           'Tambah Produk',
           style: TextStyle(

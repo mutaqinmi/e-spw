@@ -58,9 +58,7 @@ class LoginShopPage extends StatelessWidget{
               width: double.infinity,
               height: 50,
               child: OutlinedButton(
-                onPressed: (){
-                  context.pushNamed('join-shop');
-                },
+                onPressed: () => context.pushNamed('join-shop', queryParameters: {'isRedirect': 'false'}),
                 child: const Text('Gabung ke Toko'),
               ),
             )

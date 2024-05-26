@@ -49,9 +49,7 @@ class JoinShopPage extends StatelessWidget{
             width: double.infinity,
             height: 50,
             child: FilledButton(
-              onPressed: (){
-                context.goNamed('shop-dash');
-              },
+              onPressed: () => context.goNamed('shop-dash'),
               child: const Text('Gabung'),
             ),
           ),
