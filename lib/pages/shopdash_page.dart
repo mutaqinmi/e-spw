@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:espw/app/controllers.dart';
 import 'package:flutter/material.dart';
@@ -26,28 +25,6 @@ class _ShopDashPageState extends State<ShopDashPage>{
             fontWeight: FontWeight.w600
           ),
         ),
-        actions: [
-          Badge(
-            isLabelVisible: false,
-            offset: const Offset(-8, 8),
-            child: IconButton(
-              onPressed: (){},
-              icon: const Icon(Icons.chat_outlined),
-            ),
-          ),
-          Badge(
-            isLabelVisible: false,
-            offset: const Offset(-8, 8),
-            child: IconButton(
-              onPressed: () => {},
-              icon: const Icon(Icons.notifications_outlined)
-            ),
-          ),
-          IconButton(
-            onPressed: () => context.pushNamed('shop-settings'),
-            icon: const Icon(Icons.settings_outlined),
-          )
-        ],
       ),
       body: FutureBuilder(
         future: shopById(widget.idToko),
@@ -56,9 +33,40 @@ class _ShopDashPageState extends State<ShopDashPage>{
             final shop = json.decode(response.data.body)['data'];
             return SingleChildScrollView(
               child: SafeArea(
-                minimum: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                top: false,
+                minimum: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   children: [
+                    Card(
+                      elevation: 0,
+                      color: shop.first['toko']['is_open'] == true ? Colors.green : Colors.red,
+                      margin: const EdgeInsets.only(bottom: 20),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Text(
+                              'Toko anda sedang ',
+                              style: TextStyle(
+                                color: Colors.white
+                              ),
+                            ),
+                            Text(
+                              shop.first['toko']['is_open'] == true ? 'Buka' : 'Tutup',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
                     Row(
                       children: [
                         CircleAvatar(
@@ -85,6 +93,18 @@ class _ShopDashPageState extends State<ShopDashPage>{
                             ],
                           ),
                         ),
+                        FilledButton(
+                          style: ButtonStyle(
+                            visualDensity: VisualDensity.compact,
+                            backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+                            foregroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColor),
+                            side: WidgetStatePropertyAll(BorderSide(
+                              color: Theme.of(context).primaryColor
+                            ))
+                          ),
+                          onPressed: () => context.pushNamed('shop', queryParameters: {'shopID': shop.first['toko']['id_toko']}),
+                          child: const Text('Kunjungi toko')
+                        )
                       ],
                     ),
                     const Gap(30),
@@ -94,12 +114,9 @@ class _ShopDashPageState extends State<ShopDashPage>{
                           children: [
                             GestureDetector(
                               onTap: () => context.pushNamed('order-status'),
-                              child: Container(
-                                width: double.infinity,
-                                decoration: const BoxDecoration(
-                                  color: Colors.transparent
-                                ),
-                                child: const Row(
+                              child: const Card(
+                                elevation: 0,
+                                child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
@@ -126,14 +143,15 @@ class _ShopDashPageState extends State<ShopDashPage>{
                                   overlayColor: WidgetStatePropertyAll(Colors.transparent)
                                 ),
                                 onPressed: () => context.pushNamed('order-status', queryParameters: {'initial_index': '1'}),
-                                child: const Column(
+                                child: Column(
                                   children: [
                                     Icon(
-                                      Icons.event_available_outlined,
+                                      Icons.upcoming_outlined,
                                       size: 35,
+                                      color: Theme.of(context).primaryColor,
                                     ),
-                                    Gap(10),
-                                    Text('Pesanan baru')
+                                    const Gap(10),
+                                    const Text('Pesanan baru')
                                   ],
                                 ),
                               ),
@@ -149,14 +167,15 @@ class _ShopDashPageState extends State<ShopDashPage>{
                                   overlayColor: WidgetStatePropertyAll(Colors.transparent)
                                 ),
                                 onPressed: () => context.pushNamed('order-status', queryParameters: {'initial_index': '2'}),
-                                child: const Column(
+                                child: Column(
                                   children: [
                                     Icon(
                                       Icons.event_repeat_outlined,
                                       size: 35,
+                                      color: Theme.of(context).primaryColor,
                                     ),
-                                    Gap(10),
-                                    Text('Sedang Diantarkan')
+                                    const Gap(10),
+                                    const Text('Diproses')
                                   ],
                                 ),
                               ),
@@ -167,58 +186,47 @@ class _ShopDashPageState extends State<ShopDashPage>{
                     ),
                     const Gap(30),
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const Card(
+                          elevation: 0,
+                          child: Text(
+                            'Produk'
+                          ),
+                        ),
                         GestureDetector(
-                          onTap: (){},
-                          child: Container(
-                            width: double.infinity,
-                            decoration: const BoxDecoration(
-                              color: Colors.transparent
-                            ),
+                          onTap: () => context.pushNamed('product', queryParameters: {'id_toko': shop.first['toko']['id_toko']}),
+                          child: Card(
+                            elevation: 0,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
-                                  'Produk'
-                                ),
-                                TextButton(
-                                  onPressed: () => context.pushNamed('add-product'),
-                                  child: const Text('Tambah Produk'),
-                                )
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        GestureDetector(
-                          onTap: () => context.pushNamed('product'),
-                          child: Container(
-                            width: double.infinity,
-                            decoration: const BoxDecoration(
-                              color: Colors.transparent
-                            ),
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                Wrap(
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  spacing: 10,
                                   children: [
-                                    Text(
-                                      'Daftar Produk',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500
-                                      ),
+                                    Icon(
+                                      Icons.inventory_2_outlined,
+                                      color: Theme.of(context).primaryColor,
                                     ),
-                                    Text(
-                                      '0 Produk'
-                                    )
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Daftar Produk',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500
+                                          ),
+                                        ),
+                                        Text(
+                                          '${shop.length} Produk'
+                                        )
+                                      ],
+                                    ),
                                   ],
                                 ),
-                                Icon(Icons.keyboard_arrow_right)
+                                const Icon(Icons.keyboard_arrow_right)
                               ],
                             ),
                           ),
@@ -227,24 +235,137 @@ class _ShopDashPageState extends State<ShopDashPage>{
                     ),
                     const Gap(30),
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const Card(
+                          elevation: 0,
+                          child: Text(
+                            'Penilaian Pembeli'
+                          ),
+                        ),
                         GestureDetector(
-                          onTap: (){},
-                          child: Container(
-                            width: double.infinity,
-                            decoration: const BoxDecoration(
-                              color: Colors.transparent
-                            ),
+                          onTap: () => (),
+                          child: Card(
+                            elevation: 0,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
-                                  'Penilaian Pembeli'
+                                Wrap(
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  spacing: 10,
+                                  children: [
+                                    Icon(
+                                      Icons.star_rate_outlined,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                    const Text(
+                                      'Ulasan',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                TextButton(
-                                  onPressed: (){},
-                                  child: const Text('Lihat Semua'),
-                                )
+                                const Icon(Icons.keyboard_arrow_right)
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    const Gap(30),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Card(
+                          elevation: 0,
+                          child: Text(
+                            'Lainnya'
+                          ),
+                        ),
+                        const Gap(5),
+                        GestureDetector(
+                          onTap: () => (),
+                          child: Card(
+                            elevation: 0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Wrap(
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  spacing: 10,
+                                  children: [
+                                    Icon(
+                                      Icons.ads_click,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                    const Text(
+                                      'Promosi',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Icon(Icons.keyboard_arrow_right)
+                              ],
+                            ),
+                          ),
+                        ),
+                        const Gap(10),
+                        GestureDetector(
+                          onTap: () => (),
+                          child: Card(
+                            elevation: 0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Wrap(
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  spacing: 10,
+                                  children: [
+                                    Icon(
+                                      Icons.storefront_outlined,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                    const Text(
+                                      'Live Mode',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Icon(Icons.keyboard_arrow_right)
+                              ],
+                            ),
+                          ),
+                        ),
+                        const Gap(10),
+                        GestureDetector(
+                          onTap: () => context.pushNamed('shop-settings'),
+                          child: Card(
+                            elevation: 0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Wrap(
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  spacing: 10,
+                                  children: [
+                                    Icon(
+                                      Icons.settings_outlined,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                    const Text(
+                                      'Pengaturan toko',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Icon(Icons.keyboard_arrow_right)
                               ],
                             ),
                           ),
@@ -261,7 +382,12 @@ class _ShopDashPageState extends State<ShopDashPage>{
             child: CircularProgressIndicator(),
           );
         },
-      )
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: (){},
+        icon: const Icon(Icons.assignment_outlined),
+        label: const Text('Laporan'),
+      ),
     );
   }
 }

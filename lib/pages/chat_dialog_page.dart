@@ -24,7 +24,6 @@ class _ChatState extends State<Chat>{
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
-        foregroundColor: Theme.of(context).primaryColor,
         title: Wrap(
           spacing: 10,
           crossAxisAlignment: WrapCrossAlignment.center,

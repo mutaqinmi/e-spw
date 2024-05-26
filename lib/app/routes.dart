@@ -213,7 +213,9 @@ final routes = GoRouter(
                 GoRoute(
                   name: 'product',
                   path: 'product',
-                  builder: (BuildContext context, GoRouterState state) => const ProductPage(),
+                  builder: (BuildContext context, GoRouterState state) => ProductPage(
+                    idToko: state.uri.queryParameters['id_toko']!,
+                  ),
                 ),
               ]
             ),

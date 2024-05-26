@@ -130,7 +130,6 @@ class _ShopPageState extends State<ShopPage>{
               return CustomScrollView(
                 slivers: [
                   SliverAppBar(
-                    foregroundColor: Theme.of(context).primaryColor,
                     pinned: true,
                     actions: [
                       IconButton(
@@ -233,7 +232,7 @@ class _ShopPageState extends State<ShopPage>{
                                     ),
                                   ),
                                   Icon(
-                                    Icons.star,
+                                    Icons.emoji_events,
                                     size: 16,
                                   )
                                 ],

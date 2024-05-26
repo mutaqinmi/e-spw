@@ -12,7 +12,6 @@ class _FavoritePageState extends State<FavoritePage>{
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
-        foregroundColor: Theme.of(context).primaryColor,
         title: const Text(
           'Favorit',
           style: TextStyle(

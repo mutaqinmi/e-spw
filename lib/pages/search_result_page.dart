@@ -35,7 +35,6 @@ class _SearchPageState extends State<SearchResult>{
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) => [
           SliverAppBar(
             forceElevated: innerBoxIsScrolled,
-            foregroundColor: Theme.of(context).primaryColor,
             floating: true,
             snap: true,
             pinned: true,

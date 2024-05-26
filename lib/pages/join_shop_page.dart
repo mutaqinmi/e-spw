@@ -9,9 +9,7 @@ class JoinShopPage extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      appBar: AppBar(
-        foregroundColor: Theme.of(context).primaryColor,
-      ),
+      appBar: AppBar(),
       body: const SafeArea(
         minimum: EdgeInsets.symmetric(horizontal: 16),
         child: Center(

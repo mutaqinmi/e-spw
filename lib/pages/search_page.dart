@@ -130,7 +130,6 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
-        foregroundColor: Theme.of(context).primaryColor,
         title: SizedBox(
           height: 40,
           child: Form(

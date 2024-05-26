@@ -15,10 +15,9 @@ class _NotificationPageState extends State<NotificationPage>{
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
+          const SliverAppBar(
             pinned: true,
-            foregroundColor: Theme.of(context).primaryColor,
-            title: const Text(
+            title: Text(
               'Notifikasi',
               style: TextStyle(
                 fontSize: 18,

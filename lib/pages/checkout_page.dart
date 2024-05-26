@@ -90,10 +90,9 @@ class _CheckoutPageState extends State<CheckoutPage>{
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            foregroundColor: Theme.of(context).primaryColor,
+          const SliverAppBar(
             pinned: true,
-            title: const Text(
+            title: Text(
               'Checkout',
               style: TextStyle(
                 fontSize: 18,

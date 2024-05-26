@@ -105,7 +105,7 @@ class _CartPageState extends State<CartPage>{
     );
   }
 
-  Future<bool?> _confirmDismiss(BuildContext context, int idKeranjang, String itemName){
+  Future<bool?> _confirmDismiss(BuildContext context, String itemName){
     return showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -154,29 +154,30 @@ class _CartPageState extends State<CartPage>{
               ),
             ),
           ),
-          cartList.isEmpty ?
-          const Row() :
-          const SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 5),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Swipe untuk menghapus item dari keranjang',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontStyle: FontStyle.italic
+          SliverToBoxAdapter(
+            child: Visibility(
+              visible: cartList.isEmpty ? false : true,
+              child: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 5),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Swipe untuk menghapus item dari keranjang',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontStyle: FontStyle.italic
+                      ),
                     ),
-                  ),
-                  Gap(10),
-                  Divider(
-                    color: Colors.grey,
-                    thickness: 0.5,
-                    indent: 16,
-                    endIndent: 16,
-                  ),
-                ],
+                    Gap(10),
+                    Divider(
+                      color: Colors.grey,
+                      thickness: 0.5,
+                      indent: 16,
+                      endIndent: 16,
+                    ),
+                  ],
+                ),
               ),
             )
           ),
@@ -223,6 +224,10 @@ class _CartPageState extends State<CartPage>{
               final item = cartList[index];
               return Dismissible(
                 key: Key(item['keranjang']['id_keranjang'].toString()),
+                dismissThresholds: const {
+                  DismissDirection.startToEnd: .9,
+                  DismissDirection.endToStart: .9
+                },
                 background: Container(
                   decoration: const BoxDecoration(
                     color: Colors.red
@@ -250,7 +255,7 @@ class _CartPageState extends State<CartPage>{
                     ),
                   )
                 ),
-                confirmDismiss: (DismissDirection dismissDirection) => _confirmDismiss(context, item['keranjang']['id_keranjang'], item['produk']['nama_produk']),
+                confirmDismiss: (DismissDirection dismissDirection) => _confirmDismiss(context, item['produk']['nama_produk']),
                 onDismissed: (DismissDirection dismissDirection){
                   _deleteFromCart(context, item['keranjang']['id_keranjang']);
                   setState(() {

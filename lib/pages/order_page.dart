@@ -33,7 +33,6 @@ class _OrderPageState extends State<OrderPage>{
         headerSliverBuilder: (BuildContext context, bool innerChildIsScrolled) => [
           SliverAppBar(
             forceElevated: innerChildIsScrolled,
-            foregroundColor: Theme.of(context).primaryColor,
             floating: true,
             pinned: true,
             snap: true,

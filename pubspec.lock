@@ -122,7 +122,7 @@ packages:
     source: hosted
     version: "1.18.0"
   connectivity_plus:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: connectivity_plus
       sha256: db7a4e143dc72cc3cb2044ef9b052a7ebfe729513e6a82943bc3526f784365b8
@@ -432,14 +432,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.1+1"
-  internet_connection_checker_plus:
-    dependency: "direct main"
-    description:
-      name: internet_connection_checker_plus
-      sha256: "423480962bda16f10d0a79efe6c4f1b5212d80203f6b8ee921edb0a1d3c17c88"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.3.0"
   intl:
     dependency: "direct main"
     description:
@@ -886,5 +878,5 @@ packages:
     source: hosted
     version: "3.1.2"
 sdks:
-  dart: ">=3.3.1 <4.0.0"
+  dart: ">=3.3.0 <4.0.0"
   flutter: ">=3.19.0"

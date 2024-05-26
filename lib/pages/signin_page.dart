@@ -1,4 +1,3 @@
-import 'package:espw/widgets/check_connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
@@ -40,8 +39,6 @@ class _SignInPageState extends State<SignInPage>{
 
   @override
   Widget build(BuildContext context) {
-    checkConnectivity(context);
-
     return Scaffold(
       bottomNavigationBar: SingleChildScrollView(
         padding: MediaQuery.of(context).viewInsets,

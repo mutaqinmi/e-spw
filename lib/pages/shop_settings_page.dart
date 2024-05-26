@@ -23,31 +23,19 @@ class ShopSettingsPage extends StatelessWidget{
               itemTitle: 'Informasi',
             ),
             ItemButton(
-              itemTitle: 'Banner',
-            ),
-            ItemButton(
               itemTitle: 'Jadwal Operasional',
-            ),
-            ItemButton(
-              itemTitle: 'Poster Promosi Toko',
-            ),
-            Divider(
-              thickness: 0.25,
             ),
             ItemButton(
               itemTitle: 'Tambah dan Ubah Lokasi',
             ),
-            ItemButton(
-              itemTitle: 'Atur Notifikasi Penjual',
-            ),
             Divider(
               thickness: 0.25,
             ),
             ItemButton(
-              itemTitle: 'Hapus Toko',
+              itemTitle: 'Keluar Toko',
             ),
             ItemButton(
-              itemTitle: 'Keluar Toko',
+              itemTitle: 'Hapus Toko',
             ),
           ],
         ),
