@@ -19,6 +19,7 @@ import 'package:espw/pages/profile_page.dart';
 import 'package:espw/pages/shop_settings_page.dart';
 import 'package:espw/pages/shopdash_page.dart';
 import 'package:espw/pages/upload_product_image_oncreate_page.dart';
+import 'package:espw/pages/upload_product_image_page.dart';
 import 'package:espw/pages/upload_profile_image_page.dart';
 import 'package:espw/pages/verify_password_page.dart';
 import 'package:flutter/material.dart';
@@ -233,7 +234,23 @@ final routes = GoRouter(
                 GoRoute(
                   name: 'add-product',
                   path: 'add-product',
-                  builder: (BuildContext context, GoRouterState state) => const AddProductPage(),
+                  builder: (BuildContext context, GoRouterState state) => AddProductPage(
+                    idToko: state.uri.queryParameters['id_toko']!,
+                  ),
+                  routes: [
+                    GoRoute(
+                      name: 'upload-product-image',
+                      path: 'upload-product-image',
+                      builder: (BuildContext context, GoRouterState state) => UploadProductImagePage(
+                        namaProduk: state.uri.queryParameters['nama_produk'],
+                        harga: state.uri.queryParameters['harga'],
+                        stok: state.uri.queryParameters['stok'],
+                        deskripsiProduk: state.uri.queryParameters['deskripsi_produk'],
+                        detailProduk: state.uri.queryParameters['detail_produk'],
+                        idToko: state.uri.queryParameters['id_toko'],
+                      )
+                    )
+                  ]
                 ),
                 GoRoute(
                   name: 'product',

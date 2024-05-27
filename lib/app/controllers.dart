@@ -145,7 +145,8 @@ void addProduct(
     String? deskripsiProduk,
     required String detailProduk,
     required File? fotoProduk,
-    required String idToko}) async {
+    required String idToko,
+    required bool isCreate}) async {
   final SharedPreferences prefs = await _prefs;
   final url = Uri.https(baseUrl, '/api/products/add');
   final request = http.MultipartRequest('POST', url);
@@ -164,7 +165,17 @@ void addProduct(
 
   if(response.statusCode == 200){
     if(!context.mounted) return;
-    context.pushNamed('login-shop');
+    if(!isCreate){
+      context.goNamed('shop-dash', queryParameters: {'id_toko': idToko, 'isRedirect': 'false'});
+      successSnackBar(
+        context: context,
+        content: 'Produk berhasil ditambahkan!'
+      );
+
+      return;
+    }
+
+    context.goNamed('login-shop');
     successSnackBar(
       context: context,
       content: 'Toko berhasil dibuat!'

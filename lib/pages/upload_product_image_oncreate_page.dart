@@ -106,6 +106,7 @@ class _UploadProductImageOnCreatePageState extends State<UploadProductImageOnCre
                 detailProduk: widget.detailProduk!,
                 fotoProduk: filePath!,
                 idToko: widget.idToko!,
+                isCreate: true
               ),
               child: const Text('Selesai!'),
             ),

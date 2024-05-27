@@ -1,14 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 
 class AddProductPage extends StatefulWidget{
-  const AddProductPage({super.key});
+  const AddProductPage({super.key, required this.idToko});
+  final String idToko;
 
   @override
   State<AddProductPage> createState() => _AddProductPageState();
 }
 
 class _AddProductPageState extends State<AddProductPage>{
+  final _namaProdukKey = GlobalKey<FormFieldState>();
+  final _hargaKey = GlobalKey<FormFieldState>();
+  final _stokKey = GlobalKey<FormFieldState>();
+  final _deskripsiProdukKey = GlobalKey<FormFieldState>();
+  final _detailProdukKey = GlobalKey<FormFieldState>();
+  String _namaProduk = '';
+  String _harga = '';
+  String _stok = '';
+  String _deskripsiProduk = '';
+  String _detailProduk = '';
+
+  void _submit(){
+    if(_namaProdukKey.currentState!.validate() && _hargaKey.currentState!.validate() && _stokKey.currentState!.validate() && _deskripsiProdukKey.currentState!.validate()){
+      _namaProdukKey.currentState!.save();
+      _hargaKey.currentState!.save();
+      _stokKey.currentState!.save();
+      _deskripsiProdukKey.currentState!.save();
+      _detailProdukKey.currentState!.save();
+
+      context.pushNamed('upload-product-image', queryParameters: {
+        'nama_produk': _namaProduk,
+        'harga': _harga,
+        'stok': _stok,
+        'deskripsi_produk': _deskripsiProduk,
+        'detail_produk': _detailProduk,
+        'id_toko': widget.idToko,
+        'isRedirect': 'false',
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -16,8 +49,8 @@ class _AddProductPageState extends State<AddProductPage>{
         title: const Text(
           'Tambah Produk',
           style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600
+              fontSize: 18,
+              fontWeight: FontWeight.w600
           ),
         ),
       ),
@@ -33,7 +66,7 @@ class _AddProductPageState extends State<AddProductPage>{
                   Text(
                     'Tambah Produk',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 22,
                       fontWeight: FontWeight.w600
                     ),
                   ),
@@ -68,6 +101,7 @@ class _AddProductPageState extends State<AddProductPage>{
                         ),
                         const Gap(5),
                         TextFormField(
+                          key: _namaProdukKey,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(Radius.circular(10))
@@ -75,6 +109,13 @@ class _AddProductPageState extends State<AddProductPage>{
                             contentPadding: EdgeInsets.symmetric(horizontal: 10),
                             hintText: 'Nama Produk'
                           ),
+                          validator: (value){
+                            if(value!.isEmpty){
+                              return 'Masukkan nama produk terlebih dahulu';
+                            }
+                            return null;
+                          },
+                          onSaved: (value) => _namaProduk = value!,
                         )
                       ],
                     ),
@@ -97,6 +138,8 @@ class _AddProductPageState extends State<AddProductPage>{
                         ),
                         const Gap(5),
                         TextFormField(
+                          key: _hargaKey,
+                          keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(Radius.circular(10))
@@ -105,6 +148,13 @@ class _AddProductPageState extends State<AddProductPage>{
                             hintText: 'Harga',
                             prefixText: 'Rp. ',
                           ),
+                          validator: (value){
+                            if(value!.isEmpty){
+                              return 'Masukkan harga produk terlebih dahulu';
+                            }
+                            return null;
+                          },
+                          onSaved: (value) => _harga = value!,
                         )
                       ],
                     ),
@@ -127,6 +177,8 @@ class _AddProductPageState extends State<AddProductPage>{
                         ),
                         const Gap(5),
                         TextFormField(
+                          key: _stokKey,
+                          keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(Radius.circular(10))
@@ -134,6 +186,13 @@ class _AddProductPageState extends State<AddProductPage>{
                             contentPadding: EdgeInsets.symmetric(horizontal: 10),
                             hintText: 'Stok',
                           ),
+                          validator: (value){
+                            if(value!.isEmpty){
+                              return 'Masukkan stok produk terlebih dahulu';
+                            }
+                            return null;
+                          },
+                          onSaved: (value) => _stok = value!,
                         )
                       ],
                     ),
@@ -156,6 +215,7 @@ class _AddProductPageState extends State<AddProductPage>{
                         ),
                         const Gap(5),
                         TextFormField(
+                          key: _deskripsiProdukKey,
                           maxLines: 5,
                           maxLength: 255,
                           decoration: const InputDecoration(
@@ -165,6 +225,7 @@ class _AddProductPageState extends State<AddProductPage>{
                             contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                             hintText: 'Deskripsi',
                           ),
+                          onSaved: (value) => _deskripsiProduk = value!,
                         )
                       ],
                     ),
@@ -187,6 +248,7 @@ class _AddProductPageState extends State<AddProductPage>{
                         ),
                         const Gap(5),
                         TextFormField(
+                          key: _detailProdukKey,
                           maxLines: 5,
                           maxLength: 255,
                           decoration: const InputDecoration(
@@ -196,6 +258,13 @@ class _AddProductPageState extends State<AddProductPage>{
                             contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                             hintText: 'Detail Produk',
                           ),
+                          validator: (value){
+                            if(value!.isEmpty){
+                              return 'Masukkan detail produk terlebih dahulu';
+                            }
+                            return null;
+                          },
+                          onSaved: (value) => _detailProduk = value!,
                         )
                       ],
                     )
@@ -227,7 +296,7 @@ class _AddProductPageState extends State<AddProductPage>{
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              onPressed: (){},
+              onPressed: () => _submit(),
             ),
           ),
         )

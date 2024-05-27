@@ -215,7 +215,7 @@ class _ProductPageState extends State<ProductPage>{
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.pushNamed('add-product'),
+        onPressed: () => context.pushNamed('add-product', queryParameters: {'id_toko': widget.idToko}),
         icon: const Icon(Icons.add),
         label: const Text('Tambah produk'),
       ),
