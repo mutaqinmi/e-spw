@@ -57,6 +57,186 @@ class _CreateShopPageState extends State<CreateShopPage>{
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 20,
+                                  height: 20,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Theme.of(context).primaryColor
+                                  ),
+                                  child: const Center(
+                                    child: Text(
+                                      '1',
+                                      style: TextStyle(
+                                        color: Colors.white
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 75,
+                                  child: Divider(
+                                    thickness: 3,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                Container(
+                                  width: 20,
+                                  height: 20,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.grey
+                                  ),
+                                  child: const Center(
+                                    child: Text(
+                                      '2',
+                                      style: TextStyle(
+                                        color: Colors.white
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 75,
+                                  child: Divider(
+                                    thickness: 3,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                Container(
+                                  width: 20,
+                                  height: 20,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.grey
+                                  ),
+                                  child: const Center(
+                                    child: Text(
+                                      '3',
+                                      style: TextStyle(
+                                        color: Colors.white
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 75,
+                                  child: Divider(
+                                    thickness: 3,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                Container(
+                                  width: 20,
+                                  height: 20,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.grey
+                                  ),
+                                  child: const Center(
+                                    child: Text(
+                                      '4',
+                                      style: TextStyle(
+                                        color: Colors.white
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                            const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child: Center(
+                                    child: Text(
+                                      'Buat Toko',
+                                      maxLines: 2,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 10
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 45,
+                                  child: Divider(
+                                    thickness: 0,
+                                    color: Colors.transparent,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child: Center(
+                                    child: Text(
+                                      'Foto Profil',
+                                      maxLines: 2,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 10
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 45,
+                                  child: Divider(
+                                    thickness: 0,
+                                    color: Colors.transparent,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child: Center(
+                                    child: Text(
+                                      'Tambah Produk',
+                                      maxLines: 2,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 10
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 45,
+                                  child: Divider(
+                                    thickness: 0,
+                                    color: Colors.transparent,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child: Center(
+                                    child: Text(
+                                      'Foto Produk',
+                                      maxLines: 2,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 10
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
                       const Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

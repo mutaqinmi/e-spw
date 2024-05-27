@@ -110,13 +110,10 @@ void createShop(
 
   final response = await request.send();
 
-  if(!context.mounted) return;
   if(response.statusCode == 200){
-    context.goNamed('login-shop');
-    successSnackBar(
-      context: context,
-      content: 'Toko berhasil dibuat!'
-    );
+    final data = json.decode(await response.stream.bytesToString());
+    if(!context.mounted) return;
+    context.pushNamed('add-product-oncreate', queryParameters: {'id_toko': data['toko'].first['id_toko'], 'isRedirect': 'false'});
   }
 }
 
@@ -138,6 +135,41 @@ Future<http.Response> products() async {
   });
 
   return response;
+}
+
+void addProduct(
+    {required BuildContext context,
+    required String namaProduk,
+    required String harga,
+    required String stok,
+    String? deskripsiProduk,
+    required String detailProduk,
+    required File? fotoProduk,
+    required String idToko}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/products/add');
+  final request = http.MultipartRequest('POST', url);
+  request.headers.addAll({
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+  request.fields['nama_produk'] = namaProduk;
+  request.fields['harga'] = harga;
+  request.fields['stok'] = stok;
+  request.fields['deskripsi_produk'] = deskripsiProduk!;
+  request.fields['detail_produk'] = detailProduk;
+  request.fields['id_toko'] = idToko;
+  request.files.add(http.MultipartFile.fromBytes('foto_produk', File(fotoProduk!.path).readAsBytesSync(), filename: fotoProduk.path));
+
+  final response = await request.send();
+
+  if(response.statusCode == 200){
+    if(!context.mounted) return;
+    context.pushNamed('login-shop');
+    successSnackBar(
+      context: context,
+      content: 'Toko berhasil dibuat!'
+    );
+  }
 }
 
 Future<http.Response> shopById(String? shopId) async {

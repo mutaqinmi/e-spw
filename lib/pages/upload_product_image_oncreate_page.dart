@@ -6,18 +6,20 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 // import 'package:go_router/go_router.dart';
 
-class UploadProfileImagePage extends StatefulWidget{
-  const UploadProfileImagePage({super.key, required this.namaToko, required this.kelas, required this.deskripsiToko, required this.kategoriToko});
-  final String? namaToko;
-  final String? kelas;
-  final String? deskripsiToko;
-  final String? kategoriToko;
+class UploadProductImageOnCreatePage extends StatefulWidget{
+  const UploadProductImageOnCreatePage({super.key, required this.namaProduk, required this.harga, required this.stok, this.deskripsiProduk, required this.detailProduk, required this.idToko});
+  final String? namaProduk;
+  final String? harga;
+  final String? stok;
+  final String? deskripsiProduk;
+  final String? detailProduk;
+  final String? idToko;
 
   @override
-  State<UploadProfileImagePage> createState() => _UploadProfileImagePageState();
+  State<UploadProductImageOnCreatePage> createState() => _UploadProductImageOnCreatePageState();
 }
 
-class _UploadProfileImagePageState extends State<UploadProfileImagePage>{
+class _UploadProductImageOnCreatePageState extends State<UploadProductImageOnCreatePage>{
   File? filePath;
 
   Future<File> getImage() async {
@@ -34,7 +36,6 @@ class _UploadProfileImagePageState extends State<UploadProfileImagePage>{
   Future<File?> _cropImage({required File imageFile}) async {
     CroppedFile? croppedImage = await ImageCropper().cropImage(
       sourcePath: imageFile.path,
-      cropStyle: CropStyle.circle,
       aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
       uiSettings: [
         AndroidUiSettings(
@@ -47,7 +48,7 @@ class _UploadProfileImagePageState extends State<UploadProfileImagePage>{
     if(croppedImage == null) return null;
     return File(croppedImage.path);
   }
-  
+
   Widget checkMedia(){
     if(filePath == null){
       return OutlinedButton(
@@ -57,7 +58,7 @@ class _UploadProfileImagePageState extends State<UploadProfileImagePage>{
     }
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(125),
+      borderRadius: BorderRadius.circular(20),
       child: Image.file(
         filePath!,
         width: 250,
@@ -96,15 +97,17 @@ class _UploadProfileImagePageState extends State<UploadProfileImagePage>{
             width: double.infinity,
             height: 50,
             child: FilledButton(
-              onPressed: () => createShop(
+              onPressed: () => addProduct(
                 context: context,
-                namaToko: widget.namaToko!,
-                kelas: widget.kelas!,
-                deskripsiToko: widget.deskripsiToko!,
-                kategoriToko: widget.kategoriToko!,
-                bannerToko: filePath
+                namaProduk: widget.namaProduk!,
+                harga: widget.harga!,
+                stok: widget.stok!,
+                deskripsiProduk: widget.deskripsiProduk!,
+                detailProduk: widget.detailProduk!,
+                fotoProduk: filePath!,
+                idToko: widget.idToko!,
               ),
-              child: const Text('Selanjutnya'),
+              child: const Text('Selesai!'),
             ),
           ),
         )
@@ -133,8 +136,8 @@ class _UploadProfileImagePageState extends State<UploadProfileImagePage>{
                         width: 20,
                         height: 20,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Theme.of(context).primaryColor
+                          borderRadius: BorderRadius.circular(10),
+                          color: Theme.of(context).primaryColor
                         ),
                         child: const Center(
                           child: Text(
@@ -168,11 +171,11 @@ class _UploadProfileImagePageState extends State<UploadProfileImagePage>{
                           ),
                         ),
                       ),
-                      const SizedBox(
+                      SizedBox(
                         width: 75,
                         child: Divider(
-                        thickness: 3,
-                        color: Colors.grey,
+                          thickness: 3,
+                          color: Theme.of(context).primaryColor,
                         ),
                       ),
                       Container(
@@ -180,7 +183,7 @@ class _UploadProfileImagePageState extends State<UploadProfileImagePage>{
                         height: 20,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          color: Colors.grey
+                          color: Theme.of(context).primaryColor
                         ),
                         child: const Center(
                           child: Text(
@@ -191,11 +194,11 @@ class _UploadProfileImagePageState extends State<UploadProfileImagePage>{
                           ),
                         ),
                       ),
-                      const SizedBox(
+                      SizedBox(
                         width: 75,
                         child: Divider(
                           thickness: 3,
-                          color: Colors.grey,
+                          color: Theme.of(context).primaryColor,
                         ),
                       ),
                       Container(
@@ -203,7 +206,7 @@ class _UploadProfileImagePageState extends State<UploadProfileImagePage>{
                         height: 20,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          color: Colors.grey
+                          color: Theme.of(context).primaryColor
                         ),
                         child: const Center(
                           child: Text(
@@ -305,14 +308,14 @@ class _UploadProfileImagePageState extends State<UploadProfileImagePage>{
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Atur Banner Toko',
+                  'Atur Foto Produk',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w600
                   ),
                 ),
                 Text(
-                  'Atur banner toko anda.'
+                  'Atur foto produk anda.'
                 )
               ],
             ),

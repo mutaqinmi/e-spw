@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:espw/app/controllers.dart';
+import 'package:espw/pages/add_product_oncreate_page.dart';
 import 'package:espw/pages/add_product_page.dart';
 import 'package:espw/pages/change_password.dart';
 import 'package:espw/pages/chat_dialog_page.dart';
@@ -17,6 +18,7 @@ import 'package:espw/pages/product_page.dart';
 import 'package:espw/pages/profile_page.dart';
 import 'package:espw/pages/shop_settings_page.dart';
 import 'package:espw/pages/shopdash_page.dart';
+import 'package:espw/pages/upload_product_image_oncreate_page.dart';
 import 'package:espw/pages/upload_profile_image_page.dart';
 import 'package:espw/pages/verify_password_page.dart';
 import 'package:flutter/material.dart';
@@ -176,6 +178,29 @@ final routes = GoRouter(
                         deskripsiToko: state.uri.queryParameters['deskripsi_toko'],
                         kategoriToko: state.uri.queryParameters['kategori_toko'],
                       ),
+                      routes: [
+                        GoRoute(
+                          name: 'add-product-oncreate',
+                          path: 'add-product-oncreate',
+                          builder: (BuildContext context, GoRouterState state) => AddProductOnCreatePage(
+                            idToko: state.uri.queryParameters['id_toko']!,
+                          ),
+                          routes: [
+                            GoRoute(
+                              name: 'upload-product-image-oncreate',
+                              path: 'upload-product-image-oncreate',
+                              builder: (BuildContext context, GoRouterState state) => UploadProductImageOnCreatePage(
+                                namaProduk: state.uri.queryParameters['nama_produk'],
+                                harga: state.uri.queryParameters['harga'],
+                                stok: state.uri.queryParameters['stok'],
+                                deskripsiProduk: state.uri.queryParameters['deskripsi_produk'],
+                                detailProduk: state.uri.queryParameters['detail_produk'],
+                                idToko: state.uri.queryParameters['id_toko'],
+                              )
+                            )
+                          ]
+                        )
+                      ]
                     )
                   ]
                 ),
