@@ -16,6 +16,7 @@ import 'package:espw/pages/order_page.dart';
 import 'package:espw/pages/order_status_page.dart';
 import 'package:espw/pages/product_page.dart';
 import 'package:espw/pages/profile_page.dart';
+import 'package:espw/pages/set_schedule_page.dart';
 import 'package:espw/pages/shop_settings_page.dart';
 import 'package:espw/pages/shopdash_page.dart';
 import 'package:espw/pages/upload_product_image_oncreate_page.dart';
@@ -287,7 +288,18 @@ final routes = GoRouter(
             GoRoute(
               name: 'shop-settings',
               path: 'shop-settings',
-              builder: (BuildContext context, GoRouterState state) => const ShopSettingsPage(),
+              builder: (BuildContext context, GoRouterState state) => ShopSettingsPage(
+                idToko: state.uri.queryParameters['id_toko']!,
+              ),
+              routes: [
+                GoRoute(
+                  name: 'set-schedule',
+                  path: 'set-schedule',
+                  builder: (BuildContext context, GoRouterState state) => SetSchedulePage(
+                    idToko: state.uri.queryParameters['id_toko']!,
+                  )
+                )
+              ]
             ),
             GoRoute(
               name: 'edit-profile',

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ShopSettingsPage extends StatelessWidget{
-  const ShopSettingsPage({super.key});
+  const ShopSettingsPage({super.key, required this.idToko});
+  final String idToko;
 
   @override
   Widget build(BuildContext context){
@@ -15,32 +17,37 @@ class ShopSettingsPage extends StatelessWidget{
           ),
         ),
       ),
-      body: const SafeArea(
-        minimum: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      body: SafeArea(
+        minimum: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Column(
           children: [
             ItemButton(
-              itemTitle: Text('Informasi'),
+              itemTitle: const Text('Informasi'),
+              onPressed: () => context.pushNamed('search'),
             ),
             ItemButton(
-              itemTitle: Text('Jadwal Operasional'),
+              itemTitle: const Text('Jadwal Operasional'),
+              onPressed: () => context.pushNamed('set-schedule', queryParameters: {'id_toko': idToko}),
             ),
             ItemButton(
-              itemTitle: Text('Lokasi'),
+              itemTitle: const Text('Lokasi'),
+              onPressed: () => context.pushNamed('search'),
             ),
-            Divider(
+            const Divider(
               thickness: 0.25,
             ),
             ItemButton(
-              itemTitle: Text('Keluar Toko'),
+              itemTitle: const Text('Keluar Toko'),
+              onPressed: () => context.pushNamed('search'),
             ),
             ItemButton(
-              itemTitle: Text(
+              itemTitle: const Text(
                 'Hapus Toko',
                 style: TextStyle(
                   color: Colors.red
                 ),
               ),
+              onPressed: () => context.pushNamed('search'),
             ),
           ],
         ),
@@ -56,28 +63,23 @@ class ItemButton extends StatelessWidget{
 
   @override
   Widget build(BuildContext context){
-    return SizedBox(
-      width: double.infinity,
-      child: GestureDetector(
-        onTap: onPressed,
-        child: Card(
-          surfaceTintColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.zero,
+    return InkWell(
+      borderRadius: BorderRadius.circular(10),
+      onTap: onPressed,
+      child: Card(
+        color: Colors.transparent,
+        elevation: 0,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              itemTitle,
+              const Icon(Icons.keyboard_arrow_right)
+            ],
           ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                itemTitle,
-                const Icon(Icons.keyboard_arrow_right)
-              ],
-            ),
-          )
-        ),
-      )
+        )
+      ),
     );
   }
 }

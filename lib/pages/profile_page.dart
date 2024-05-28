@@ -309,9 +309,11 @@ class _ProfilePageState extends State<ProfilePage>{
                   ),
                   SizedBox(
                     width: double.infinity,
-                    child: GestureDetector(
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(10),
                       onTap: () => {},
                       child: Card(
+                        color: Colors.transparent,
                         elevation: 0,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -338,10 +340,12 @@ class _ProfilePageState extends State<ProfilePage>{
                   ),
                   SizedBox(
                     width: double.infinity,
-                    child: GestureDetector(
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(10),
                       onTap: () => context.pushNamed('favorite'),
                       child: Card(
                         elevation: 0,
+                        color: Colors.transparent,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                           child: Row(
@@ -372,9 +376,11 @@ class _ProfilePageState extends State<ProfilePage>{
                   ),
                   SizedBox(
                     width: double.infinity,
-                    child: GestureDetector(
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(10),
                       onTap: () => context.pushNamed('verify-password'),
                       child: Card(
+                        color: Colors.transparent,
                         elevation: 0,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -401,9 +407,11 @@ class _ProfilePageState extends State<ProfilePage>{
                   ),
                   SizedBox(
                     width: double.infinity,
-                    child: GestureDetector(
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(10),
                       onTap: () => {},
                       child: Card(
+                        color: Colors.transparent,
                         elevation: 0,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
