@@ -138,6 +138,31 @@ void createShop(
   }
 }
 
+void joinKelompok({required BuildContext context, required String kodeUnik}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/kelompok/join');
+  final response = await http.post(url, body: json.encode({
+    'kode_unik': kodeUnik
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  if(!context.mounted) return;
+  if(response.statusCode == 200){
+    context.goNamed('shop-dash', queryParameters: {'id_toko': json.decode(response.body)['id_toko']});
+    successSnackBar(
+      context: context,
+      content: 'Anda bergabung ke ${json.decode(response.body)['nama_toko']}'
+    );
+  } else {
+    alertSnackBar(
+      context: context,
+      content: 'Anda sudah bergabung'
+    );
+  }
+}
+
 Future<http.Response> kelompok() async {
   final SharedPreferences prefs = await _prefs;
   final url = Uri.https(baseUrl, '/api/kelompok');

@@ -20,22 +20,27 @@ class ShopSettingsPage extends StatelessWidget{
         child: Column(
           children: [
             ItemButton(
-              itemTitle: 'Informasi',
+              itemTitle: Text('Informasi'),
             ),
             ItemButton(
-              itemTitle: 'Jadwal Operasional',
+              itemTitle: Text('Jadwal Operasional'),
             ),
             ItemButton(
-              itemTitle: 'Tambah dan Ubah Lokasi',
+              itemTitle: Text('Lokasi'),
             ),
             Divider(
               thickness: 0.25,
             ),
             ItemButton(
-              itemTitle: 'Keluar Toko',
+              itemTitle: Text('Keluar Toko'),
             ),
             ItemButton(
-              itemTitle: 'Hapus Toko',
+              itemTitle: Text(
+                'Hapus Toko',
+                style: TextStyle(
+                  color: Colors.red
+                ),
+              ),
             ),
           ],
         ),
@@ -46,7 +51,7 @@ class ShopSettingsPage extends StatelessWidget{
 
 class ItemButton extends StatelessWidget{
   const ItemButton({super.key, required this.itemTitle, this.onPressed});
-  final String itemTitle;
+  final Widget itemTitle;
   final void Function()? onPressed;
 
   @override
@@ -66,7 +71,7 @@ class ItemButton extends StatelessWidget{
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(itemTitle),
+                itemTitle,
                 const Icon(Icons.keyboard_arrow_right)
               ],
             ),
