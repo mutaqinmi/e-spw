@@ -1,4 +1,6 @@
+import 'package:espw/app/controllers.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 
 class ShopSettingsPage extends StatelessWidget{
@@ -7,6 +9,9 @@ class ShopSettingsPage extends StatelessWidget{
 
   @override
   Widget build(BuildContext context){
+    final formFieldKey = GlobalKey<FormFieldState>();
+    String confirmText = '';
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -38,7 +43,32 @@ class ShopSettingsPage extends StatelessWidget{
             ),
             ItemButton(
               itemTitle: const Text('Keluar Toko'),
-              onPressed: () => context.pushNamed('search'),
+              onPressed: () async {
+                final bool? confirm = await showDialog(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    content: const Text('Apakah anda yakin ingin keluar?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => context.pop(false),
+                        child: const Text('Batal'),
+                      ),
+                      FilledButton(
+                        onPressed: () => context.pop(true),
+                        child: const Text('Keluar'),
+                      )
+                    ],
+                  )
+                );
+
+                if(!context.mounted) return;
+                if(confirm!){
+                  removeFromKelompok(
+                    context: context,
+                    idToko: idToko
+                  );
+                }
+              },
             ),
             ItemButton(
               itemTitle: const Text(
@@ -47,7 +77,69 @@ class ShopSettingsPage extends StatelessWidget{
                   color: Colors.red
                 ),
               ),
-              onPressed: () => context.pushNamed('search'),
+              onPressed: () async {
+                final bool? confirm = await showDialog(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: const Text('Hapus toko?'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text('Konfirmasi dengan mengetik kata dibawah ini.'),
+                        const Gap(10),
+                        TextFormField(
+                          key: formFieldKey,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          autofocus: true,
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(10))
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
+                            hintText: idToko,
+                          ),
+                          validator: (value){
+                            if(value!.isEmpty){
+                              return 'Isi field terlebih dahulu!';
+                            }
+
+                            if(value != idToko){
+                              return 'Kata tidak sesuai';
+                            }
+
+                            return null;
+                          },
+                          onChanged: (value){
+                            confirmText = value;
+                          },
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => context.pop(false),
+                        child: const Text('Batal'),
+                      ),
+                      FilledButton(
+                        onPressed: (){
+                          if(confirmText == idToko){
+                            context.pop(true);
+                          }
+                        },
+                        child: const Text('Hapus'),
+                      )
+                    ],
+                  )
+                );
+
+                if(!context.mounted) return;
+                if(confirm!){
+                  deleteShop(
+                    context: context,
+                    idToko: idToko
+                  );
+                }
+              },
             ),
           ],
         ),

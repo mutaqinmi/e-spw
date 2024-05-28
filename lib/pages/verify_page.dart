@@ -130,7 +130,7 @@ class _VerifyState extends State<Verify> {
 
                   return null;
                 },
-                onSaved: (value){_password = value!;},
+                onSaved: (value) => _password = value!,
               ),
             ),
           ],

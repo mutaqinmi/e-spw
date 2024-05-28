@@ -36,9 +36,16 @@ class _SetSchedulePageState extends State<SetSchedulePage>{
         minimum: const EdgeInsets.symmetric(horizontal: 16),
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
-          onTap: () => setState(() {
-            isOpen = !isOpen;
-          }),
+          onTap: () {
+            setState(() {
+              isOpen = !isOpen;
+            });
+            updateJadwal(
+              context: context,
+              idToko: widget.idToko,
+              isOpen: isOpen
+            );
+          },
           child: Card(
             color: Colors.transparent,
             elevation: 0,
@@ -48,9 +55,16 @@ class _SetSchedulePageState extends State<SetSchedulePage>{
                 const Text('Buka sekarang'),
                 Switch(
                   value: isOpen,
-                  onChanged: (value) => setState(() {
-                    isOpen = !isOpen;
-                  }),
+                  onChanged: (value){
+                    setState(() {
+                      isOpen = !isOpen;
+                    });
+                    updateJadwal(
+                      context: context,
+                      idToko: widget.idToko,
+                      isOpen: isOpen
+                    );
+                  },
                 )
               ],
             ),

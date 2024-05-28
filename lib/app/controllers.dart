@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:espw/widgets/bottom_snack_bar.dart';
@@ -138,6 +139,46 @@ void createShop(
   }
 }
 
+void deleteShop({required BuildContext context, required String idToko}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/shop/delete');
+  final response = await http.post(url, body: json.encode({
+    'id_toko': idToko
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  if(!context.mounted) return;
+  if(response.statusCode == 200){
+    context.goNamed('profile', queryParameters: {'user_id': prefs.getInt('nis').toString()});
+    successSnackBar(
+      context: context,
+      content: 'Toko dihapus!'
+    );
+  }
+}
+
+void updateJadwal({required BuildContext context, required String idToko, required bool isOpen}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/shop/update-jadwal');
+  final response = await http.post(url, body: json.encode({
+    'id_toko': idToko,
+    'is_open': isOpen,
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  if(!context.mounted) return;
+  if(response.statusCode == 200){
+    successSnackBar(
+      context: context,
+      content: 'Jadwal toko berhasil diubah'
+    );
+  }
+}
+
 void joinKelompok({required BuildContext context, required String kodeUnik}) async {
   final SharedPreferences prefs = await _prefs;
   final url = Uri.https(baseUrl, '/api/kelompok/join');
@@ -158,7 +199,27 @@ void joinKelompok({required BuildContext context, required String kodeUnik}) asy
   } else {
     alertSnackBar(
       context: context,
-      content: 'Anda sudah bergabung'
+      content: json.decode(response.body)['message']
+    );
+  }
+}
+
+void removeFromKelompok({required BuildContext context, required String idToko}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/kelompok/remove');
+  final response = await http.post(url, body: json.encode({
+    'id_toko': idToko
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  if(!context.mounted) return;
+  if(response.statusCode == 200){
+    context.goNamed('profile', queryParameters: {'user_id': prefs.getInt('nis').toString()});
+    successSnackBar(
+      context: context,
+      content: 'Anda keluar dari kelompok'
     );
   }
 }
