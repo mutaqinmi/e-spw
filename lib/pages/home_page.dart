@@ -6,6 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -38,6 +39,12 @@ class _HomePageState extends State<HomePage> {
     products().then((res) => setState(() {
       productList = json.decode(res.body)['data'];
     }));
+  }
+
+  Future<String> _getFotoProfil() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final fotoProfil = prefs.getString('foto_profil');
+    return fotoProfil!;
   }
 
   Widget _bannerList(BuildContext context){
@@ -113,10 +120,22 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   actions: [
-                    ProfilePicture(
-                      imageURL: 'https://$baseUrl/assets/images/profile.png',
-                      onTap: () => context.pushNamed('profile'),
-                    ),
+                    FutureBuilder(
+                      future: _getFotoProfil(),
+                      builder: (BuildContext context, AsyncSnapshot response){
+                        if(response.hasData){
+                          return ProfilePicture(
+                            imageURL: 'https://$baseUrl/assets/${response.data.isEmpty ? 'images/profile.png' : 'public/${response.data}'}',
+                            onTap: () => context.pushNamed('profile'),
+                          );
+                        }
+
+                        return ProfilePicture(
+                          imageURL: 'https://$baseUrl/assets/images/profile.png',
+                          onTap: () => context.pushNamed('profile'),
+                        );
+                      },
+                    )
                   ],
                 ),
               ),

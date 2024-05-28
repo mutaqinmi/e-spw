@@ -15,7 +15,7 @@ class EditProfilePage extends StatefulWidget{
 }
 
 class _EditProfilePageState extends State<EditProfilePage>{
-  File? filePath;
+  String profilePicture = '';
 
   Future<List> _getUserData() async {
     List userData = [];
@@ -37,15 +37,24 @@ class _EditProfilePageState extends State<EditProfilePage>{
     return userData;
   }
 
-  Future<File> _getImage() async {
+  @override
+  void initState() {
+    super.initState();
+    _getUserData().then((res) => setState(() {
+      profilePicture = res.first['foto_profil'];
+    }));
+  }
+
+  void _getImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     File? file = File(image!.path);
     file = await _cropImage(imageFile: file);
-    setState(() {
-      filePath = file;
-    });
-    return file!;
+    if(!mounted) return;
+    return updateProfilePicture(
+      context: context,
+      profilePicture: file!
+    );
   }
 
   Future<File?> _cropImage({required File imageFile}) async {
@@ -84,10 +93,10 @@ class _EditProfilePageState extends State<EditProfilePage>{
             children: [
               Column(
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 50,
                     backgroundImage: NetworkImage(
-                      'https://$baseUrl/assets/images/profile.png'
+                      'https://$baseUrl/assets/${profilePicture.isEmpty ? 'images/profile.png' : 'public/$profilePicture'}'
                     ),
                   ),
                   TextButton(

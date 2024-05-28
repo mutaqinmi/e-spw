@@ -14,12 +14,14 @@ class ProfilePage extends StatefulWidget{
 }
 
 class _ProfilePageState extends State<ProfilePage>{
+  String profilePicture = '';
   Future<List> _getUserData() async {
     List userData = [];
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final nis = prefs.getInt('nis');
     final nama = prefs.getString('nama');
     final kelas = prefs.getString('kelas');
+    final password = prefs.getString('password');
     final telepon = prefs.getString('telepon');
     final fotoProfil = prefs.getString('foto_profil');
 
@@ -27,11 +29,20 @@ class _ProfilePageState extends State<ProfilePage>{
       "nis": nis,
       "nama": nama,
       "kelas": kelas,
+      "password": password,
       "telepon": telepon,
       "foto_profil": fotoProfil
     });
 
     return userData;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getUserData().then((res) => setState(() {
+      profilePicture = res.first['foto_profil'];
+    }));
   }
 
   @override
@@ -41,6 +52,45 @@ class _ProfilePageState extends State<ProfilePage>{
       body: SingleChildScrollView(
         child: Column(
           children: [
+            FutureBuilder(
+              future: _getUserData(),
+              builder: (BuildContext context, AsyncSnapshot response){
+                if(response.hasData){
+                  return Visibility(
+                    visible: response.data.first['password'] == '12345' ? true : false,
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Card(
+                        elevation: 0,
+                        color: Colors.red,
+                        margin: const EdgeInsets.only(bottom: 20, left: 16, right: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: Text(
+                            'Kata sandi anda dalam keadaan default. Untuk keamanan, segera ubah kata sandi anda!',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  );
+                }
+
+                return const Text(
+                  "Profil",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600
+                  ),
+                );
+              },
+            ),
             Card(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               elevation: 0,
@@ -48,14 +98,14 @@ class _ProfilePageState extends State<ProfilePage>{
                 padding: const EdgeInsets.only(top: 10),
                 child: Column(
                   children: [
-                    const Hero(
+                    Hero(
                       tag: 'profile',
                       child: CircleAvatar(
                         radius: 40,
                         backgroundImage: NetworkImage(
-                          'https://$baseUrl/assets/images/profile.png'
+                          'https://$baseUrl/assets/${profilePicture.isEmpty ? 'images/profile.png' : 'public/$profilePicture'}'
                         ),
-                      ),
+                      )
                     ),
                     const Gap(20),
                     Column(
@@ -179,12 +229,6 @@ class _ProfilePageState extends State<ProfilePage>{
                     width: double.infinity,
                     child: Card(
                       elevation: 0,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        side: BorderSide(
-                          width: .5
-                        )
-                      ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                         child: Column(
@@ -211,11 +255,15 @@ class _ProfilePageState extends State<ProfilePage>{
                                       ))
                                     ),
                                     onPressed: () => context.goNamed('order', queryParameters: {'initial_index': '0'}),
-                                    child: const Column(
+                                    child: Column(
                                       children: [
-                                        Icon(Icons.history),
-                                        Gap(10),
-                                        Text(
+                                        Icon(
+                                          Icons.history,
+                                          color: Theme.of(context).primaryColor,
+                                          size: 35,
+                                        ),
+                                        const Gap(10),
+                                        const Text(
                                           'Diproses'
                                         )
                                       ],
@@ -232,11 +280,15 @@ class _ProfilePageState extends State<ProfilePage>{
                                       ))
                                     ),
                                     onPressed: () => context.goNamed('order', queryParameters: {'initial_index': '1'}),
-                                    child: const Column(
+                                    child: Column(
                                       children: [
-                                        Icon(Icons.check_circle_outline),
-                                        Gap(10),
-                                        Text(
+                                        Icon(
+                                          Icons.check_circle_outline,
+                                          color: Theme.of(context).primaryColor,
+                                          size: 35,
+                                        ),
+                                        const Gap(10),
+                                        const Text(
                                           'Selesai'
                                         )
                                       ],
@@ -250,20 +302,19 @@ class _ProfilePageState extends State<ProfilePage>{
                       ),
                     ),
                   ),
+                  const Gap(10),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 10, top: 15, bottom: 5),
+                    child: Text('Aktivitas Anda'),
+                  ),
                   SizedBox(
                     width: double.infinity,
                     child: GestureDetector(
                       onTap: () => {},
-                      child: const Card(
+                      child: Card(
                         elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                          side: BorderSide(
-                            width: .5
-                          )
-                        ),
                         child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -271,11 +322,14 @@ class _ProfilePageState extends State<ProfilePage>{
                                 spacing: 10,
                                 crossAxisAlignment: WrapCrossAlignment.center,
                                 children: [
-                                  Icon(Icons.stars_outlined),
-                                  Text('Penilaian Saya')
+                                  Icon(
+                                    Icons.stars_outlined,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                  const Text('Penilaian Saya')
                                 ],
                               ),
-                              Icon(Icons.keyboard_arrow_right)
+                              const Icon(Icons.keyboard_arrow_right)
                             ],
                           ),
                         ),
@@ -286,17 +340,10 @@ class _ProfilePageState extends State<ProfilePage>{
                     width: double.infinity,
                     child: GestureDetector(
                       onTap: () => context.pushNamed('favorite'),
-                      child: const Card(
+                      child: Card(
                         elevation: 0,
-                        surfaceTintColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                          side: BorderSide(
-                            width: .5
-                          )
-                        ),
                         child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -304,47 +351,84 @@ class _ProfilePageState extends State<ProfilePage>{
                                 spacing: 10,
                                 crossAxisAlignment: WrapCrossAlignment.center,
                                 children: [
-                                  Icon(Icons.favorite_outline),
-                                  Text('Toko yang disukai')
+                                  Icon(
+                                    Icons.favorite_outline,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                  const Text('Toko yang disukai')
                                 ],
                               ),
-                              Icon(Icons.keyboard_arrow_right)
+                              const Icon(Icons.keyboard_arrow_right)
                             ],
                           ),
                         ),
                       ),
                     )
                   ),
+                  const Gap(10),
                   const Padding(
                     padding: EdgeInsets.only(left: 10, top: 15, bottom: 5),
                     child: Text('Pengaturan Akun'),
                   ),
                   SizedBox(
                     width: double.infinity,
-                    child: Card(
-                      elevation: 0,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        side: BorderSide(
-                          width: .5
-                        )
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          MenuButton(
-                            icon: Icons.password,
-                            label: 'Ubah Kata Sandi',
-                            onPressed: () => context.pushNamed('verify-password'),
+                    child: GestureDetector(
+                      onTap: () => context.pushNamed('verify-password'),
+                      child: Card(
+                        elevation: 0,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Wrap(
+                                spacing: 10,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.password,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                  const Text('Ubah Kata Sandi')
+                                ],
+                              ),
+                              const Icon(Icons.keyboard_arrow_right)
+                            ],
                           ),
-                          const MenuButton(
-                            icon: Icons.location_on_outlined,
-                            label: 'Alamat Utama',
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
+                    )
                   ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: GestureDetector(
+                      onTap: () => {},
+                      child: Card(
+                        elevation: 0,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Wrap(
+                                spacing: 10,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.location_on_outlined,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                  const Text('Alamat Utama')
+                                ],
+                              ),
+                              const Icon(Icons.keyboard_arrow_right)
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  ),
+                  const Gap(10),
                   SizedBox(
                     width: double.infinity,
                     child: GestureDetector(
@@ -385,44 +469,6 @@ class _ProfilePageState extends State<ProfilePage>{
           ],
         ),
       )
-    );
-  }
-}
-
-class MenuButton extends StatelessWidget{
-  const MenuButton({super.key, required this.icon, required this.label, this.onPressed});
-  final IconData icon;
-  final String label;
-  final void Function()? onPressed;
-
-  @override
-  Widget build(BuildContext context){
-    return SizedBox(
-      width: double.infinity,
-      child: TextButton(
-        style: const ButtonStyle(
-          foregroundColor: WidgetStatePropertyAll(Colors.black),
-          overlayColor: WidgetStatePropertyAll(Colors.transparent),
-          shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-            borderRadius: BorderRadius.zero
-          ))
-        ),
-        onPressed: onPressed,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Wrap(
-              spacing: 10,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                Icon(icon),
-                Text(label)
-              ],
-            ),
-            const Icon(Icons.keyboard_arrow_right)
-          ],
-        ),
-      ),
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:espw/app/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -9,28 +10,66 @@ class ChangePassword extends StatefulWidget{
 }
 
 class _ChangePasswordState extends State<ChangePassword>{
+  Widget _buttonChild = const Text(
+    'Ubah Kata Sandi',
+    style: TextStyle(
+      fontWeight: FontWeight.w600,
+    ),
+  );
+  final _passwordKey = GlobalKey<FormFieldState>();
+  final _confirmPasswordKey = GlobalKey<FormFieldState>();
   bool _obscureTextNewPassword = true;
   bool _obscureTextConfirmPassword = true;
+  String _password = '';
+  String _confirmPassword = '';
+
+  void _submit(){
+    if(_passwordKey.currentState!.validate()){
+      _passwordKey.currentState!.save();
+      if(_confirmPasswordKey.currentState!.validate()){
+        _confirmPasswordKey.currentState!.save();
+        setState(() {
+          _buttonChild = const SizedBox(
+            width: 22,
+            height: 22,
+            child: CircularProgressIndicator(
+              color: Colors.white,
+            ),
+          );
+        });
+        changePassword(context, _confirmPassword);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Ubah Kata Sandi',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600
-          ),
-        ),
-      ),
+      appBar: AppBar(),
       body: SafeArea(
         minimum: const EdgeInsets.symmetric(horizontal: 16),
         child: Form(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Ubah Kata Sandi',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600
+                    ),
+                  ),
+                  Text(
+                    'Ubah kata sandi anda untuk keamanan akun.'
+                  )
+                ],
+              ),
               const Gap(10),
               TextFormField(
+                key: _passwordKey,
                 obscureText: _obscureTextNewPassword,
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(
@@ -44,11 +83,24 @@ class _ChangePasswordState extends State<ChangePassword>{
                     onPressed: () => setState(() {
                       _obscureTextNewPassword = !_obscureTextNewPassword;
                     }),
-                  )
+                  ),
                 ),
+                validator: (value){
+                  if(value!.isEmpty){
+                    return 'Masukkan password terlebih dahulu!';
+                  }
+
+                  return null;
+                },
+                onSaved: (value) => _password = value!,
+              ),
+              const Gap(30),
+              const Text(
+                'Konfirmasi kata sandi anda.'
               ),
               const Gap(10),
               TextFormField(
+                key: _confirmPasswordKey,
                 obscureText: _obscureTextConfirmPassword,
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(
@@ -64,6 +116,18 @@ class _ChangePasswordState extends State<ChangePassword>{
                     }),
                   )
                 ),
+                validator: (value){
+                  if(value!.isEmpty){
+                    return 'Konfirmasi password terlebih dahulu!';
+                  }
+
+                  if(value != _password){
+                    return 'Password tidak sesuai';
+                  }
+
+                  return null;
+                },
+                onSaved: (value) => _confirmPassword = value!,
               ),
             ],
           ),
@@ -84,13 +148,8 @@ class _ChangePasswordState extends State<ChangePassword>{
                   )
                 ),
               ),
-              child: const Text(
-                'Ubah Kata Sandi',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              onPressed: (){},
+              child: _buttonChild,
+              onPressed: () => _submit(),
             ),
           ),
         )

@@ -12,7 +12,6 @@ const String baseUrl = 'lucky-premium-redfish.ngrok-free.app';
 // const String baseUrl = 'espw.my.id';
 
 void signIn(BuildContext context, String nis) async {
-  final SharedPreferences prefs = await _prefs;
   final url = Uri.https(baseUrl, '/api/login');
   final response = await http.post(url, body: json.encode({
     'nis': int.parse(nis)
@@ -22,38 +21,17 @@ void signIn(BuildContext context, String nis) async {
 
   if(!context.mounted) return;
   if(response.statusCode == 200){
-    prefs.setInt('nis', json.decode(response.body)['data']['siswa']['nis']);
-    prefs.setString('nama', json.decode(response.body)['data']['siswa']['nama']);
-    prefs.setString('kelas', json.decode(response.body)['data']['kelas']['kelas']);
-    prefs.setString('password', json.decode(response.body)['data']['siswa']['password']);
-    prefs.setString('telepon', json.decode(response.body)['data']['siswa']['telepon']);
-    prefs.setString('foto_profil', json.decode(response.body)['data']['siswa']['foto_profil']);
-    prefs.setString('token', json.decode(response.body)['token']);
-
-    context.pushNamed('verify');
+    context.pushNamed('verify', queryParameters: {
+      'nis': json.decode(response.body)['data']['siswa']['nis'].toString(),
+      'nama': json.decode(response.body)['data']['siswa']['nama'],
+      'kelas': json.decode(response.body)['data']['kelas']['kelas'],
+      'password': json.decode(response.body)['data']['siswa']['password'],
+      'telepon': json.decode(response.body)['data']['siswa']['telepon'],
+      'foto_profil': json.decode(response.body)['data']['siswa']['foto_profil'],
+      'token': json.decode(response.body)['token'],
+    });
   } else {
     context.pushNamed('login-failed');
-  }
-}
-
-void verify(BuildContext context, String passwordText) async {
-  final SharedPreferences prefs = await _prefs;
-  final String? password = prefs.getString('password');
-
-  if(!context.mounted) return;
-  if(passwordText == password){
-    prefs.setBool('isAuthenticated', true);
-    successSnackBar(
-      context: context,
-      content: 'Login berhasil!'
-    );
-
-    context.goNamed('home');
-  } else {
-    alertSnackBar(
-      context: context,
-      content: 'Password salah!'
-    );
   }
 }
 
@@ -69,6 +47,49 @@ void logout(BuildContext context) async {
     prefs.clear();
     prefs.setBool('isAuthenticated', false);
     context.goNamed('signin');
+  }
+}
+
+void changePassword(BuildContext context, String newPassword) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/user/${prefs.getInt('nis')}/change-password');
+  final response = await http.patch(url, body: json.encode({
+    'password': newPassword
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  if(!context.mounted) return;
+  if(response.statusCode == 200){
+    prefs.setString('password', newPassword);
+    context.goNamed('profile', queryParameters: {'user_id': prefs.getInt('nis').toString()});
+    successSnackBar(
+      context: context,
+      content: 'Password berhasil diubah!'
+    );
+  }
+}
+
+void updateProfilePicture({required BuildContext context, required File profilePicture}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/user/${prefs.getInt('nis')}/update-profile-picture');
+  final request = http.MultipartRequest('POST', url);
+  request.headers.addAll({
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+  request.fields['old_image'] = prefs.getString('foto_profil') ?? '';
+  request.files.add(http.MultipartFile.fromBytes('profile_picture', File(profilePicture.path).readAsBytesSync(), filename: profilePicture.path));
+  final response = await request.send();
+  if(response.statusCode == 200){
+    final data = json.decode(await response.stream.bytesToString());
+    prefs.setString('foto_profil', data['siswa'].first['foto_profil']);
+    if(!context.mounted) return;
+    context.goNamed('profile', queryParameters: {'user_id': prefs.getInt('nis').toString()});
+    successSnackBar(
+      context: context,
+      content: 'Foto profil berhasil diubah!'
+    );
   }
 }
 

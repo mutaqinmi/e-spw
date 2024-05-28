@@ -1,9 +1,18 @@
+import 'package:espw/widgets/bottom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:espw/app/controllers.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Verify extends StatefulWidget {
-  const Verify({super.key});
+  const Verify({super.key, required this.nis, required this.nama, required this.kelas, required this.password, required this.telepon, required this.fotoProfil, required this.token});
+  final String nis;
+  final String nama;
+  final String kelas;
+  final String password;
+  final String telepon;
+  final String fotoProfil;
+  final String token;
 
   @override
   State<Verify> createState() => _VerifyState();
@@ -14,10 +23,33 @@ class _VerifyState extends State<Verify> {
   bool _obscureText = true;
   String _password = '';
 
-  void _submit(){
+  void _submit() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     if(_formFieldKey.currentState!.validate()){
       _formFieldKey.currentState!.save();
-      verify(context, _password);
+      if(!mounted) return;
+      if(_password == widget.password){
+        prefs.setBool('isAuthenticated', true);
+        prefs.setInt('nis', int.parse(widget.nis));
+        prefs.setString('nama', widget.nama);
+        prefs.setString('kelas', widget.kelas);
+        prefs.setString('password', widget.password);
+        prefs.setString('telepon', widget.telepon);
+        prefs.setString('foto_profil', widget.fotoProfil);
+        prefs.setString('token', widget.token);
+
+        successSnackBar(
+          context: context,
+          content: 'Login berhasil!'
+        );
+
+        context.goNamed('home');
+      } else {
+        alertSnackBar(
+          context: context,
+          content: 'Password salah!'
+        );
+      }
     }
   }
 

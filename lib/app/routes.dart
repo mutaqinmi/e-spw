@@ -57,7 +57,15 @@ final routes = GoRouter(
         GoRoute(
           name: 'verify',
           path: 'verify',
-          builder: (BuildContext context, GoRouterState state) => const Verify(),
+          builder: (BuildContext context, GoRouterState state) => Verify(
+            nis: state.uri.queryParameters['nis']!,
+            nama: state.uri.queryParameters['nama']!,
+            kelas: state.uri.queryParameters['kelas']!,
+            password: state.uri.queryParameters['password']!,
+            telepon: state.uri.queryParameters['telepon']!,
+            fotoProfil: state.uri.queryParameters['foto_profil']!,
+            token: state.uri.queryParameters['token']!,
+          ),
         ),
         GoRoute(
           name: 'login-failed',
