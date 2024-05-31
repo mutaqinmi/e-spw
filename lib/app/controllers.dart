@@ -155,7 +155,11 @@ void createShop(
   if(response.statusCode == 200){
     final data = json.decode(await response.stream.bytesToString());
     if(!context.mounted) return;
-    context.pushNamed('add-product-oncreate', queryParameters: {'id_toko': data['toko'].first['id_toko'], 'isRedirect': 'false'});
+    context.goNamed('add-product-oncreate', queryParameters: {'id_toko': data['toko'].first['id_toko'], 'isRedirect': 'false'});
+    successSnackBar(
+      context: context,
+      content: 'Toko berhasil dibuat!'
+    );
   }
 }
 

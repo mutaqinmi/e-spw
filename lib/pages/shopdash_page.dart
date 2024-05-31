@@ -14,12 +14,12 @@ class ShopDashPage extends StatefulWidget{
 }
 
 class _ShopDashPageState extends State<ShopDashPage>{
-  List shopList = [];
+  List hasData = [];
   @override
   void initState() {
     super.initState();
     shopById(widget.idToko).then((res) => setState(() {
-      shopList = json.decode(res.body)['data'];
+      hasData = json.decode(res.body)['data'];
     }));
   }
   @override
@@ -37,378 +37,397 @@ class _ShopDashPageState extends State<ShopDashPage>{
       body: FutureBuilder(
         future: shopById(widget.idToko),
         builder: (BuildContext context, AsyncSnapshot response){
-          if(response.hasData && response.connectionState == ConnectionState.done){
-            return SingleChildScrollView(
-              child: SafeArea(
-                top: false,
-                minimum: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () => context.pushNamed('set-schedule', queryParameters: {'id_toko': widget.idToko}),
-                      child: Card(
-                        elevation: 0,
-                        color: shopList.first['toko']['is_open'] == true ? Colors.green : Colors.red,
-                        margin: const EdgeInsets.only(bottom: 20),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const Text(
-                                'Toko anda sedang ',
-                                style: TextStyle(
-                                  color: Colors.white
+          if(response.hasData){
+            if(json.decode(response.data.body)['data'].isNotEmpty){
+              final shop = json.decode(response.data.body)['data'];
+              return SingleChildScrollView(
+                child: SafeArea(
+                  top: false,
+                  minimum: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () => context.pushNamed('set-schedule', queryParameters: {'id_toko': widget.idToko}),
+                        child: Card(
+                          elevation: 0,
+                          color: shop.first['toko']['is_open'] == true ? Colors.green : Colors.red,
+                          margin: const EdgeInsets.only(bottom: 20),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  'Toko anda sedang ',
+                                  style: TextStyle(
+                                    color: Colors.white
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                shopList.first['toko']['is_open'] == true ? 'Buka' : 'Tutup',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              )
-                            ],
+                                Text(
+                                  shop.first['toko']['is_open'] == true ? 'Buka' : 'Tutup',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 30,
-                          backgroundImage: CachedNetworkImageProvider(
-                            'https://$baseUrl/assets/public/${shopList.first['toko']['banner_toko']}'
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 30,
+                            backgroundImage: CachedNetworkImageProvider(
+                              'https://$baseUrl/assets/public/${shop.first['toko']['banner_toko']}'
+                            ),
                           ),
-                        ),
-                        const Gap(10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                shopList.first['toko']['nama_toko'],
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600
+                          const Gap(10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  shop.first['toko']['nama_toko'],
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                shopList.first['kelas']['kelas']
+                                Text(
+                                  shop.first['kelas']['kelas']
+                                )
+                              ],
+                            ),
+                          ),
+                          FilledButton(
+                            style: ButtonStyle(
+                              visualDensity: VisualDensity.compact,
+                              backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+                              foregroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColor),
+                              side: WidgetStatePropertyAll(BorderSide(
+                                color: Theme.of(context).primaryColor
+                              ))
+                            ),
+                            onPressed: () => context.pushNamed('shop', queryParameters: {'shopID': shop.first['toko']['id_toko']}),
+                            child: const Text('Kunjungi toko')
+                          )
+                        ],
+                      ),
+                      const Gap(30),
+                      Column(
+                        children: [
+                          Column(
+                            children: [
+                              GestureDetector(
+                                onTap: () => context.pushNamed('order-status'),
+                                child: const Card(
+                                  elevation: 0,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Penjualan'
+                                      ),
+                                      Icon(Icons.keyboard_arrow_right)
+                                    ],
+                                  ),
+                                ),
                               )
                             ],
                           ),
-                        ),
-                        FilledButton(
-                          style: ButtonStyle(
-                            visualDensity: VisualDensity.compact,
-                            backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
-                            foregroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColor),
-                            side: WidgetStatePropertyAll(BorderSide(
-                              color: Theme.of(context).primaryColor
-                            ))
+                          const Gap(10),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextButton(
+                                  style: const ButtonStyle(
+                                    shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.zero
+                                    )),
+                                    foregroundColor: WidgetStatePropertyAll(Colors.black),
+                                    padding: WidgetStatePropertyAll(EdgeInsets.zero),
+                                    overlayColor: WidgetStatePropertyAll(Colors.transparent)
+                                  ),
+                                  onPressed: () => context.pushNamed('order-status', queryParameters: {'initial_index': '1'}),
+                                  child: Column(
+                                    children: [
+                                      Icon(
+                                        Icons.upcoming_outlined,
+                                        size: 35,
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                      const Gap(10),
+                                      const Text('Pesanan baru')
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: TextButton(
+                                  style: const ButtonStyle(
+                                    shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.zero
+                                    )),
+                                    foregroundColor: WidgetStatePropertyAll(Colors.black),
+                                    padding: WidgetStatePropertyAll(EdgeInsets.zero),
+                                    overlayColor: WidgetStatePropertyAll(Colors.transparent)
+                                  ),
+                                  onPressed: () => context.pushNamed('order-status', queryParameters: {'initial_index': '2'}),
+                                  child: Column(
+                                    children: [
+                                      Icon(
+                                        Icons.event_repeat_outlined,
+                                        size: 35,
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                      const Gap(10),
+                                      const Text('Diproses')
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          onPressed: () => context.pushNamed('shop', queryParameters: {'shopID': shopList.first['toko']['id_toko']}),
-                          child: const Text('Kunjungi toko')
-                        )
-                      ],
-                    ),
-                    const Gap(30),
-                    Column(
-                      children: [
-                        Column(
-                          children: [
-                            GestureDetector(
-                              onTap: () => context.pushNamed('order-status'),
-                              child: const Card(
+                        ],
+                      ),
+                      const Gap(30),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Card(
+                            elevation: 0,
+                            child: Text(
+                              'Produk'
+                            ),
+                          ),
+                          InkWell(
+                            borderRadius: BorderRadius.circular(10),
+                            onTap: () => context.pushNamed('product', queryParameters: {'id_toko': shop.first['toko']['id_toko']}),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 5),
+                              child: Card(
+                                color: Colors.transparent,
                                 elevation: 0,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      'Penjualan'
+                                    Wrap(
+                                      crossAxisAlignment: WrapCrossAlignment.center,
+                                      spacing: 10,
+                                      children: [
+                                        Icon(
+                                          Icons.inventory_2_outlined,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            const Text(
+                                              'Daftar Produk',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500
+                                              ),
+                                            ),
+                                            Text(
+                                              '${shop.length} Produk'
+                                            )
+                                          ],
+                                        ),
+                                      ],
                                     ),
-                                    Icon(Icons.keyboard_arrow_right)
+                                    const Icon(Icons.keyboard_arrow_right)
                                   ],
                                 ),
                               ),
                             )
-                          ],
-                        ),
-                        const Gap(10),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextButton(
-                                style: const ButtonStyle(
-                                  shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.zero
-                                  )),
-                                  foregroundColor: WidgetStatePropertyAll(Colors.black),
-                                  padding: WidgetStatePropertyAll(EdgeInsets.zero),
-                                  overlayColor: WidgetStatePropertyAll(Colors.transparent)
-                                ),
-                                onPressed: () => context.pushNamed('order-status', queryParameters: {'initial_index': '1'}),
-                                child: Column(
-                                  children: [
-                                    Icon(
-                                      Icons.upcoming_outlined,
-                                      size: 35,
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                    const Gap(10),
-                                    const Text('Pesanan baru')
-                                  ],
-                                ),
-                              ),
+                          )
+                        ],
+                      ),
+                      const Gap(30),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Card(
+                            elevation: 0,
+                            child: Text(
+                              'Penilaian Pembeli'
                             ),
-                            Expanded(
-                              child: TextButton(
-                                style: const ButtonStyle(
-                                  shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.zero
-                                  )),
-                                  foregroundColor: WidgetStatePropertyAll(Colors.black),
-                                  padding: WidgetStatePropertyAll(EdgeInsets.zero),
-                                  overlayColor: WidgetStatePropertyAll(Colors.transparent)
-                                ),
-                                onPressed: () => context.pushNamed('order-status', queryParameters: {'initial_index': '2'}),
-                                child: Column(
-                                  children: [
-                                    Icon(
-                                      Icons.event_repeat_outlined,
-                                      size: 35,
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                    const Gap(10),
-                                    const Text('Diproses')
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const Gap(30),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Card(
-                          elevation: 0,
-                          child: Text(
-                            'Produk'
                           ),
-                        ),
-                        InkWell(
-                          borderRadius: BorderRadius.circular(10),
-                          onTap: () => context.pushNamed('product', queryParameters: {'id_toko': shopList.first['toko']['id_toko']}),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5),
-                            child: Card(
-                              color: Colors.transparent,
-                              elevation: 0,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Wrap(
-                                    crossAxisAlignment: WrapCrossAlignment.center,
-                                    spacing: 10,
-                                    children: [
-                                      Icon(
-                                        Icons.inventory_2_outlined,
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            'Daftar Produk',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500
-                                            ),
+                          InkWell(
+                            borderRadius: BorderRadius.circular(10),
+                            onTap: () => (),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Card(
+                                color: Colors.transparent,
+                                elevation: 0,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Wrap(
+                                      crossAxisAlignment: WrapCrossAlignment.center,
+                                      spacing: 10,
+                                      children: [
+                                        Icon(
+                                          Icons.star_rate_outlined,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                        const Text(
+                                          'Ulasan',
+                                          style: TextStyle(
+                                            fontSize: 16,
                                           ),
-                                          Text(
-                                            '${shopList.length} Produk'
-                                          )
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  const Icon(Icons.keyboard_arrow_right)
-                                ],
+                                        ),
+                                      ],
+                                    ),
+                                    const Icon(Icons.keyboard_arrow_right)
+                                  ],
+                                ),
                               ),
-                            ),
+                            )
                           )
-                        )
-                      ],
-                    ),
-                    const Gap(30),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Card(
-                          elevation: 0,
-                          child: Text(
-                            'Penilaian Pembeli'
+                        ],
+                      ),
+                      const Gap(30),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Card(
+                            elevation: 0,
+                            child: Text(
+                              'Lainnya'
+                            ),
                           ),
-                        ),
-                        InkWell(
-                          borderRadius: BorderRadius.circular(10),
-                          onTap: () => (),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Card(
-                              color: Colors.transparent,
-                              elevation: 0,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Wrap(
-                                    crossAxisAlignment: WrapCrossAlignment.center,
-                                    spacing: 10,
-                                    children: [
-                                      Icon(
-                                        Icons.star_rate_outlined,
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                      const Text(
-                                        'Ulasan',
-                                        style: TextStyle(
-                                          fontSize: 16,
+                          const Gap(5),
+                          InkWell(
+                            borderRadius: BorderRadius.circular(10),
+                            onTap: () => (),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Card(
+                                color: Colors.transparent,
+                                elevation: 0,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Wrap(
+                                      crossAxisAlignment: WrapCrossAlignment.center,
+                                      spacing: 10,
+                                      children: [
+                                        Icon(
+                                          Icons.ads_click,
+                                          color: Theme.of(context).primaryColor,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  const Icon(Icons.keyboard_arrow_right)
-                                ],
+                                        const Text(
+                                          'Promosi',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const Icon(Icons.keyboard_arrow_right)
+                                  ],
+                                ),
                               ),
-                            ),
-                          )
-                        )
-                      ],
-                    ),
-                    const Gap(30),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Card(
-                          elevation: 0,
-                          child: Text(
-                            'Lainnya'
+                            )
                           ),
-                        ),
-                        const Gap(5),
-                        InkWell(
-                          borderRadius: BorderRadius.circular(10),
-                          onTap: () => (),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Card(
-                              color: Colors.transparent,
-                              elevation: 0,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Wrap(
-                                    crossAxisAlignment: WrapCrossAlignment.center,
-                                    spacing: 10,
-                                    children: [
-                                      Icon(
-                                        Icons.ads_click,
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                      const Text(
-                                        'Promosi',
-                                        style: TextStyle(
-                                          fontSize: 16,
+                          InkWell(
+                            borderRadius: BorderRadius.circular(10),
+                            onTap: () => (),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Card(
+                                color: Colors.transparent,
+                                elevation: 0,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Wrap(
+                                      crossAxisAlignment: WrapCrossAlignment.center,
+                                      spacing: 10,
+                                      children: [
+                                        Icon(
+                                          Icons.storefront_outlined,
+                                          color: Theme.of(context).primaryColor,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  const Icon(Icons.keyboard_arrow_right)
-                                ],
-                              ),
-                            ),
-                          )
-                        ),
-                        InkWell(
-                          borderRadius: BorderRadius.circular(10),
-                          onTap: () => (),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Card(
-                              color: Colors.transparent,
-                              elevation: 0,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Wrap(
-                                    crossAxisAlignment: WrapCrossAlignment.center,
-                                    spacing: 10,
-                                    children: [
-                                      Icon(
-                                        Icons.storefront_outlined,
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                      const Text(
-                                        'Live Mode',
-                                        style: TextStyle(
-                                          fontSize: 16,
+                                        const Text(
+                                          'Live Mode',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  const Icon(Icons.keyboard_arrow_right)
-                                ],
+                                      ],
+                                    ),
+                                    const Icon(Icons.keyboard_arrow_right)
+                                  ],
+                                ),
                               ),
-                            ),
-                          )
-                        ),
-                        InkWell(
-                          borderRadius: BorderRadius.circular(10),
-                          onTap: () => context.pushNamed('shop-settings', queryParameters: {'id_toko': widget.idToko}),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Card(
-                              color: Colors.transparent,
-                              elevation: 0,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Wrap(
-                                    crossAxisAlignment: WrapCrossAlignment.center,
-                                    spacing: 10,
-                                    children: [
-                                      Icon(
-                                        Icons.settings_outlined,
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                      const Text(
-                                        'Pengaturan toko',
-                                        style: TextStyle(
-                                          fontSize: 16,
+                            )
+                          ),
+                          InkWell(
+                            borderRadius: BorderRadius.circular(10),
+                            onTap: () => context.pushNamed('shop-settings', queryParameters: {'id_toko': widget.idToko}),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Card(
+                                color: Colors.transparent,
+                                elevation: 0,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Wrap(
+                                      crossAxisAlignment: WrapCrossAlignment.center,
+                                      spacing: 10,
+                                      children: [
+                                        Icon(
+                                          Icons.settings_outlined,
+                                          color: Theme.of(context).primaryColor,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  const Icon(Icons.keyboard_arrow_right)
-                                ],
+                                        const Text(
+                                          'Pengaturan toko',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const Icon(Icons.keyboard_arrow_right)
+                                  ],
+                                ),
                               ),
-                            ),
+                            )
                           )
-                        )
-                      ],
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            } else if (json.decode(response.data.body)['data'].isEmpty){
+              return const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Toko anda belum memiliki produk',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600
+                      ),
                     ),
+                    Text('Tambahkan produk untuk memulai'),
                   ],
                 ),
-              ),
-            );
+              );
+            }
           }
 
           return const Center(
@@ -416,11 +435,26 @@ class _ShopDashPageState extends State<ShopDashPage>{
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: (){},
-        icon: const Icon(Icons.assignment_outlined),
-        label: const Text('Laporan'),
-      ),
+      floatingActionButton: FutureBuilder(
+        future: shopById(widget.idToko),
+        builder: (BuildContext context, AsyncSnapshot response){
+          if(response.hasData){
+            if(json.decode(response.data.body)['data'].isNotEmpty){
+              return FloatingActionButton.extended(
+                onPressed: (){},
+                icon: const Icon(Icons.assignment_outlined),
+                label: const Text('Laporan'),
+              );
+            }
+          }
+
+          return FloatingActionButton.extended(
+            onPressed: () => context.pushNamed('add-product', queryParameters: {'id_toko': widget.idToko}),
+            icon: const Icon(Icons.add),
+            label: const Text('Tambah Produk'),
+          );
+        },
+      )
     );
   }
 }

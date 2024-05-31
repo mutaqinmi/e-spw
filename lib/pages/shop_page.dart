@@ -126,343 +126,356 @@ class _ShopPageState extends State<ShopPage>{
         child: FutureBuilder(
           future: shopById(widget.shopID),
           builder: (BuildContext context, AsyncSnapshot response){
-            if(response.hasData || response.connectionState == ConnectionState.done){
-              return CustomScrollView(
-                slivers: [
-                  SliverAppBar(
-                    pinned: true,
-                    actions: [
-                      IconButton(
-                        onPressed: (){},
-                        icon: const Icon(Icons.info_outline),
-                      ),
-                      Badge(
-                        isLabelVisible: cartBadge == 0 ? false : true,
-                        offset: const Offset(-8, 8),
-                        label: Text(cartBadge.toString()),
-                        child: IconButton(
-                          onPressed: () => context.pushNamed('cart'),
-                          icon: const Icon(Icons.shopping_cart_outlined),
+            if(response.hasData){
+              if(shopList.isNotEmpty){
+                return CustomScrollView(
+                  slivers: [
+                    SliverAppBar(
+                      pinned: true,
+                      actions: [
+                        IconButton(
+                          onPressed: (){},
+                          icon: const Icon(Icons.info_outline),
+                        ),
+                        Badge(
+                          isLabelVisible: cartBadge == 0 ? false : true,
+                          offset: const Offset(-8, 8),
+                          label: Text(cartBadge.toString()),
+                          child: IconButton(
+                            onPressed: () => context.pushNamed('cart'),
+                            icon: const Icon(Icons.shopping_cart_outlined),
+                          ),
+                        ),
+                      ],
+                      expandedHeight: 200,
+                      flexibleSpace: FlexibleSpaceBar(
+                        background: CachedNetworkImage(
+                          imageUrl: 'https://$baseUrl/assets/${shopList.first['toko']['banner_toko'].isEmpty ? 'images/shop-profile.png' : 'public/${shopList.first['toko']['banner_toko']}'}',
+                          fit: BoxFit.cover,
                         ),
                       ),
-                    ],
-                    expandedHeight: 200,
-                    flexibleSpace: FlexibleSpaceBar(
-                      background: CachedNetworkImage(
-                        imageUrl: 'https://$baseUrl/assets/${shopList.first['toko']['banner_toko'].isEmpty ? 'images/shop-profile.png' : 'public/${shopList.first['toko']['banner_toko']}'}',
-                        fit: BoxFit.cover,
-                      ),
                     ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: SafeArea(
-                      top: false,
-                      minimum: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                    SliverToBoxAdapter(
+                      child: SafeArea(
+                        top: false,
+                        minimum: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Wrap(
+                                        crossAxisAlignment: WrapCrossAlignment.center,
+                                        spacing: 5,
+                                        children: [
+                                          Text(
+                                            '${shopList.first['toko']['nama_toko']}',
+                                            style: const TextStyle(
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.w600
+                                            ),
+                                          ),
+                                          _isOpen(shopList.first['toko']['is_open'])
+                                        ],
+                                      ),
+                                      Text(
+                                        shopList.first['toko']['deskripsi_toko'],
+                                      ),
+                                      Wrap(
+                                        crossAxisAlignment: WrapCrossAlignment.center,
+                                        spacing: 5,
+                                        children: [
+                                          RatingBar(
+                                            ignoreGestures: true,
+                                            allowHalfRating: true,
+                                            initialRating: double.parse(shopList.first['toko']['rating_toko']),
+                                            itemSize: 18,
+                                            ratingWidget: RatingWidget(
+                                              full: Icon(Icons.star, color: Theme.of(context).primaryColor),
+                                              half: Icon(Icons.star_half, color: Theme.of(context).primaryColor),
+                                              empty: Icon(Icons.star_outline, color: Theme.of(context).primaryColor)
+                                            ),
+                                            onRatingUpdate: (rating){},
+                                          ),
+                                          Text(
+                                            shopList.first['toko']['rating_toko'].toString()
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: (){},
+                                  icon: Icon(Icons.favorite_outline, color: Theme.of(context).primaryColor),
+                                )
+                              ],
+                            ),
+                            const Gap(20),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Wrap(
+                                  spacing: 5,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
                                   children: [
-                                    Wrap(
-                                      crossAxisAlignment: WrapCrossAlignment.center,
-                                      spacing: 5,
-                                      children: [
-                                        Text(
-                                          '${shopList.first['toko']['nama_toko']}',
-                                          style: const TextStyle(
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.w600
-                                          ),
-                                        ),
-                                        _isOpen(shopList.first['toko']['is_open'])
-                                      ],
-                                    ),
                                     Text(
-                                      shopList.first['toko']['deskripsi_toko'],
+                                      'Unggulan',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600
+                                      ),
                                     ),
-                                    Wrap(
-                                      crossAxisAlignment: WrapCrossAlignment.center,
-                                      spacing: 5,
-                                      children: [
-                                        RatingBar(
-                                          ignoreGestures: true,
-                                          allowHalfRating: true,
-                                          initialRating: double.parse(shopList.first['toko']['rating_toko']),
-                                          itemSize: 18,
-                                          ratingWidget: RatingWidget(
-                                            full: Icon(Icons.star, color: Theme.of(context).primaryColor),
-                                            half: Icon(Icons.star_half, color: Theme.of(context).primaryColor),
-                                            empty: Icon(Icons.star_outline, color: Theme.of(context).primaryColor)
-                                          ),
-                                          onRatingUpdate: (rating){},
-                                        ),
-                                        Text(
-                                          shopList.first['toko']['rating_toko'].toString()
-                                        ),
-                                      ],
+                                    Icon(
+                                      Icons.emoji_events,
+                                      size: 16,
                                     )
                                   ],
                                 ),
-                              ),
-                              IconButton(
-                                onPressed: (){},
-                                icon: Icon(Icons.favorite_outline, color: Theme.of(context).primaryColor),
-                              )
-                            ],
-                          ),
-                          const Gap(20),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Wrap(
-                                spacing: 5,
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                children: [
-                                  Text(
-                                    'Unggulan',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.emoji_events,
-                                    size: 16,
-                                  )
-                                ],
-                              ),
-                              const Text(
-                                'Yang paling disukai di toko ini.',
-                              ),
-                              const Gap(10),
-                              GestureDetector(
-                                onTap: () => _showAddToCart(0),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Card(
-                                    child: Column(
-                                      children: [
-                                        Stack(
-                                          children: [
-                                            ClipRRect(
-                                              borderRadius: BorderRadius.circular(15),
-                                              child: CachedNetworkImage(
-                                                imageUrl: 'https://$baseUrl/assets/public/${shopList.first['produk']['foto_produk']}',
-                                                width: double.infinity,
-                                                height: 200,
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                            Positioned(
-                                              top: 10,
-                                              right: 10,
-                                              child: Container(
-                                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                                decoration: const BoxDecoration(
-                                                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                                                  color: Colors.white
+                                const Text(
+                                  'Yang paling disukai di toko ini.',
+                                ),
+                                const Gap(10),
+                                GestureDetector(
+                                  onTap: () => _showAddToCart(0),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Card(
+                                      child: Column(
+                                        children: [
+                                          Stack(
+                                            children: [
+                                              ClipRRect(
+                                                borderRadius: BorderRadius.circular(15),
+                                                child: CachedNetworkImage(
+                                                  imageUrl: 'https://$baseUrl/assets/public/${shopList.first['produk']['foto_produk']}',
+                                                  width: double.infinity,
+                                                  height: 200,
+                                                  fit: BoxFit.cover,
                                                 ),
-                                                child: Row(
-                                                  children: [
-                                                    Text(shopList.first['produk']['rating_produk'].toString()),
-                                                    Icon(Icons.star_rate_rounded, color: Theme.of(context).primaryColor),
-                                                  ],
-                                                )
                                               ),
-                                            ),
-                                            Positioned(
-                                              left: 0,
-                                              right: 0,
-                                              bottom: 0,
-                                              child: Container(
-                                                decoration: const BoxDecoration(
-                                                  borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
-                                                  gradient: LinearGradient(
-                                                    begin: Alignment.topCenter,
-                                                    end: Alignment.bottomCenter,
-                                                    colors: [
-                                                      Colors.transparent,
-                                                      Colors.black
-                                                    ]
+                                              Positioned(
+                                                top: 10,
+                                                right: 10,
+                                                child: Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                  decoration: const BoxDecoration(
+                                                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                                                    color: Colors.white
+                                                  ),
+                                                  child: Row(
+                                                    children: [
+                                                      Text(shopList.first['produk']['rating_produk'].toString()),
+                                                      Icon(Icons.star_rate_rounded, color: Theme.of(context).primaryColor),
+                                                    ],
                                                   )
                                                 ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                              ),
+                                              Positioned(
+                                                left: 0,
+                                                right: 0,
+                                                bottom: 0,
+                                                child: Container(
+                                                  decoration: const BoxDecoration(
+                                                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
+                                                    gradient: LinearGradient(
+                                                      begin: Alignment.topCenter,
+                                                      end: Alignment.bottomCenter,
+                                                      colors: [
+                                                        Colors.transparent,
+                                                        Colors.black
+                                                      ]
+                                                    )
+                                                  ),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Expanded(
+                                                          child: Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                              Text(
+                                                                shopList.first['produk']['nama_produk'],
+                                                                overflow: TextOverflow.ellipsis,
+                                                                style: const TextStyle(
+                                                                  fontSize: 18,
+                                                                  fontWeight: FontWeight.w600,
+                                                                  color: Colors.white
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                shopList.first['produk']['deskripsi_produk'],
+                                                                overflow: TextOverflow.ellipsis,
+                                                                style: const TextStyle(
+                                                                  fontSize: 12,
+                                                                  color: Colors.white
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        const Gap(20),
+                                                        Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.end,
                                                           children: [
                                                             Text(
-                                                              shopList.first['produk']['nama_produk'],
-                                                              overflow: TextOverflow.ellipsis,
+                                                              'Rp. ${formatter.format(int.parse(shopList.first['produk']['harga']))}',
                                                               style: const TextStyle(
-                                                                fontSize: 18,
+                                                                fontSize: 14,
                                                                 fontWeight: FontWeight.w600,
                                                                 color: Colors.white
                                                               ),
                                                             ),
                                                             Text(
-                                                              shopList.first['produk']['deskripsi_produk'],
-                                                              overflow: TextOverflow.ellipsis,
+                                                              'Terjual ${shopList.first['produk']['jumlah_terjual']}',
                                                               style: const TextStyle(
                                                                 fontSize: 12,
                                                                 color: Colors.white
                                                               ),
                                                             ),
                                                           ],
-                                                        ),
-                                                      ),
-                                                      const Gap(20),
-                                                      Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.end,
-                                                        children: [
-                                                          Text(
-                                                            'Rp. ${formatter.format(int.parse(shopList.first['produk']['harga']))}',
-                                                            style: const TextStyle(
-                                                              fontSize: 14,
-                                                              fontWeight: FontWeight.w600,
-                                                              color: Colors.white
-                                                            ),
-                                                          ),
-                                                          Text(
-                                                            'Terjual ${shopList.first['produk']['jumlah_terjual']}',
-                                                            style: const TextStyle(
-                                                              fontSize: 12,
-                                                              color: Colors.white
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      )
-                                                    ],
+                                                        )
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                          const Gap(20),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Menu',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600
-                                ),
-                              ),
-                              Text(
-                                'Semua menu (${shopList.length})'
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  SliverList.builder(
-                    itemCount: shopList.length,
-                    itemBuilder: (BuildContext context, int index){
-                      final product = shopList[index];
-                      return SafeArea(
-                        top: false,
-                        bottom: false,
-                        minimum: const EdgeInsets.only(left: 16, right: 16, top: 10),
-                        child: Column(
-                          children: [
-                            GestureDetector(
-                              onTap: (){},
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: CachedNetworkImage(
-                                      imageUrl: 'https://$baseUrl/assets/public/${product['produk']['foto_produk']}',
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left: 15),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                product['produk']['nama_produk'],
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w600
-                                                ),
-                                              ),
-                                              Text(
-                                                'Terjual ${product['produk']['jumlah_terjual']}',
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const Gap(20),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                'Rp. ${formatter.format(int.parse(product['produk']['harga']))}',
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.w600
-                                                ),
-                                              ),
-                                              OutlinedButton(
-                                                onPressed: () => _showAddToCart(index),
-                                                style: const ButtonStyle(
-                                                  visualDensity: VisualDensity.compact
-                                                ),
-                                                child: const Text('Tambah'),
                                               )
                                             ],
-                                          )
+                                          ),
                                         ],
                                       ),
                                     ),
-                                  )
-                                ],
-                              ),
+                                  ),
+                                )
+                              ],
                             ),
-                            const Gap(10),
-                            const Divider(
-                              thickness: 0.2,
+                            const Gap(20),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Menu',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600
+                                  ),
+                                ),
+                                Text(
+                                  'Semua menu (${shopList.length})'
+                                )
+                              ],
                             )
                           ],
-                        )
-                      );
-                    },
-                  ),
-                ],
-              );
+                        ),
+                      ),
+                    ),
+                    SliverList.builder(
+                      itemCount: shopList.length,
+                      itemBuilder: (BuildContext context, int index){
+                        final product = shopList[index];
+                        return SafeArea(
+                          top: false,
+                          bottom: false,
+                          minimum: const EdgeInsets.only(left: 16, right: 16, top: 10),
+                          child: Column(
+                            children: [
+                              GestureDetector(
+                                onTap: (){},
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: CachedNetworkImage(
+                                        imageUrl: 'https://$baseUrl/assets/public/${product['produk']['foto_produk']}',
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(left: 15),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  product['produk']['nama_produk'],
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w600
+                                                  ),
+                                                ),
+                                                Text(
+                                                  'Terjual ${product['produk']['jumlah_terjual']}',
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const Gap(20),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Text(
+                                                  'Rp. ${formatter.format(int.parse(product['produk']['harga']))}',
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.w600
+                                                  ),
+                                                ),
+                                                OutlinedButton(
+                                                  onPressed: () => _showAddToCart(index),
+                                                  style: const ButtonStyle(
+                                                    visualDensity: VisualDensity.compact
+                                                  ),
+                                                  child: const Text('Tambah'),
+                                                )
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              const Gap(10),
+                              const Divider(
+                                thickness: 0.2,
+                              )
+                            ],
+                          )
+                        );
+                      },
+                    ),
+                  ],
+                );
+              } else if (shopList.isEmpty){
+                return const CustomScrollView(
+                  slivers: [
+                    SliverAppBar(),
+                    SliverFillRemaining(
+                      child: Center(
+                        child: Text('Toko ini belum memiliki produk.'),
+                      ),
+                    )
+                  ],
+                );
+              }
             }
 
             return const Center(

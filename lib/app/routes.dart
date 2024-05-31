@@ -188,68 +188,29 @@ final routes = GoRouter(
                         deskripsiToko: state.uri.queryParameters['deskripsi_toko'],
                         kategoriToko: state.uri.queryParameters['kategori_toko'],
                       ),
-                      routes: [
-                        GoRoute(
-                          name: 'add-product-oncreate',
-                          path: 'add-product-oncreate',
-                          builder: (BuildContext context, GoRouterState state) => AddProductOnCreatePage(
-                            idToko: state.uri.queryParameters['id_toko']!,
-                          ),
-                          // onExit: (BuildContext context, GoRouterState state) async {
-                          //   final bool? confirm = await showDialog(
-                          //     context: context,
-                          //     builder: (BuildContext context) => AlertDialog(
-                          //       content: const Text('Apakah anda yakin ingin membatalkan?'),
-                          //       actions: [
-                          //         TextButton(
-                          //           onPressed: (){
-                          //             context.pop(false);
-                          //           },
-                          //           child: const Text('Batal'),
-                          //         ),
-                          //         ElevatedButton(
-                          //           style: ButtonStyle(
-                          //             backgroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColor),
-                          //             foregroundColor: const WidgetStatePropertyAll(Colors.white)
-                          //           ),
-                          //           onPressed: (){
-                          //             context.pop(true);
-                          //           },
-                          //           child: const Text('Keluar'),
-                          //         ),
-                          //       ],
-                          //     )
-                          //   );
-                          //
-                          //   if(!context.mounted) return false;
-                          //   if(confirm!){
-                          //     deleteShop(context: context, idToko: state.uri.queryParameters['id_toko']!);
-                          //   }
-                          //
-                          //   return confirm;
-                          // },
-                          routes: [
-                            GoRoute(
-                              name: 'upload-product-image-oncreate',
-                              path: 'upload-product-image-oncreate',
-                              builder: (BuildContext context, GoRouterState state) => UploadProductImageOnCreatePage(
-                                namaProduk: state.uri.queryParameters['nama_produk'],
-                                harga: state.uri.queryParameters['harga'],
-                                stok: state.uri.queryParameters['stok'],
-                                deskripsiProduk: state.uri.queryParameters['deskripsi_produk'],
-                                detailProduk: state.uri.queryParameters['detail_produk'],
-                                idToko: state.uri.queryParameters['id_toko'],
-                              ),
-                              // onExit: (BuildContext context, GoRouterState state){
-                              //   context.pop(false);
-                              //   return true;
-                              // }
-                            )
-                          ]
-                        )
-                      ]
                     )
                   ]
+                ),
+                GoRoute(
+                  name: 'add-product-oncreate',
+                  path: 'add-product-oncreate',
+                  builder: (BuildContext context, GoRouterState state) => AddProductOnCreatePage(
+                    idToko: state.uri.queryParameters['id_toko']!,
+                  ),
+                  routes: [
+                    GoRoute(
+                      name: 'upload-product-image-oncreate',
+                      path: 'upload-product-image-oncreate',
+                      builder: (BuildContext context, GoRouterState state) => UploadProductImageOnCreatePage(
+                        namaProduk: state.uri.queryParameters['nama_produk'],
+                        harga: state.uri.queryParameters['harga'],
+                        stok: state.uri.queryParameters['stok'],
+                        deskripsiProduk: state.uri.queryParameters['deskripsi_produk'],
+                        detailProduk: state.uri.queryParameters['detail_produk'],
+                        idToko: state.uri.queryParameters['id_toko'],
+                      ),
+                    )
+                  ],
                 ),
                 GoRoute(
                   name: 'join-shop',
