@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:espw/widgets/bottom_snack_bar.dart';
@@ -9,8 +8,8 @@ import 'package:http/http.dart' as http;
 
 // initializing global variable
 final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-const String baseUrl = 'lucky-premium-redfish.ngrok-free.app';
-// const String baseUrl = 'espw.my.id';
+// const String baseUrl = 'lucky-premium-redfish.ngrok-free.app';
+const String baseUrl = 'espw.my.id';
 
 void signIn(BuildContext context, String nis) async {
   final url = Uri.https(baseUrl, '/api/login');
@@ -48,6 +47,27 @@ void logout(BuildContext context) async {
     prefs.clear();
     prefs.setBool('isAuthenticated', false);
     context.goNamed('signin');
+  }
+}
+
+void updateTelepon({required BuildContext context, required String telepon}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/user/${prefs.getInt('nis')}/update-telepon');
+  final response = await http.patch(url, body: json.encode({
+    'telepon': telepon
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  if(!context.mounted) return;
+  if(response.statusCode == 200){
+    prefs.setString('telepon', telepon);
+    context.goNamed('profile', queryParameters: {'user_id': prefs.getInt('nis').toString()});
+    successSnackBar(
+      context: context,
+      content: 'Nomor telepon berhasil diubah!'
+    );
   }
 }
 
@@ -179,6 +199,16 @@ void updateJadwal({required BuildContext context, required String idToko, requir
   }
 }
 
+Future<http.Response> getAllDataKelompok() async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/kelompok/all');
+  final response = await http.get(url, headers: {
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  return response;
+}
+
 void joinKelompok({required BuildContext context, required String kodeUnik}) async {
   final SharedPreferences prefs = await _prefs;
   final url = Uri.https(baseUrl, '/api/kelompok/join');
@@ -286,6 +316,26 @@ void addProduct(
     successSnackBar(
       context: context,
       content: 'Toko berhasil dibuat!'
+    );
+  }
+}
+
+void removeProduct({required BuildContext context, required String idProduk}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/products/delete');
+  final response = await http.post(url, body: json.encode({
+    'id_produk': idProduk
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  if(!context.mounted) return;
+  if(response.statusCode == 200){
+    context.goNamed('shop-dash', queryParameters: {'id_toko': prefs.getInt('id_toko').toString()});
+    successSnackBar(
+      context: context,
+      content: 'Produk berhasil dihapus!'
     );
   }
 }

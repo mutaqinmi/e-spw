@@ -11,27 +11,15 @@ class SignInPage extends StatefulWidget{
 }
 
 class _SignInPageState extends State<SignInPage>{
-  Widget _buttonChild = const Text(
-    "AYO MULAI!",
-    style: TextStyle(
-      fontWeight: FontWeight.w600,
-      letterSpacing: 2,
-    ),
-  );
   final _signInKey = GlobalKey<FormFieldState>();
   String _nis = '';
+  bool _buttonClicked = false;
 
   void _submit(){
     if(_signInKey.currentState!.validate()){
       _signInKey.currentState!.save();
       setState(() {
-        _buttonChild = const SizedBox(
-          width: 22,
-          height: 22,
-          child: CircularProgressIndicator(
-            color: Colors.white,
-          ),
-        );
+        _buttonClicked = true;
       });
       signIn(context, _nis);
     }
@@ -151,7 +139,19 @@ class _SignInPageState extends State<SignInPage>{
                       )
                     ),
                   ),
-                  child: _buttonChild,
+                  child: _buttonClicked ? const SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
+                  ) : const Text(
+                    "AYO MULAI!",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 2,
+                    ),
+                  ),
                   onPressed: () => _submit(),
                 )
               )

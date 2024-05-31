@@ -43,6 +43,15 @@ class _ProductPageState extends State<ProductPage>{
     );
   }
 
+  List shopList = [];
+  @override
+  void initState() {
+    super.initState();
+    shopById(widget.idToko).then((res) => setState(() {
+      shopList = json.decode(res.body)['data'];
+    }));
+  }
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -50,7 +59,10 @@ class _ProductPageState extends State<ProductPage>{
         future: shopById(widget.idToko),
         builder: (BuildContext context, AsyncSnapshot response){
           if(response.hasData && response.connectionState == ConnectionState.done){
-            final shop = json.decode(response.data.body)['data'];
+            List product = [];
+            for(int i = 0; i < shopList.length; i++){
+              product.add(shopList[i]['produk']);
+            }
             return CustomScrollView(
               slivers: [
                 const SliverAppBar(
@@ -94,7 +106,7 @@ class _ProductPageState extends State<ProductPage>{
                       spacing: 5,
                       children: [
                         ChoiceChip(
-                          label: Text('Semua (${shop.length})'),
+                          label: Text('Semua (${product.length})'),
                           selected: true,
                           onSelected: (bool selected){},
                         )
@@ -102,12 +114,18 @@ class _ProductPageState extends State<ProductPage>{
                     )
                   ),
                 ),
+                product.isEmpty ?
+                const SliverToBoxAdapter(
+                  child: Center(
+                    child: Text('Produk tidak ditemukan!'),
+                  ),
+                ) :
                 SliverList.builder(
-                  itemCount: shop.length,
+                  itemCount: product.length,
                   itemBuilder: (BuildContext context, int index){
-                    final product = shop[index]['produk'];
+                    final item = product[index];
                     return Dismissible(
-                      key: Key(product['id_produk']),
+                      key: Key(item['id_produk']),
                       dismissThresholds: const {
                         DismissDirection.startToEnd: .9,
                         DismissDirection.endToStart: .9
@@ -141,7 +159,7 @@ class _ProductPageState extends State<ProductPage>{
                       ),
                       confirmDismiss: (DismissDirection dismissDirection){
                         if(dismissDirection == DismissDirection.endToStart){
-                          return _confirmDismiss(context, product['nama_produk']);
+                          return _confirmDismiss(context, item['nama_produk']);
                         } else if (dismissDirection == DismissDirection.startToEnd){
                           return context.pushNamed('search'); //TODO: Edit Product Page
                         }
@@ -150,8 +168,12 @@ class _ProductPageState extends State<ProductPage>{
                       },
                       onDismissed: (DismissDirection dismissDirection){
                         if(dismissDirection == DismissDirection.endToStart){
+                          removeProduct(
+                            context: context,
+                            idProduk: item['id_produk']
+                          );
                           setState(() {
-                            shop.removeAt[index];
+                            item.removeAt[index];
                           });
                         }
                       },
@@ -167,7 +189,7 @@ class _ProductPageState extends State<ProductPage>{
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
                                   child: CachedNetworkImage(
-                                    imageUrl: 'https://$baseUrl/assets/public/${product['foto_produk']}',
+                                    imageUrl: 'https://$baseUrl/assets/public/${item['foto_produk']}',
                                     width: 100,
                                     height: 100,
                                     fit: BoxFit.cover,
@@ -180,18 +202,18 @@ class _ProductPageState extends State<ProductPage>{
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Text(
-                                        product['nama_produk'],
+                                        item['nama_produk'],
                                         style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600
                                         ),
                                       ),
                                       Text(
-                                        'Rp. ${formatter.format(int.parse(product['harga']))}',
+                                        'Rp. ${formatter.format(int.parse(item['harga']))}',
                                       ),
                                       const Gap(35),
                                       Text(
-                                        'Stok: ${product['stok']}'
+                                        'Stok: ${item['stok']}'
                                       )
                                     ],
                                   ),

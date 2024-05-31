@@ -494,18 +494,12 @@ class ProfilePicture extends StatelessWidget{
 
   Widget _isContainProfilePicture(){
     if(imageURL.isNotEmpty){
-      return Hero(
-        tag: 'profile',
-        child: CircleAvatar(
-          backgroundImage: NetworkImage(imageURL),
-        ),
+      return CircleAvatar(
+        backgroundImage: NetworkImage(imageURL),
       );
     } else {
-      return const Hero(
-        tag: 'profile',
-        child: CircleAvatar(
-          backgroundImage: NetworkImage('https://$baseUrl/assets/images/profile.png'),
-        ),
+      return const CircleAvatar(
+        backgroundImage: NetworkImage('https://$baseUrl/assets/images/profile.png'),
       );
     }
   }

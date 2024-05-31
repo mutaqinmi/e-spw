@@ -14,6 +14,14 @@ class ShopDashPage extends StatefulWidget{
 }
 
 class _ShopDashPageState extends State<ShopDashPage>{
+  List shopList = [];
+  @override
+  void initState() {
+    super.initState();
+    shopById(widget.idToko).then((res) => setState(() {
+      shopList = json.decode(res.body)['data'];
+    }));
+  }
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -30,7 +38,6 @@ class _ShopDashPageState extends State<ShopDashPage>{
         future: shopById(widget.idToko),
         builder: (BuildContext context, AsyncSnapshot response){
           if(response.hasData && response.connectionState == ConnectionState.done){
-            final shop = json.decode(response.data.body)['data'];
             return SingleChildScrollView(
               child: SafeArea(
                 top: false,
@@ -41,7 +48,7 @@ class _ShopDashPageState extends State<ShopDashPage>{
                       onTap: () => context.pushNamed('set-schedule', queryParameters: {'id_toko': widget.idToko}),
                       child: Card(
                         elevation: 0,
-                        color: shop.first['toko']['is_open'] == true ? Colors.green : Colors.red,
+                        color: shopList.first['toko']['is_open'] == true ? Colors.green : Colors.red,
                         margin: const EdgeInsets.only(bottom: 20),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)
@@ -59,7 +66,7 @@ class _ShopDashPageState extends State<ShopDashPage>{
                                 ),
                               ),
                               Text(
-                                shop.first['toko']['is_open'] == true ? 'Buka' : 'Tutup',
+                                shopList.first['toko']['is_open'] == true ? 'Buka' : 'Tutup',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
@@ -75,7 +82,7 @@ class _ShopDashPageState extends State<ShopDashPage>{
                         CircleAvatar(
                           radius: 30,
                           backgroundImage: CachedNetworkImageProvider(
-                            'https://$baseUrl/assets/public/${shop.first['toko']['banner_toko']}'
+                            'https://$baseUrl/assets/public/${shopList.first['toko']['banner_toko']}'
                           ),
                         ),
                         const Gap(10),
@@ -84,14 +91,14 @@ class _ShopDashPageState extends State<ShopDashPage>{
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                shop.first['toko']['nama_toko'],
+                                shopList.first['toko']['nama_toko'],
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600
                                 ),
                               ),
                               Text(
-                                shop.first['kelas']['kelas']
+                                shopList.first['kelas']['kelas']
                               )
                             ],
                           ),
@@ -105,7 +112,7 @@ class _ShopDashPageState extends State<ShopDashPage>{
                               color: Theme.of(context).primaryColor
                             ))
                           ),
-                          onPressed: () => context.pushNamed('shop', queryParameters: {'shopID': shop.first['toko']['id_toko']}),
+                          onPressed: () => context.pushNamed('shop', queryParameters: {'shopID': shopList.first['toko']['id_toko']}),
                           child: const Text('Kunjungi toko')
                         )
                       ],
@@ -199,7 +206,7 @@ class _ShopDashPageState extends State<ShopDashPage>{
                         ),
                         InkWell(
                           borderRadius: BorderRadius.circular(10),
-                          onTap: () => context.pushNamed('product', queryParameters: {'id_toko': shop.first['toko']['id_toko']}),
+                          onTap: () => context.pushNamed('product', queryParameters: {'id_toko': shopList.first['toko']['id_toko']}),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 5),
                             child: Card(
@@ -227,7 +234,7 @@ class _ShopDashPageState extends State<ShopDashPage>{
                                             ),
                                           ),
                                           Text(
-                                            '${shop.length} Produk'
+                                            '${shopList.length} Produk'
                                           )
                                         ],
                                       ),

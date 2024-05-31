@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
-// import 'package:go_router/go_router.dart';
 
 class UploadProfileImagePage extends StatefulWidget{
   const UploadProfileImagePage({super.key, required this.namaToko, required this.kelas, required this.deskripsiToko, required this.kategoriToko});
@@ -19,6 +18,21 @@ class UploadProfileImagePage extends StatefulWidget{
 
 class _UploadProfileImagePageState extends State<UploadProfileImagePage>{
   File? filePath;
+  bool _buttonClicked = false;
+
+  void _submit(){
+    setState(() {
+      _buttonClicked = true;
+    });
+    createShop(
+      context: context,
+      namaToko: widget.namaToko!,
+      kelas: widget.kelas!,
+      deskripsiToko: widget.deskripsiToko!,
+      kategoriToko: widget.kategoriToko!,
+      bannerToko: filePath
+    );
+  }
 
   Future<File> getImage() async {
     final ImagePicker picker = ImagePicker();
@@ -96,15 +110,14 @@ class _UploadProfileImagePageState extends State<UploadProfileImagePage>{
             width: double.infinity,
             height: 50,
             child: FilledButton(
-              onPressed: () => createShop(
-                context: context,
-                namaToko: widget.namaToko!,
-                kelas: widget.kelas!,
-                deskripsiToko: widget.deskripsiToko!,
-                kategoriToko: widget.kategoriToko!,
-                bannerToko: filePath
-              ),
-              child: const Text('Selanjutnya'),
+              onPressed: () => _submit(),
+              child: _buttonClicked ? const SizedBox(
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+              ) : const Text('Selanjutnya'),
             ),
           ),
         )
@@ -133,8 +146,8 @@ class _UploadProfileImagePageState extends State<UploadProfileImagePage>{
                         width: 20,
                         height: 20,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Theme.of(context).primaryColor
+                          borderRadius: BorderRadius.circular(10),
+                          color: Theme.of(context).primaryColor
                         ),
                         child: const Center(
                           child: Text(

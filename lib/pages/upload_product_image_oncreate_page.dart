@@ -21,6 +21,24 @@ class UploadProductImageOnCreatePage extends StatefulWidget{
 
 class _UploadProductImageOnCreatePageState extends State<UploadProductImageOnCreatePage>{
   File? filePath;
+  bool _buttonClicked = false;
+
+  void _submit(){
+    setState(() {
+      _buttonClicked = true;
+    });
+    addProduct(
+      context: context,
+      namaProduk: widget.namaProduk!,
+      harga: widget.harga!,
+      stok: widget.stok!,
+      deskripsiProduk: widget.deskripsiProduk!,
+      detailProduk: widget.detailProduk!,
+      fotoProduk: filePath!,
+      idToko: widget.idToko!,
+      isCreate: true
+    );
+  }
 
   Future<File> getImage() async {
     final ImagePicker picker = ImagePicker();
@@ -97,18 +115,14 @@ class _UploadProductImageOnCreatePageState extends State<UploadProductImageOnCre
             width: double.infinity,
             height: 50,
             child: FilledButton(
-              onPressed: () => addProduct(
-                context: context,
-                namaProduk: widget.namaProduk!,
-                harga: widget.harga!,
-                stok: widget.stok!,
-                deskripsiProduk: widget.deskripsiProduk!,
-                detailProduk: widget.detailProduk!,
-                fotoProduk: filePath!,
-                idToko: widget.idToko!,
-                isCreate: true
-              ),
-              child: const Text('Selesai!'),
+              onPressed: () => _submit(),
+              child: _buttonClicked ? const SizedBox(
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+              ) : const Text('Selesai!'),
             ),
           ),
         )

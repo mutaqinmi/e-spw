@@ -98,14 +98,11 @@ class _ProfilePageState extends State<ProfilePage>{
                 padding: const EdgeInsets.only(top: 10),
                 child: Column(
                   children: [
-                    Hero(
-                      tag: 'profile',
-                      child: CircleAvatar(
-                        radius: 40,
-                        backgroundImage: NetworkImage(
-                          'https://$baseUrl/assets/${profilePicture.isEmpty ? 'images/profile.png' : 'public/$profilePicture'}'
-                        ),
-                      )
+                    CircleAvatar(
+                      radius: 40,
+                      backgroundImage: NetworkImage(
+                        'https://$baseUrl/assets/${profilePicture.isEmpty ? 'images/profile.png' : 'public/$profilePicture'}'
+                      ),
                     ),
                     const Gap(20),
                     Column(
