@@ -35,10 +35,6 @@ class ShopSettingsPage extends StatelessWidget{
               itemTitle: const Text('Jadwal Operasional'),
               onPressed: () => context.pushNamed('set-schedule', queryParameters: {'id_toko': idToko}),
             ),
-            ItemButton(
-              itemTitle: const Text('Lokasi'),
-              onPressed: () => context.pushNamed('search'),
-            ),
             const Divider(
               thickness: 0.25,
             ),

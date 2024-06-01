@@ -278,6 +278,16 @@ Future<http.Response> products() async {
   return response;
 }
 
+Future<http.Response> productById(idProduk) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/products/$idProduk');
+  final response = await http.get(url, headers: {
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  return response;
+}
+
 void addProduct(
     {required BuildContext context,
     required String namaProduk,

@@ -8,6 +8,7 @@ import 'package:espw/pages/checkout_page.dart';
 import 'package:espw/pages/choose_shop.dart';
 import 'package:espw/pages/create_shop_page.dart';
 import 'package:espw/pages/detail_shop.dart';
+import 'package:espw/pages/edit_product_page.dart';
 import 'package:espw/pages/edit_profile_page.dart';
 import 'package:espw/pages/favorite_page.dart';
 import 'package:espw/pages/information_page.dart';
@@ -248,6 +249,15 @@ final routes = GoRouter(
                   builder: (BuildContext context, GoRouterState state) => ProductPage(
                     idToko: state.uri.queryParameters['id_toko']!,
                   ),
+                  routes: [
+                    GoRoute(
+                      name: 'edit-product',
+                      path: 'edit-product',
+                      builder: (BuildContext context, GoRouterState state) => EditProductPage(
+                        idProduk: state.uri.queryParameters['id_produk']!,
+                      )
+                    )
+                  ]
                 ),
               ]
             ),

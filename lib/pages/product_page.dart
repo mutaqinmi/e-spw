@@ -117,7 +117,10 @@ class _ProductPageState extends State<ProductPage>{
                 product.isEmpty ?
                 const SliverToBoxAdapter(
                   child: Center(
-                    child: Text('Produk tidak ditemukan!'),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Text('Produk tidak ditemukan!'),
+                    ),
                   ),
                 ) :
                 SliverList.builder(
@@ -161,7 +164,7 @@ class _ProductPageState extends State<ProductPage>{
                         if(dismissDirection == DismissDirection.endToStart){
                           return _confirmDismiss(context, item['nama_produk']);
                         } else if (dismissDirection == DismissDirection.startToEnd){
-                          return context.pushNamed('search'); //TODO: Edit Product Page
+                          return context.pushNamed('edit-product', queryParameters: {'id_produk': item['id_produk']});
                         }
 
                         return Future.value(false);
