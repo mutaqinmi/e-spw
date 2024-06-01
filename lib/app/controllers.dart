@@ -135,7 +135,6 @@ void createShop(
     required String namaToko,
     required String kelas,
     required String deskripsiToko,
-    required String kategoriToko,
     File? bannerToko}) async {
   final SharedPreferences prefs = await _prefs;
   final url = Uri.https(baseUrl, '/api/shop/create');
@@ -146,7 +145,6 @@ void createShop(
   request.fields['nama_toko'] = namaToko;
   request.fields['id_kelas'] = kelas;
   request.fields['deskripsi_toko'] = deskripsiToko;
-  request.fields['kategori_toko'] = kategoriToko;
   request.files.add(http.MultipartFile.fromBytes('banner_toko', File(bannerToko!.path).readAsBytesSync(), filename: bannerToko.path));
 
   final response = await request.send();
@@ -202,10 +200,13 @@ void updateJadwal({required BuildContext context, required String idToko, requir
   }
 }
 
-Future<http.Response> getAllDataKelompok() async {
+Future<http.Response> getAllDataKelompok(String idToko) async {
   final SharedPreferences prefs = await _prefs;
   final url = Uri.https(baseUrl, '/api/kelompok/all');
-  final response = await http.get(url, headers: {
+  final response = await http.post(url, body: json.encode({
+    'id_toko': idToko
+  }), headers: {
+    'Content-Type': 'application/json',
     'Authorization': 'Bearer ${prefs.get('token')}'
   });
 

@@ -7,12 +7,14 @@ import 'package:espw/pages/change_phone.dart';
 import 'package:espw/pages/checkout_page.dart';
 import 'package:espw/pages/choose_shop.dart';
 import 'package:espw/pages/create_shop_page.dart';
+import 'package:espw/pages/detail_shop.dart';
 import 'package:espw/pages/edit_profile_page.dart';
 import 'package:espw/pages/favorite_page.dart';
 import 'package:espw/pages/information_page.dart';
 import 'package:espw/pages/join_shop_page.dart';
 import 'package:espw/pages/login_failed.dart';
 import 'package:espw/pages/login_shop_page.dart';
+import 'package:espw/pages/member_page.dart';
 import 'package:espw/pages/order_page.dart';
 import 'package:espw/pages/order_status_page.dart';
 import 'package:espw/pages/product_page.dart';
@@ -166,7 +168,6 @@ final routes = GoRouter(
                         namaToko: state.uri.queryParameters['nama_toko'],
                         kelas: state.uri.queryParameters['kelas'],
                         deskripsiToko: state.uri.queryParameters['deskripsi_toko'],
-                        kategoriToko: state.uri.queryParameters['kategori_toko'],
                       ),
                       routes: [
                         GoRoute(
@@ -280,9 +281,23 @@ final routes = GoRouter(
                   ),
                   routes: [
                     GoRoute(
+                      name: 'detail-shop',
+                      path: 'detail-shop',
+                      builder: (BuildContext context, GoRouterState state) => DetailShop(
+                        idToko: state.uri.queryParameters['id_toko']!,
+                      ),
+                    ),
+                    GoRoute(
                       name: 'unique-code',
                       path: 'unique-code',
                       builder: (BuildContext context, GoRouterState state) => UniqueCode(
+                        idToko: state.uri.queryParameters['id_toko']!,
+                      )
+                    ),
+                    GoRoute(
+                      name: 'member',
+                      path: 'member',
+                      builder: (BuildContext context, GoRouterState state) => MemberPage(
                         idToko: state.uri.queryParameters['id_toko']!,
                       )
                     )

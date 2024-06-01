@@ -13,24 +13,20 @@ class CreateShopPage extends StatefulWidget{
 
 class _CreateShopPageState extends State<CreateShopPage>{
   final _namaTokoKey = GlobalKey<FormFieldState>();
-  final _kategoriTokoKey = GlobalKey<FormFieldState>();
   final _deskripsiTokoKey = GlobalKey<FormFieldState>();
   String _namaToko = '';
   String? _kelasValue = 'X DPIB 1';
-  String _kategoriToko = '';
   String _deskripsiToko = '';
 
   void submit(){
-    if(_namaTokoKey.currentState!.validate() && _kategoriTokoKey.currentState!.validate()){
+    if(_namaTokoKey.currentState!.validate()){
       _namaTokoKey.currentState!.save();
-      _kategoriTokoKey.currentState!.save();
       _deskripsiTokoKey.currentState!.save();
 
       context.pushNamed('upload-profile-image', queryParameters: {
         'nama_toko': _namaToko,
         'kelas': _kelasValue,
         'deskripsi_toko': _deskripsiToko,
-        'kategori_toko': _kategoriToko,
         'isRedirect': 'false',
       });
     }
@@ -302,28 +298,9 @@ class _CreateShopPageState extends State<CreateShopPage>{
                       ),
                       const Gap(15),
                       TextFormField(
-                        key: _kategoriTokoKey,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10))
-                          ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                          hintText: 'e.g. Makanan dan Minuman',
-                          labelText: 'Kategori Toko',
-                        ),
-                        validator: (value){
-                          if(value!.isEmpty){
-                            return 'Isi kategori toko terlebih dahulu!';
-                          }
-
-                          return null;
-                        },
-                        onSaved: (value){_kategoriToko = value!;},
-                      ),
-                      const Gap(15),
-                      TextFormField(
                         key: _deskripsiTokoKey,
                         maxLines: 5,
+                        maxLength: 255,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(10))

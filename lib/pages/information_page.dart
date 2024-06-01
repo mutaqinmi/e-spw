@@ -18,12 +18,13 @@ class InformationPage extends StatelessWidget{
         ),
       ),
       body: SafeArea(
-        minimum: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        top: false,
+        minimum: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           children: [
             ItemButton(
-              itemTitle: const Text('Biodata'),
-              onPressed: (){},
+              itemTitle: const Text('Ubah Informasi Toko'),
+              onPressed: () => context.pushNamed('detail-shop', queryParameters: {'id_toko': idToko}),
             ),
             ItemButton(
               itemTitle: const Text('Kode Unik'),
@@ -31,7 +32,7 @@ class InformationPage extends StatelessWidget{
             ),
             ItemButton(
               itemTitle: const Text('Anggota'),
-              onPressed: (){},
+              onPressed: () => context.pushNamed('member', queryParameters: {'id_toko': idToko}),
             ),
           ],
         ),

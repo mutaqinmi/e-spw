@@ -6,11 +6,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 class UploadProfileImagePage extends StatefulWidget{
-  const UploadProfileImagePage({super.key, required this.namaToko, required this.kelas, required this.deskripsiToko, required this.kategoriToko});
+  const UploadProfileImagePage({super.key, required this.namaToko, required this.kelas, required this.deskripsiToko});
   final String? namaToko;
   final String? kelas;
   final String? deskripsiToko;
-  final String? kategoriToko;
 
   @override
   State<UploadProfileImagePage> createState() => _UploadProfileImagePageState();
@@ -29,7 +28,6 @@ class _UploadProfileImagePageState extends State<UploadProfileImagePage>{
       namaToko: widget.namaToko!,
       kelas: widget.kelas!,
       deskripsiToko: widget.deskripsiToko!,
-      kategoriToko: widget.kategoriToko!,
       bannerToko: filePath
     );
   }

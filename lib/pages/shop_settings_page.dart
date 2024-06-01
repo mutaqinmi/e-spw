@@ -23,7 +23,8 @@ class ShopSettingsPage extends StatelessWidget{
         ),
       ),
       body: SafeArea(
-        minimum: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        top: false,
+        minimum: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           children: [
             ItemButton(
