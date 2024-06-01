@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:espw/app/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -278,7 +279,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
                                     ),
                                   ),
                                   GestureDetector(
-                                    onTap: (){},
+                                    onTap: () => context.pushNamed('change-phone'),
                                     child: Text(
                                       'Ubah',
                                       style: TextStyle(
@@ -299,7 +300,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
                               children: [
                                 const Text('Telepon'),
                                 GestureDetector(
-                                  onTap: (){},
+                                  onTap: () => context.pushNamed('change-phone'),
                                   child: Text(
                                     'Ubah',
                                     style: TextStyle(

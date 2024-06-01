@@ -1,3 +1,4 @@
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:espw/widgets/bottom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -20,11 +21,12 @@ class _VerifyPasswordState extends State<VerifyPassword> {
     if(_formFieldKey.currentState!.validate()){
       _formFieldKey.currentState!.save();
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      final String? password = prefs.getString('password');
+      final String? token = prefs.getString('token');
+      final verify = JWT.verify(token!, SecretKey('espwapp'));
 
       if(!mounted) return;
-      if(_password == password){
-        context.goNamed('change-password');
+      if(_password == verify.payload['password']){
+        context.pushNamed('change-password');
       } else {
         alertSnackBar(
           context: context,

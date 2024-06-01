@@ -22,6 +22,7 @@ dependencies:
   pinput: ^4.0.0
   image_cropper: ^6.0.0
   connectivity_plus: ^6.0.3
+  dart_jsonwebtoken: ^2.14.0
 
 dev_dependencies:
   flutter_test:

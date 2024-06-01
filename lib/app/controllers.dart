@@ -12,6 +12,7 @@ final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 const String baseUrl = 'espw.my.id';
 
 void signIn(BuildContext context, String nis) async {
+  final SharedPreferences prefs = await _prefs;
   final url = Uri.https(baseUrl, '/api/login');
   final response = await http.post(url, body: json.encode({
     'nis': int.parse(nis)
@@ -21,13 +22,12 @@ void signIn(BuildContext context, String nis) async {
 
   if(!context.mounted) return;
   if(response.statusCode == 200){
+    prefs.setInt('nis', json.decode(response.body)['data']['siswa']['nis']);
+    prefs.setString('nama', json.decode(response.body)['data']['siswa']['nama']);
+    prefs.setString('kelas', json.decode(response.body)['data']['kelas']['kelas']);
+    prefs.setString('telepon', json.decode(response.body)['data']['siswa']['telepon']);
+    prefs.setString('foto_profil', json.decode(response.body)['data']['siswa']['foto_profil']);
     context.pushNamed('verify', queryParameters: {
-      'nis': json.decode(response.body)['data']['siswa']['nis'].toString(),
-      'nama': json.decode(response.body)['data']['siswa']['nama'],
-      'kelas': json.decode(response.body)['data']['kelas']['kelas'],
-      'password': json.decode(response.body)['data']['siswa']['password'],
-      'telepon': json.decode(response.body)['data']['siswa']['telepon'],
-      'foto_profil': json.decode(response.body)['data']['siswa']['foto_profil'],
       'token': json.decode(response.body)['token'],
     });
   } else {
@@ -63,7 +63,7 @@ void updateTelepon({required BuildContext context, required String telepon}) asy
   if(!context.mounted) return;
   if(response.statusCode == 200){
     prefs.setString('telepon', telepon);
-    context.goNamed('profile', queryParameters: {'user_id': prefs.getInt('nis').toString()});
+    context.goNamed('home');
     successSnackBar(
       context: context,
       content: 'Nomor telepon berhasil diubah!'
@@ -83,8 +83,7 @@ void changePassword(BuildContext context, String newPassword) async {
 
   if(!context.mounted) return;
   if(response.statusCode == 200){
-    prefs.setString('password', newPassword);
-    context.goNamed('profile', queryParameters: {'user_id': prefs.getInt('nis').toString()});
+    logout(context);
     successSnackBar(
       context: context,
       content: 'Password berhasil diubah!'
@@ -106,7 +105,7 @@ void updateProfilePicture({required BuildContext context, required File profileP
     final data = json.decode(await response.stream.bytesToString());
     prefs.setString('foto_profil', data['siswa'].first['foto_profil']);
     if(!context.mounted) return;
-    context.goNamed('profile', queryParameters: {'user_id': prefs.getInt('nis').toString()});
+    context.goNamed('home');
     successSnackBar(
       context: context,
       content: 'Foto profil berhasil diubah!'
@@ -175,7 +174,7 @@ void deleteShop({required BuildContext context, required String idToko}) async {
 
   if(!context.mounted) return;
   if(response.statusCode == 200){
-    context.goNamed('profile', queryParameters: {'user_id': prefs.getInt('nis').toString()});
+    context.goNamed('home');
     successSnackBar(
       context: context,
       content: 'Toko dihapus!'
@@ -250,7 +249,7 @@ void removeFromKelompok({required BuildContext context, required String idToko})
 
   if(!context.mounted) return;
   if(response.statusCode == 200){
-    context.goNamed('profile', queryParameters: {'user_id': prefs.getInt('nis').toString()});
+    context.goNamed('home');
     successSnackBar(
       context: context,
       content: 'Anda keluar dari kelompok'
@@ -306,20 +305,10 @@ void addProduct(
 
   if(response.statusCode == 200){
     if(!context.mounted) return;
-    if(!isCreate){
-      context.goNamed('shop-dash', queryParameters: {'id_toko': idToko, 'isRedirect': 'false'});
-      successSnackBar(
-        context: context,
-        content: 'Produk berhasil ditambahkan!'
-      );
-
-      return;
-    }
-
-    context.goNamed('login-shop');
+    context.goNamed('shop-dash', queryParameters: {'id_toko': idToko, 'isRedirect': 'false'});
     successSnackBar(
       context: context,
-      content: 'Toko berhasil dibuat!'
+      content: 'Produk berhasil ditambahkan!'
     );
   }
 }

@@ -306,39 +306,39 @@ class _ShopDashPageState extends State<ShopDashPage>{
                             ),
                           ),
                           const Gap(5),
-                          InkWell(
-                            borderRadius: BorderRadius.circular(10),
-                            onTap: () => (),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: Card(
-                                color: Colors.transparent,
-                                elevation: 0,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Wrap(
-                                      crossAxisAlignment: WrapCrossAlignment.center,
-                                      spacing: 10,
-                                      children: [
-                                        Icon(
-                                          Icons.ads_click,
-                                          color: Theme.of(context).primaryColor,
-                                        ),
-                                        const Text(
-                                          'Promosi',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const Icon(Icons.keyboard_arrow_right)
-                                  ],
-                                ),
-                              ),
-                            )
-                          ),
+                          // InkWell(
+                          //   borderRadius: BorderRadius.circular(10),
+                          //   onTap: () => (),
+                          //   child: Padding(
+                          //     padding: const EdgeInsets.symmetric(vertical: 10),
+                          //     child: Card(
+                          //       color: Colors.transparent,
+                          //       elevation: 0,
+                          //       child: Row(
+                          //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //         children: [
+                          //           Wrap(
+                          //             crossAxisAlignment: WrapCrossAlignment.center,
+                          //             spacing: 10,
+                          //             children: [
+                          //               Icon(
+                          //                 Icons.ads_click,
+                          //                 color: Theme.of(context).primaryColor,
+                          //               ),
+                          //               const Text(
+                          //                 'Promosi',
+                          //                 style: TextStyle(
+                          //                   fontSize: 16,
+                          //                 ),
+                          //               ),
+                          //             ],
+                          //           ),
+                          //           const Icon(Icons.keyboard_arrow_right)
+                          //         ],
+                          //       ),
+                          //     ),
+                          //   )
+                          // ),
                           InkWell(
                             borderRadius: BorderRadius.circular(10),
                             onTap: () => (),

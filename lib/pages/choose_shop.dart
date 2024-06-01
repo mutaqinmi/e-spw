@@ -55,7 +55,7 @@ class _ChooseShopState extends State<ChooseShop>{
             itemBuilder: (BuildContext context, int index){
               final shop = shopList[index];
               return GestureDetector(
-                onTap: () => context.goNamed('shop-dash', queryParameters: {'id_toko': shop['toko']['id_toko']}),
+                onTap: () => context.pushNamed('shop-dash', queryParameters: {'id_toko': shop['toko']['id_toko']}),
                 child: Card(
                   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                   shape: const RoundedRectangleBorder(

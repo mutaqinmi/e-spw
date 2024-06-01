@@ -131,12 +131,9 @@ class _ShopPageState extends State<ShopPage>{
                 return CustomScrollView(
                   slivers: [
                     SliverAppBar(
+                      foregroundColor: Theme.of(context).primaryColor,
                       pinned: true,
                       actions: [
-                        IconButton(
-                          onPressed: (){},
-                          icon: const Icon(Icons.info_outline),
-                        ),
                         Badge(
                           isLabelVisible: cartBadge == 0 ? false : true,
                           offset: const Offset(-8, 8),
@@ -154,11 +151,22 @@ class _ShopPageState extends State<ShopPage>{
                           fit: BoxFit.cover,
                         ),
                       ),
+                      bottom: PreferredSize(
+                        preferredSize: const Size.fromHeight(20),
+                        child: Container(
+                          width: double.infinity,
+                          height: 20,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(20))
+                          ),
+                        )
+                      ),
                     ),
                     SliverToBoxAdapter(
                       child: SafeArea(
                         top: false,
-                        minimum: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        minimum: const EdgeInsets.symmetric(horizontal: 16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

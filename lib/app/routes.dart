@@ -3,12 +3,13 @@ import 'package:espw/app/controllers.dart';
 import 'package:espw/pages/add_product_oncreate_page.dart';
 import 'package:espw/pages/add_product_page.dart';
 import 'package:espw/pages/change_password.dart';
-import 'package:espw/pages/chat_dialog_page.dart';
+import 'package:espw/pages/change_phone.dart';
 import 'package:espw/pages/checkout_page.dart';
 import 'package:espw/pages/choose_shop.dart';
 import 'package:espw/pages/create_shop_page.dart';
 import 'package:espw/pages/edit_profile_page.dart';
 import 'package:espw/pages/favorite_page.dart';
+import 'package:espw/pages/information_page.dart';
 import 'package:espw/pages/join_shop_page.dart';
 import 'package:espw/pages/login_failed.dart';
 import 'package:espw/pages/login_shop_page.dart';
@@ -19,6 +20,7 @@ import 'package:espw/pages/profile_page.dart';
 import 'package:espw/pages/set_schedule_page.dart';
 import 'package:espw/pages/shop_settings_page.dart';
 import 'package:espw/pages/shopdash_page.dart';
+import 'package:espw/pages/unique_code.dart';
 import 'package:espw/pages/upload_product_image_oncreate_page.dart';
 import 'package:espw/pages/upload_product_image_page.dart';
 import 'package:espw/pages/upload_profile_image_page.dart';
@@ -43,15 +45,10 @@ final routes = GoRouter(
       builder: (BuildContext context, GoRouterState state) => const SignInPage(),
       redirect: (BuildContext context, GoRouterState state) async {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
-        final isAuthenticated = prefs.getBool('isAuthenticated');
-        if(isAuthenticated == null){
-          prefs.setBool('isAuthenticated', false);
-        }
+        final bool? isAuthenticated = prefs.getBool('isAuthenticated');
+        if(isAuthenticated == null) prefs.setBool('isAuthenticated', false);
 
-        if(isAuthenticated!){
-          return '/home';
-        }
-
+        if(isAuthenticated!) return '/home';
         return null;
       },
       routes: [
@@ -59,12 +56,6 @@ final routes = GoRouter(
           name: 'verify',
           path: 'verify',
           builder: (BuildContext context, GoRouterState state) => Verify(
-            nis: state.uri.queryParameters['nis']!,
-            nama: state.uri.queryParameters['nama']!,
-            kelas: state.uri.queryParameters['kelas']!,
-            password: state.uri.queryParameters['password']!,
-            telepon: state.uri.queryParameters['telepon']!,
-            fotoProfil: state.uri.queryParameters['foto_profil']!,
             token: state.uri.queryParameters['token']!,
           ),
         ),
@@ -88,9 +79,7 @@ final routes = GoRouter(
               content: const Text('Apakah anda yakin ingin keluar?'),
               actions: [
                 TextButton(
-                  onPressed: (){
-                    context.pop(false);
-                  },
+                  onPressed: () => context.pop(false),
                   child: const Text('Batal'),
                 ),
                 ElevatedButton(
@@ -98,9 +87,7 @@ final routes = GoRouter(
                     backgroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColor),
                     foregroundColor: const WidgetStatePropertyAll(Colors.white)
                   ),
-                  onPressed: (){
-                    context.pop(true);
-                  },
+                  onPressed: () => context.pop(true),
                   child: const Text('Keluar'),
                 ),
               ],
@@ -145,9 +132,7 @@ final routes = GoRouter(
         GoRoute(
           name: 'profile',
           path: 'profile',
-          builder: (BuildContext context, GoRouterState state) => ProfilePage(
-            userID: state.uri.queryParameters['user_id'],
-          ),
+          builder: (BuildContext context, GoRouterState state) => const ProfilePage(),
           routes: [
             GoRoute(
               name: 'order',
@@ -163,13 +148,8 @@ final routes = GoRouter(
               redirect: (BuildContext context, GoRouterState state) async {
                 final String? isRedirect = state.uri.queryParameters['isRedirect'];
                 final dataKelompok = await kelompok();
-                if(isRedirect == 'false'){
-                  return null;
-                }
-
-                if(json.decode(dataKelompok.body)['data'].isNotEmpty){
-                  return '/home/profile/login-shop/choose-shop';
-                }
+                if(isRedirect == 'false') return null;
+                if(json.decode(dataKelompok.body)['data'].isNotEmpty) return '/home/profile/login-shop/choose-shop';
 
                 return null;
               },
@@ -188,29 +168,31 @@ final routes = GoRouter(
                         deskripsiToko: state.uri.queryParameters['deskripsi_toko'],
                         kategoriToko: state.uri.queryParameters['kategori_toko'],
                       ),
-                    )
+                      routes: [
+                        GoRoute(
+                          name: 'add-product-oncreate',
+                          path: 'add-product-oncreate',
+                          builder: (BuildContext context, GoRouterState state) => AddProductOnCreatePage(
+                            idToko: state.uri.queryParameters['id_toko']!,
+                          ),
+                          routes: [
+                            GoRoute(
+                              name: 'upload-product-image-oncreate',
+                              path: 'upload-product-image-oncreate',
+                              builder: (BuildContext context, GoRouterState state) => UploadProductImageOnCreatePage(
+                                namaProduk: state.uri.queryParameters['nama_produk'],
+                                harga: state.uri.queryParameters['harga'],
+                                stok: state.uri.queryParameters['stok'],
+                                deskripsiProduk: state.uri.queryParameters['deskripsi_produk'],
+                                detailProduk: state.uri.queryParameters['detail_produk'],
+                                idToko: state.uri.queryParameters['id_toko'],
+                              ),
+                            )
+                          ],
+                        ),
+                      ]
+                    ),
                   ]
-                ),
-                GoRoute(
-                  name: 'add-product-oncreate',
-                  path: 'add-product-oncreate',
-                  builder: (BuildContext context, GoRouterState state) => AddProductOnCreatePage(
-                    idToko: state.uri.queryParameters['id_toko']!,
-                  ),
-                  routes: [
-                    GoRoute(
-                      name: 'upload-product-image-oncreate',
-                      path: 'upload-product-image-oncreate',
-                      builder: (BuildContext context, GoRouterState state) => UploadProductImageOnCreatePage(
-                        namaProduk: state.uri.queryParameters['nama_produk'],
-                        harga: state.uri.queryParameters['harga'],
-                        stok: state.uri.queryParameters['stok'],
-                        deskripsiProduk: state.uri.queryParameters['deskripsi_produk'],
-                        detailProduk: state.uri.queryParameters['detail_produk'],
-                        idToko: state.uri.queryParameters['id_toko'],
-                      ),
-                    )
-                  ],
                 ),
                 GoRoute(
                   name: 'join-shop',
@@ -291,6 +273,22 @@ final routes = GoRouter(
               ),
               routes: [
                 GoRoute(
+                  name: 'shop-info',
+                  path: 'shop-info',
+                  builder: (BuildContext context, GoRouterState state) => InformationPage(
+                    idToko: state.uri.queryParameters['id_toko']!,
+                  ),
+                  routes: [
+                    GoRoute(
+                      name: 'unique-code',
+                      path: 'unique-code',
+                      builder: (BuildContext context, GoRouterState state) => UniqueCode(
+                        idToko: state.uri.queryParameters['id_toko']!,
+                      )
+                    )
+                  ]
+                ),
+                GoRoute(
                   name: 'set-schedule',
                   path: 'set-schedule',
                   builder: (BuildContext context, GoRouterState state) => SetSchedulePage(
@@ -303,6 +301,13 @@ final routes = GoRouter(
               name: 'edit-profile',
               path: 'edit-profile',
               builder: (BuildContext context, GoRouterState state) => const EditProfilePage(),
+              routes: [
+                GoRoute(
+                  name: 'change-phone',
+                  path: 'change-phone',
+                  builder: (BuildContext context, GoRouterState state) => const ChangePhone(),
+                )
+              ]
             )
           ]
         ),
@@ -315,12 +320,5 @@ final routes = GoRouter(
         ),
       ],
     ),
-    GoRoute(
-      name: 'chat',
-      path: '/chat',
-      builder: (BuildContext context, GoRouterState state) => Chat(
-        chatID: state.uri.queryParameters['chat_id'],
-      )
-    )
   ]
 );

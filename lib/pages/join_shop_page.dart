@@ -79,7 +79,7 @@ class _JoinShopPageState extends State<JoinShopPage>{
                   ),
                 ),
                 Text(
-                  '4. Klik Kode Unik',
+                  '4. Klik Informasi > Kode Unik',
                   style: TextStyle(
                     color: Colors.grey
                   ),

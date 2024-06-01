@@ -1,10 +1,13 @@
-import 'package:espw/pages/chat_page.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:espw/app/controllers.dart';
+import 'package:espw/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 
 // Pages
 import 'package:espw/pages/home_page.dart';
 import 'package:espw/pages/cart_page.dart';
 import 'package:espw/pages/notification_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NavBar extends StatefulWidget{
   const NavBar({super.key});
@@ -20,6 +23,12 @@ class _NavBarState extends State<NavBar>{
   final int notificationBadge = 0;
   final int chatBadge = 0;
 
+  Future<String> _getFotoProfil() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final fotoProfil = prefs.getString('foto_profil');
+    return fotoProfil!;
+  }
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -27,7 +36,7 @@ class _NavBarState extends State<NavBar>{
         HomePage(),
         CartPage(),
         NotificationPage(),
-        ChatPage(),
+        ProfilePage(),
       ][currentPage],
       bottomNavigationBar: NavigationBar(
         elevation: 20,
@@ -70,17 +79,25 @@ class _NavBarState extends State<NavBar>{
             label: 'Notifikasi',
           ),
           NavigationDestination(
-            selectedIcon: Badge(
-              isLabelVisible: notificationBadge == 0 ? false : true,
-              label: Text(notificationBadge.toString()),
-              child: const Icon(Icons.chat),
+            // selectedIcon: Badge(
+            //   isLabelVisible: notificationBadge == 0 ? false : true,
+            //   label: Text(notificationBadge.toString()),
+            //   child: const Icon(Icons.chat),
+            // ),
+            icon: FutureBuilder(
+              future: _getFotoProfil(),
+              builder: (BuildContext context, AsyncSnapshot response){
+                if(response.hasData){
+                  return CircleAvatar(
+                    radius: 14,
+                    backgroundImage: CachedNetworkImageProvider('https://$baseUrl/assets/${response.data.isEmpty ? 'images/profile.png' : 'public/${response.data}'}'),
+                  );
+                }
+
+                return const CircularProgressIndicator();
+              },
             ),
-            icon: Badge(
-              isLabelVisible: notificationBadge == 0 ? false : true,
-              label: Text(notificationBadge.toString()),
-              child: const Icon(Icons.chat_outlined),
-            ),
-            label: 'Chat',
+            label: 'Profil',
           ),
         ],
       ),

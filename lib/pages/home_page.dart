@@ -6,7 +6,6 @@ import 'package:gap/gap.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,17 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int currentPage = 0;
   bool _isOpen = false;
-
-  // bool _isUnder5K = false;
-  // bool _isUnder10K = false;
-  // bool _isAbove10K = false;
-  // bool _highestRating = false;
-  // bool _lowestRating = false;
-  // bool _isFood = false;
-  // bool _isDrink = false;
-  // bool _isOther = false;
 
   List shopList = [];
   List productList = [];
@@ -41,11 +30,11 @@ class _HomePageState extends State<HomePage> {
     }));
   }
 
-  Future<String> _getFotoProfil() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final fotoProfil = prefs.getString('foto_profil');
-    return fotoProfil!;
-  }
+  // Future<String> _getFotoProfil() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   final fotoProfil = prefs.getString('foto_profil');
+  //   return fotoProfil!;
+  // }
 
   Widget _bannerList(BuildContext context){
     return const Carousel(
@@ -84,20 +73,20 @@ class _HomePageState extends State<HomePage> {
               ),
               shadowColor: Colors.grey.withAlpha(50),
               pinned: true,
-              expandedHeight: 250,
+              expandedHeight: 265,
               flexibleSpace: FlexibleSpaceBar(
                 collapseMode: CollapseMode.pin,
                 background: _bannerList(context),
               ),
               bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(0),
+                preferredSize: const Size.fromHeight(10),
                 child: AppBar(
                   surfaceTintColor: Colors.transparent,
                   backgroundColor: Colors.transparent,
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.vertical(bottom: Radius.circular(25)),
                   ),
-                  toolbarHeight: 50,
+                  toolbarHeight: 65,
                   title: SizedBox(
                     child: FilledButton(
                       style: const ButtonStyle(
@@ -105,7 +94,7 @@ class _HomePageState extends State<HomePage> {
                           color: Color.fromARGB(255, 155, 155, 155),
                           width: 0.5
                         )),
-                        backgroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 240, 240, 240)),
+                        backgroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 245, 245, 245)),
                         foregroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 155, 155, 155)),
                         padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 15))
                       ),
@@ -119,24 +108,24 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-                  actions: [
-                    FutureBuilder(
-                      future: _getFotoProfil(),
-                      builder: (BuildContext context, AsyncSnapshot response){
-                        if(response.hasData){
-                          return ProfilePicture(
-                            imageURL: 'https://$baseUrl/assets/${response.data.isEmpty ? 'images/profile.png' : 'public/${response.data}'}',
-                            onTap: () => context.pushNamed('profile'),
-                          );
-                        }
-
-                        return ProfilePicture(
-                          imageURL: 'https://$baseUrl/assets/images/profile.png',
-                          onTap: () => context.pushNamed('profile'),
-                        );
-                      },
-                    )
-                  ],
+                  // actions: [
+                  //   FutureBuilder(
+                  //     future: _getFotoProfil(),
+                  //     builder: (BuildContext context, AsyncSnapshot response){
+                  //       if(response.hasData){
+                  //         return ProfilePicture(
+                  //           imageURL: 'https://$baseUrl/assets/${response.data.isEmpty ? 'images/profile.png' : 'public/${response.data}'}',
+                  //           onTap: () => context.pushNamed('profile'),
+                  //         );
+                  //       }
+                  //
+                  //       return ProfilePicture(
+                  //         imageURL: 'https://$baseUrl/assets/images/profile.png',
+                  //         onTap: () => context.pushNamed('profile'),
+                  //       );
+                  //     },
+                  //   )
+                  // ],
                 ),
               ),
             ),
@@ -198,30 +187,53 @@ class _HomePageState extends State<HomePage> {
                 child: FutureBuilder(
                   future: shop(),
                   builder: (BuildContext context, AsyncSnapshot response){
-                    if(response.hasData && response.connectionState == ConnectionState.done){
-                      return ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: shopList.length,
-                        itemBuilder: (BuildContext context, int index){
-                          final shop = shopList[index];
-                          return ShopCard(
-                            imageURL: 'https://$baseUrl/assets/${shop['toko']['banner_toko'].isEmpty ? 'images/shop-profile.png' : 'public/${shop['toko']['banner_toko']}'}',
-                            className: shop['kelas']['kelas'],
-                            shopName: shop['toko']['nama_toko'],
-                            rating: double.parse(shop['toko']['rating_toko']),
-                            onTap: () => context.pushNamed('shop', queryParameters: {'shopID': shop['toko']['id_toko']}),
-                          );
-                        },
-                      );
+                    if(response.connectionState == ConnectionState.done){
+                      if(json.decode(response.data.body)['data'].isNotEmpty){
+                        return ListView.builder(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          scrollDirection: Axis.horizontal,
+                          itemCount: shopList.length,
+                          itemBuilder: (BuildContext context, int index){
+                            final shop = shopList[index];
+                            return ShopCard(
+                              imageURL: 'https://$baseUrl/assets/${shop['toko']['banner_toko'].isEmpty ? 'images/shop-profile.png' : 'public/${shop['toko']['banner_toko']}'}',
+                              className: shop['kelas']['kelas'],
+                              shopName: shop['toko']['nama_toko'],
+                              rating: double.parse(shop['toko']['rating_toko']),
+                              onTap: () => context.pushNamed('shop', queryParameters: {'shopID': shop['toko']['id_toko']}),
+                            );
+                          },
+                        );
+                      }
                     } else if (response.connectionState == ConnectionState.waiting){
                       return const Center(
                         child: CircularProgressIndicator(),
                       );
+                    } else if (response.connectionState == ConnectionState.none){
+                      return const SliverToBoxAdapter(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                          child: Center(
+                            child: Text(
+                              'Gagal memuat',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontStyle: FontStyle.italic
+                              ),
+                            ),
+                          ),
+                        )
+                      );
                     }
 
                     return const Center(
-                      child: Text('Gagal memuat!'),
+                      child: Text(
+                        'Toko tidak ditemukan.',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontStyle: FontStyle.italic
+                        ),
+                      ),
                     );
                   },
                 ),
@@ -256,180 +268,6 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
-                    // ElevatedButton(
-                    //   onPressed: (){
-                    //     showModalBottomSheet(
-                    //       isScrollControlled: true,
-                    //       context: context,
-                    //       builder: (context){
-                    //         return SingleChildScrollView(
-                    //           child: SafeArea(
-                    //             minimum: const EdgeInsets.all(16),
-                    //             child: SizedBox(
-                    //               width: double.infinity,
-                    //               child: Column(
-                    //                 crossAxisAlignment: CrossAxisAlignment.start,
-                    //                 children: [
-                    //                   const Text(
-                    //                     'Filter',
-                    //                     style: TextStyle(
-                    //                       fontSize: 26,
-                    //                       fontWeight: FontWeight.w600
-                    //                     ),
-                    //                   ),
-                    //                   const Gap(20),
-                    //                   const Text(
-                    //                     'Harga',
-                    //                     style: TextStyle(
-                    //                       fontSize: 18,
-                    //                       fontWeight: FontWeight.w600
-                    //                     ),
-                    //                   ),
-                    //                   StatefulBuilder(
-                    //                     builder: (BuildContext context, StateSetter setState){
-                    //                       return Wrap(
-                    //                         spacing: 5,
-                    //                         children: [
-                    //                           ChoiceChip(
-                    //                             label: const Text('Dibawah 5K'),
-                    //                             selected: _isUnder5K,
-                    //                             onSelected: (bool selected){
-                    //                               setState(() {
-                    //                                 _isUnder5K = !_isUnder5K;
-                    //                               });
-                    //                             },
-                    //                           ),
-                    //                           ChoiceChip(
-                    //                             label: const Text('Dibawah 10K'),
-                    //                             selected: _isUnder10K,
-                    //                             onSelected: (bool selected){
-                    //                               setState(() {
-                    //                                 _isUnder10K = !_isUnder10K;
-                    //                               });
-                    //                             },
-                    //                           ),
-                    //                           ChoiceChip(
-                    //                             label: const Text('Diatas 10K'),
-                    //                             selected: _isAbove10K,
-                    //                             onSelected: (bool selected){
-                    //                               setState(() {
-                    //                                 _isAbove10K = !_isAbove10K;
-                    //                               });
-                    //                             },
-                    //                           )
-                    //                         ],
-                    //                       );
-                    //                     },
-                    //                   ),
-                    //                   const Gap(15),
-                    //                   const Text(
-                    //                     'Rating',
-                    //                     style: TextStyle(
-                    //                       fontSize: 18,
-                    //                       fontWeight: FontWeight.w600
-                    //                     ),
-                    //                   ),
-                    //                   StatefulBuilder(
-                    //                     builder: (BuildContext context, StateSetter setState){
-                    //                       return Wrap(
-                    //                         spacing: 5,
-                    //                         children: [
-                    //                           ChoiceChip(
-                    //                             label: const Row(
-                    //                               mainAxisSize: MainAxisSize.min,
-                    //                               children: [
-                    //                                 Text('Diatas 4.0'),
-                    //                                 Gap(5),
-                    //                                 Icon(Icons.star_half)
-                    //                               ],
-                    //                             ),
-                    //                             selected: _lowestRating,
-                    //                             onSelected: (bool selected){
-                    //                               setState(() {
-                    //                                 _lowestRating = !_lowestRating;
-                    //                               });
-                    //                             },
-                    //                           ),
-                    //                           ChoiceChip(
-                    //                             label: const Row(
-                    //                               mainAxisSize: MainAxisSize.min,
-                    //                               children: [
-                    //                                 Text('Diatas 4.5'),
-                    //                                 Gap(5),
-                    //                                 Icon(Icons.star)
-                    //                               ],
-                    //                             ),
-                    //                             selected: _highestRating,
-                    //                             onSelected: (bool selected){
-                    //                               setState(() {
-                    //                                 _highestRating = !_highestRating;
-                    //                               });
-                    //                             },
-                    //                           ),
-                    //                         ],
-                    //                       );
-                    //                     },
-                    //                   ),
-                    //                   const Gap(15),
-                    //                   const Text(
-                    //                     'Jenis',
-                    //                     style: TextStyle(
-                    //                       fontSize: 18,
-                    //                       fontWeight: FontWeight.w600
-                    //                     ),
-                    //                   ),
-                    //                   StatefulBuilder(
-                    //                     builder: (BuildContext context, StateSetter setState){
-                    //                       return Wrap(
-                    //                         spacing: 5,
-                    //                         children: [
-                    //                           ChoiceChip(
-                    //                             label: const Text('Makanan'),
-                    //                             selected: _isFood,
-                    //                             onSelected: (bool selected){
-                    //                               setState(() {
-                    //                                 _isFood = !_isFood;
-                    //                               });
-                    //                             },
-                    //                           ),
-                    //                           ChoiceChip(
-                    //                             label: const Text('Minuman'),
-                    //                             selected: _isDrink,
-                    //                             onSelected: (bool selected){
-                    //                               setState(() {
-                    //                                 _isDrink = !_isDrink;
-                    //                               });
-                    //                             },
-                    //                           ),
-                    //                           ChoiceChip(
-                    //                             label: const Text('Lainnya'),
-                    //                             selected: _isOther,
-                    //                             onSelected: (bool selected){
-                    //                               setState(() {
-                    //                                 _isOther = !_isOther;
-                    //                               });
-                    //                             },
-                    //                           ),
-                    //                         ],
-                    //                       );
-                    //                     },
-                    //                   ),
-                    //                 ],
-                    //               ),
-                    //             ),
-                    //           ),
-                    //         );
-                    //       }
-                    //     );
-                    //   },
-                    //   child: const Row(
-                    //     children: [
-                    //       Icon(Icons.tune),
-                    //       Gap(10),
-                    //       Text('Filter')
-                    //     ],
-                    //   ),
-                    // )
                   ],
                 )
               ),
@@ -437,28 +275,45 @@ class _HomePageState extends State<HomePage> {
             FutureBuilder(
               future: products(),
               builder: (BuildContext context, AsyncSnapshot response){
-                if(response.hasData && response.connectionState == ConnectionState.done){
-                  return SliverList.builder(
-                    itemCount: productList.length,
-                    itemBuilder: (BuildContext context, int index){
-                      final product = productList[index];
-                      return ProductCard(
-                        imageURL: 'https://$baseUrl/assets/public/${product['produk']['foto_produk']}',
-                        productName: product['produk']['nama_produk'],
-                        description: product['produk']['deskripsi_produk'],
-                        soldTotal: product['produk']['jumlah_terjual'],
-                        price: int.parse(product['produk']['harga']),
-                        rating: double.parse(product['produk']['rating_produk']),
-                        onTap: () => context.pushNamed('shop', queryParameters: {'shopID': product['produk']['id_toko']}),
-                      );
-                    },
-                  );
+                if(response.connectionState == ConnectionState.done){
+                  if(json.decode(response.data.body)['data'].isNotEmpty){
+                    return SliverList.builder(
+                      itemCount: productList.length,
+                      itemBuilder: (BuildContext context, int index){
+                        final product = productList[index];
+                        return ProductCard(
+                          imageURL: 'https://$baseUrl/assets/public/${product['produk']['foto_produk']}',
+                          productName: product['produk']['nama_produk'],
+                          description: product['produk']['deskripsi_produk'],
+                          soldTotal: product['produk']['jumlah_terjual'],
+                          price: int.parse(product['produk']['harga']),
+                          rating: double.parse(product['produk']['rating_produk']),
+                          onTap: () => context.pushNamed('shop', queryParameters: {'shopID': product['produk']['id_toko']}),
+                        );
+                      },
+                    );
+                  }
                 } else if (response.connectionState == ConnectionState.waiting){
                   return const SliverToBoxAdapter(
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                       child: Center(
                         child: CircularProgressIndicator()
+                      ),
+                    )
+                  );
+                } else if (response.connectionState == ConnectionState.none){
+                  return const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                      child: Center(
+                        child: Text(
+                          'Gagal memuat',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontStyle: FontStyle.italic
+                          ),
+                        ),
                       ),
                     )
                   );
@@ -469,7 +324,7 @@ class _HomePageState extends State<HomePage> {
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                     child: Center(
                       child: Text(
-                        'Produk tidak ditemukan!',
+                        'Tidak ada toko yang berjualan hari ini.',
                         style: TextStyle(
                           fontSize: 12,
                           fontStyle: FontStyle.italic
@@ -487,34 +342,34 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class ProfilePicture extends StatelessWidget{
-  const ProfilePicture({super.key, required this.imageURL, this.onTap});
-  final String imageURL;
-  final void Function()? onTap;
-
-  Widget _isContainProfilePicture(){
-    if(imageURL.isNotEmpty){
-      return CircleAvatar(
-        backgroundImage: NetworkImage(imageURL),
-      );
-    } else {
-      return const CircleAvatar(
-        backgroundImage: NetworkImage('https://$baseUrl/assets/images/profile.png'),
-      );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context){
-    return Container(
-      margin: const EdgeInsets.only(right: 16),
-      child: GestureDetector(
-        onTap: onTap,
-        child: _isContainProfilePicture(),
-      ),
-    );
-  }
-}
+// class ProfilePicture extends StatelessWidget{
+//   const ProfilePicture({super.key, required this.imageURL, this.onTap});
+//   final String imageURL;
+//   final void Function()? onTap;
+//
+//   Widget _isContainProfilePicture(){
+//     if(imageURL.isNotEmpty){
+//       return CircleAvatar(
+//         backgroundImage: NetworkImage(imageURL),
+//       );
+//     } else {
+//       return const CircleAvatar(
+//         backgroundImage: NetworkImage('https://$baseUrl/assets/images/profile.png'),
+//       );
+//     }
+//   }
+//
+//   @override
+//   Widget build(BuildContext context){
+//     return Container(
+//       margin: const EdgeInsets.only(right: 16),
+//       child: GestureDetector(
+//         onTap: onTap,
+//         child: _isContainProfilePicture(),
+//       ),
+//     );
+//   }
+// }
 
 class Carousel extends StatelessWidget{
   const Carousel({super.key, required this.banner});

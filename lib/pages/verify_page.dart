@@ -1,3 +1,4 @@
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:espw/widgets/bottom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -5,13 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Verify extends StatefulWidget {
-  const Verify({super.key, required this.nis, required this.nama, required this.kelas, required this.password, required this.telepon, required this.fotoProfil, required this.token});
-  final String nis;
-  final String nama;
-  final String kelas;
-  final String password;
-  final String telepon;
-  final String fotoProfil;
+  const Verify({super.key, required this.token});
   final String token;
 
   @override
@@ -27,15 +22,12 @@ class _VerifyState extends State<Verify> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if(_formFieldKey.currentState!.validate()){
       _formFieldKey.currentState!.save();
+
+      final verify = JWT.verify(widget.token, SecretKey('espwapp'));
+
       if(!mounted) return;
-      if(_password == widget.password){
+      if(_password == verify.payload['password']){
         prefs.setBool('isAuthenticated', true);
-        prefs.setInt('nis', int.parse(widget.nis));
-        prefs.setString('nama', widget.nama);
-        prefs.setString('kelas', widget.kelas);
-        prefs.setString('password', widget.password);
-        prefs.setString('telepon', widget.telepon);
-        prefs.setString('foto_profil', widget.fotoProfil);
         prefs.setString('token', widget.token);
 
         successSnackBar(

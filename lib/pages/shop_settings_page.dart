@@ -28,7 +28,7 @@ class ShopSettingsPage extends StatelessWidget{
           children: [
             ItemButton(
               itemTitle: const Text('Informasi'),
-              onPressed: () => context.pushNamed('search'),
+              onPressed: () => context.pushNamed('shop-info', queryParameters: {'id_toko': idToko}),
             ),
             ItemButton(
               itemTitle: const Text('Jadwal Operasional'),
