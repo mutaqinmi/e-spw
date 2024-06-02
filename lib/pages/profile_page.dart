@@ -365,7 +365,7 @@ class _ProfilePageState extends State<ProfilePage>{
                           width: double.infinity,
                           child: InkWell(
                             borderRadius: BorderRadius.circular(10),
-                            onTap: () => {},
+                            onTap: () => context.pushNamed('address'),
                             child: Card(
                               color: Colors.transparent,
                               elevation: 0,

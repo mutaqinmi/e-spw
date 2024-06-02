@@ -10,12 +10,7 @@ class ChangePassword extends StatefulWidget{
 }
 
 class _ChangePasswordState extends State<ChangePassword>{
-  Widget _buttonChild = const Text(
-    'Ubah Kata Sandi',
-    style: TextStyle(
-      fontWeight: FontWeight.w600,
-    ),
-  );
+  bool _buttonClick = false;
   final _passwordKey = GlobalKey<FormFieldState>();
   final _confirmPasswordKey = GlobalKey<FormFieldState>();
   bool _obscureTextNewPassword = true;
@@ -29,13 +24,7 @@ class _ChangePasswordState extends State<ChangePassword>{
       if(_confirmPasswordKey.currentState!.validate()){
         _confirmPasswordKey.currentState!.save();
         setState(() {
-          _buttonChild = const SizedBox(
-            width: 22,
-            height: 22,
-            child: CircularProgressIndicator(
-              color: Colors.white,
-            ),
-          );
+          _buttonClick = true;
         });
         changePassword(context, _confirmPassword);
       }
@@ -148,7 +137,18 @@ class _ChangePasswordState extends State<ChangePassword>{
                   )
                 ),
               ),
-              child: _buttonChild,
+              child: _buttonClick ? const SizedBox(
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+              ) : const Text(
+                'Ubah Kata Sandi',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               onPressed: () => _submit(),
             ),
           ),
