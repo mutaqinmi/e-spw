@@ -1,3 +1,4 @@
+import 'package:espw/app/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -19,6 +20,10 @@ class _MainAddressPageState extends State<MainAddressPage>{
       setState(() {
         _buttonClick = true;
       });
+      addAddress(
+        context: context,
+        address: _address
+      );
     }
   }
 
@@ -55,7 +60,7 @@ class _MainAddressPageState extends State<MainAddressPage>{
                   borderRadius: BorderRadius.all(Radius.circular(10))
                 ),
                 contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                hintText: 'Masukkan Alamat Utama',
+                hintText: 'e.g. Lab. RPL, Lt. 2, Gedung Teknologi Informasi (TKJ), SMK Negeri 2 Tasikmalaya',
                 label: Text('Masukkan Alamat Utama'),
               ),
               validator: (value){

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:espw/widgets/bottom_snack_bar.dart';
@@ -87,6 +88,56 @@ void changePassword(BuildContext context, String newPassword) async {
     successSnackBar(
       context: context,
       content: 'Password berhasil diubah!'
+    );
+  }
+}
+
+Future<http.Response> getAddress() async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/user/${prefs.getInt('nis')}/address');
+  final response = await http.get(url, headers: {
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  return response;
+}
+
+void addAddress({required BuildContext context, required String address}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/user/${prefs.getInt('nis')}/add-address');
+  final response = await http.post(url, body: json.encode({
+    'address': address
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  if(!context.mounted) return;
+  if(response.statusCode == 200){
+    context.goNamed('address');
+    successSnackBar(
+      context: context,
+      content: 'Alamat berhasil disimpan!'
+    );
+  }
+}
+
+void deleteAddress({required BuildContext context, required int idAddress}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/user/${prefs.getInt('nis')}/delete-address');
+  final response = await http.post(url, body: json.encode({
+    'id_address': idAddress
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  if(!context.mounted) return;
+  if(response.statusCode == 200){
+    context.goNamed('home');
+    successSnackBar(
+      context: context,
+      content: 'Alamat dihapus!'
     );
   }
 }

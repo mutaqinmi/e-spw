@@ -13,6 +13,7 @@ import 'package:espw/pages/edit_profile_page.dart';
 import 'package:espw/pages/favorite_page.dart';
 import 'package:espw/pages/information_page.dart';
 import 'package:espw/pages/join_shop_page.dart';
+import 'package:espw/pages/list_address_page.dart';
 import 'package:espw/pages/login_failed.dart';
 import 'package:espw/pages/login_shop_page.dart';
 import 'package:espw/pages/main_address_page.dart';
@@ -281,7 +282,14 @@ final routes = GoRouter(
             GoRoute(
               name: 'address',
               path: 'address',
-              builder: (BuildContext context, GoRouterState state) => const MainAddressPage(),
+              builder: (BuildContext context, GoRouterState state) => const ListAddressPage(),
+              routes: [
+                GoRoute(
+                  name: 'add-address',
+                  path: 'add-address',
+                  builder: (BuildContext context, GoRouterState state) => const MainAddressPage(),
+                ),
+              ]
             ),
             GoRoute(
               name: 'shop-settings',
