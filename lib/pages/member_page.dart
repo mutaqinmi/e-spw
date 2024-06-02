@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:espw/app/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -55,7 +54,7 @@ class _MemberPageState extends State<MemberPage>{
                         children: [
                           CircleAvatar(
                             radius: 25,
-                            backgroundImage: CachedNetworkImageProvider(
+                            backgroundImage: NetworkImage(
                               'https://$baseUrl/assets/${kelompok['siswa']['foto_profil'].isEmpty ? 'images/profile.png' : 'public/${kelompok['siswa']['foto_profil']}'}'
                             ),
                           ),

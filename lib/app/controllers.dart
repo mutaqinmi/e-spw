@@ -160,6 +160,47 @@ void createShop(
   }
 }
 
+void updateShopBanner({required BuildContext context, required String idToko, required File bannerToko, required String oldImage}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/shop/$idToko/update-profile-picture');
+  final request = http.MultipartRequest('POST', url);
+  request.headers.addAll({
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+  request.fields['old_image'] = oldImage;
+  request.files.add(http.MultipartFile.fromBytes('banner_toko', File(bannerToko.path).readAsBytesSync(), filename: bannerToko.path));
+  final response = await request.send();
+  if(response.statusCode == 200){
+    if(!context.mounted) return;
+    context.goNamed('shop-dash', queryParameters: {'id_toko': idToko});
+    successSnackBar(
+      context: context,
+      content: 'Foto profil berhasil diubah!'
+    );
+  }
+}
+
+void updateShop({required BuildContext context, required String deskripsiToko, required String idToko}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/shop/update');
+  final response = await http.patch(url, body: json.encode({
+    'id_toko': idToko,
+    'deskripsi_toko': deskripsiToko
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  if(!context.mounted) return;
+  if(response.statusCode == 200){
+    context.goNamed('shop-dash', queryParameters: {'id_toko': idToko});
+    successSnackBar(
+      context: context,
+      content: 'Informasi toko berhasil diubah!'
+    );
+  }
+}
+
 void deleteShop({required BuildContext context, required String idToko}) async {
   final SharedPreferences prefs = await _prefs;
   final url = Uri.https(baseUrl, '/api/shop/delete');
@@ -320,6 +361,51 @@ void addProduct(
     successSnackBar(
       context: context,
       content: 'Produk berhasil ditambahkan!'
+    );
+  }
+}
+
+void updateFotoProduk({required BuildContext context, required String idProduk, required File fotoProduk, required String oldImage, required String idToko}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/products/$idProduk/update-profile-picture');
+  final request = http.MultipartRequest('POST', url);
+  request.headers.addAll({
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+  request.fields['old_image'] = oldImage;
+  request.files.add(http.MultipartFile.fromBytes('foto_produk', File(fotoProduk.path).readAsBytesSync(), filename: fotoProduk.path));
+  final response = await request.send();
+  if(response.statusCode == 200){
+    if(!context.mounted) return;
+    context.goNamed('shop-dash', queryParameters: {'id_toko': idToko});
+    successSnackBar(
+      context: context,
+      content: 'Foto produk berhasil diubah!'
+    );
+  }
+}
+
+void updateProduk({required BuildContext context, required String namaProduk, required String harga, required String stok, required String deskripsiProduk, required String detailProduk, required String idProduk, required String idToko}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/products/update');
+  final response = await http.patch(url, body: json.encode({
+    'id_produk': idProduk,
+    'nama_produk': namaProduk,
+    'harga': harga,
+    'stok': stok,
+    'deskripsi_produk': deskripsiProduk,
+    'detail_produk': detailProduk
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  if(!context.mounted) return;
+  if(response.statusCode == 200){
+    context.goNamed('shop-dash', queryParameters: {'id_toko': idToko});
+    successSnackBar(
+      context: context,
+      content: 'Informasi produk berhasil diubah!'
     );
   }
 }

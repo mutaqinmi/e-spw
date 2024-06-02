@@ -300,7 +300,7 @@ class ShopResult extends StatelessWidget{
                 children: [
                   CircleAvatar(
                     radius: 25,
-                    backgroundImage: CachedNetworkImageProvider(
+                    backgroundImage: NetworkImage(
                       imageURL
                     ),
                   ),

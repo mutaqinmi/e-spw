@@ -1,5 +1,4 @@
 // import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:espw/app/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -89,7 +88,7 @@ class _ProfilePageState extends State<ProfilePage>{
                         children: [
                           CircleAvatar(
                             radius: 40,
-                            backgroundImage: CachedNetworkImageProvider(
+                            backgroundImage: NetworkImage(
                               'https://$baseUrl/assets/${profilePicture.isEmpty ? 'images/profile.png' : 'public/$profilePicture'}'
                             ),
                           ),

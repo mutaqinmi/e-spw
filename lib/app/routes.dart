@@ -256,6 +256,7 @@ final routes = GoRouter(
                       path: 'edit-product',
                       builder: (BuildContext context, GoRouterState state) => EditProductPage(
                         idProduk: state.uri.queryParameters['id_produk']!,
+                        idToko: state.uri.queryParameters['id_toko']!,
                       )
                     )
                   ]

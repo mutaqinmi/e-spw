@@ -164,7 +164,7 @@ class _ProductPageState extends State<ProductPage>{
                         if(dismissDirection == DismissDirection.endToStart){
                           return _confirmDismiss(context, item['nama_produk']);
                         } else if (dismissDirection == DismissDirection.startToEnd){
-                          return context.pushNamed('edit-product', queryParameters: {'id_produk': item['id_produk']});
+                          return context.pushNamed('edit-product', queryParameters: {'id_produk': item['id_produk'], 'id_toko': widget.idToko});
                         }
 
                         return Future.value(false);

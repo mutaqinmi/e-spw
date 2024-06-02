@@ -1,12 +1,15 @@
 import 'dart:convert';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:io';
 import 'package:espw/app/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditProductPage extends StatefulWidget{
-  const EditProductPage({super.key, required this.idProduk});
+  const EditProductPage({super.key, required this.idProduk, required this.idToko});
   final String idProduk;
+  final String idToko;
 
   @override
   State<EditProductPage> createState() => _EditProductPageState();
@@ -32,7 +35,52 @@ class _EditProductPageState extends State<EditProductPage>{
       _stokKey.currentState!.save();
       _deskripsiProdukKey.currentState!.save();
       _detailProdukKey.currentState!.save();
+      setState(() {
+        _buttonClicked = true;
+      });
+      updateProduk(
+        context: context,
+        idProduk: widget.idProduk,
+        namaProduk: _namaProduk,
+        harga: _harga,
+        stok: _stok,
+        deskripsiProduk: _deskripsiProduk,
+        detailProduk: _detailProduk,
+        idToko: widget.idToko
+      );
     }
+  }
+
+  void _getImage(String oldImage) async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    File? file = File(image!.path);
+    file = await _cropImage(imageFile: file);
+    if(!mounted) return;
+    return updateFotoProduk(
+      context: context,
+      idProduk: widget.idProduk,
+      fotoProduk: file!,
+      oldImage: oldImage,
+      idToko: widget.idToko,
+    );
+  }
+
+  Future<File?> _cropImage({required File imageFile}) async {
+    CroppedFile? croppedImage = await ImageCropper().cropImage(
+      sourcePath: imageFile.path,
+      cropStyle: CropStyle.circle,
+      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Edit',
+          lockAspectRatio: true,
+          hideBottomControls: true
+        )
+      ]
+    );
+    if(croppedImage == null) return null;
+    return File(croppedImage.path);
   }
 
   @override
@@ -65,13 +113,13 @@ class _EditProductPageState extends State<EditProductPage>{
                         children: [
                           CircleAvatar(
                             radius: 50,
-                            backgroundImage: CachedNetworkImageProvider(
+                            backgroundImage: NetworkImage(
                               'https://$baseUrl/assets/public/${produk['foto_produk']}'
                             ),
                           ),
                           const Gap(5),
                           TextButton(
-                            onPressed: (){},
+                            onPressed: () =>_getImage(produk['foto_produk']),
                             child: const Text('Ubah Foto Produk'),
                           )
                         ],

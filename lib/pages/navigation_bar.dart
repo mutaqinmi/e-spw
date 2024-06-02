@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:espw/app/controllers.dart';
 import 'package:espw/pages/profile_page.dart';
 import 'package:flutter/material.dart';
@@ -90,7 +89,7 @@ class _NavBarState extends State<NavBar>{
                 if(response.hasData){
                   return CircleAvatar(
                     radius: 14,
-                    backgroundImage: CachedNetworkImageProvider('https://$baseUrl/assets/${response.data.isEmpty ? 'images/profile.png' : 'public/${response.data}'}'),
+                    backgroundImage: NetworkImage('https://$baseUrl/assets/${response.data.isEmpty ? 'images/profile.png' : 'public/${response.data}'}'),
                   );
                 }
 

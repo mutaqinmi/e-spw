@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:espw/app/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -83,7 +82,7 @@ class _ShopDashPageState extends State<ShopDashPage>{
                         children: [
                           CircleAvatar(
                             radius: 30,
-                            backgroundImage: CachedNetworkImageProvider(
+                            backgroundImage: NetworkImage(
                               'https://$baseUrl/assets/public/${shop.first['toko']['banner_toko']}'
                             ),
                           ),

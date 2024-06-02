@@ -1,8 +1,10 @@
 import 'dart:convert';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:io';
 import 'package:espw/app/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 
 class DetailShop extends StatefulWidget{
   const DetailShop({super.key, required this.idToko});
@@ -14,19 +16,50 @@ class DetailShop extends StatefulWidget{
 
 class _DetailShopState extends State<DetailShop>{
   bool _buttonClicked = false;
-  final _namaTokoKey = GlobalKey<FormFieldState>();
   final _deskripsiTokoKey = GlobalKey<FormFieldState>();
-  String _namaToko = '';
   String _deskripsiToko = '';
 
   void _submit(){
-    if(_namaTokoKey.currentState!.validate()){
-      _namaTokoKey.currentState!.save();
-      _deskripsiTokoKey.currentState!.save();
-      setState(() {
-        _buttonClicked = true;
-      });
-    }
+    _deskripsiTokoKey.currentState!.save();
+    setState(() {
+      _buttonClicked = true;
+    });
+    updateShop(
+      context: context,
+      deskripsiToko: _deskripsiToko,
+      idToko: widget.idToko
+    );
+  }
+
+  void _getImage(String oldImage) async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    File? file = File(image!.path);
+    file = await _cropImage(imageFile: file);
+    if(!mounted) return;
+    return updateShopBanner(
+      context: context,
+      bannerToko: file!,
+      idToko: widget.idToko,
+      oldImage: oldImage
+    );
+  }
+
+  Future<File?> _cropImage({required File imageFile}) async {
+    CroppedFile? croppedImage = await ImageCropper().cropImage(
+      sourcePath: imageFile.path,
+      cropStyle: CropStyle.circle,
+      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Edit',
+          lockAspectRatio: true,
+          hideBottomControls: true
+        )
+      ]
+    );
+    if(croppedImage == null) return null;
+    return File(croppedImage.path);
   }
 
   @override
@@ -60,13 +93,13 @@ class _DetailShopState extends State<DetailShop>{
                         children: [
                           CircleAvatar(
                             radius: 50,
-                            backgroundImage: CachedNetworkImageProvider(
+                            backgroundImage: NetworkImage(
                               'https://$baseUrl/assets/public/${toko['banner_toko']}'
                             ),
                           ),
                           const Gap(5),
                           TextButton(
-                            onPressed: (){},
+                            onPressed: () => _getImage(toko['banner_toko']),
                             child: const Text('Ubah Foto Profil'),
                           )
                         ],
@@ -78,26 +111,12 @@ class _DetailShopState extends State<DetailShop>{
                       children: [
                         const Text('Nama Toko'),
                         const Gap(5),
-                        TextFormField(
-                          initialValue: toko['nama_toko'],
-                          key: _namaTokoKey,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(10))
-                            ),
-                            contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 15),
-                            hintText: 'Nama Toko',
+                        Text(
+                          toko['nama_toko'],
+                          style: const TextStyle(
+                            fontSize: 16
                           ),
-                          validator: (value){
-                            if(value!.isEmpty){
-                              return 'Isi field terlebih dahulu!';
-                            }
-
-                            return null;
-                          },
-                          onSaved: (value) => _namaToko = value!,
-                        ),
+                        )
                       ],
                     ),
                     const Gap(20),
