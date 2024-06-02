@@ -19,16 +19,34 @@ class ShopPage extends StatefulWidget{
 class _ShopPageState extends State<ShopPage>{
   NumberFormat formatter = NumberFormat("###,###.##", "id_ID");
   int qty = 0;
+  bool subscribe = false;
 
   List shopList = [];
-  final int cartBadge = 0;
+  bool favorite = false;
   @override
   void initState() {
     super.initState();
     shopById(widget.shopID).then((res) => setState(() {
       shopList = json.decode(res.body)['data'];
     }));
-    // cartBadge = carts.length;
+    getFavorite().then((res){
+      List data = json.decode(res.body)['data'];
+      for(int i = 0; i < data.length; i++){
+        if(data[i]['toko']['id_toko'] != shopList.first['toko']['id_toko']){
+          Future.delayed(const Duration(seconds: 1), (){
+            setState(() {
+              favorite = false;
+            });
+          });
+        } else {
+          Future.delayed(const Duration(seconds: 1), (){
+            setState(() {
+              favorite = true;
+            });
+          });
+        }
+      }
+    });
   }
 
   Widget _isOpen(bool isOpen){
@@ -132,18 +150,6 @@ class _ShopPageState extends State<ShopPage>{
                   slivers: [
                     SliverAppBar(
                       foregroundColor: Theme.of(context).primaryColor,
-                      pinned: true,
-                      actions: [
-                        Badge(
-                          isLabelVisible: cartBadge == 0 ? false : true,
-                          offset: const Offset(-8, 8),
-                          label: Text(cartBadge.toString()),
-                          child: IconButton(
-                            onPressed: () => context.pushNamed('cart'),
-                            icon: const Icon(Icons.shopping_cart_outlined),
-                          ),
-                        ),
-                      ],
                       expandedHeight: 200,
                       flexibleSpace: FlexibleSpaceBar(
                         background: CachedNetworkImage(
@@ -195,6 +201,7 @@ class _ShopPageState extends State<ShopPage>{
                                       Text(
                                         shopList.first['toko']['deskripsi_toko'],
                                       ),
+                                      const Gap(5),
                                       Wrap(
                                         crossAxisAlignment: WrapCrossAlignment.center,
                                         spacing: 5,
@@ -219,9 +226,37 @@ class _ShopPageState extends State<ShopPage>{
                                     ],
                                   ),
                                 ),
-                                IconButton(
-                                  onPressed: (){},
-                                  icon: Icon(Icons.favorite_outline, color: Theme.of(context).primaryColor),
+                                FutureBuilder(
+                                  future: getFavorite(),
+                                  builder: (BuildContext context, AsyncSnapshot response){
+                                    if(response.hasData){
+                                      return IconButton(
+                                        onPressed: (){
+                                          setState(() {
+                                            favorite = !favorite;
+                                          });
+
+                                          if(!favorite){
+                                            deleteFromFavorite(
+                                              context: context,
+                                              idToko: shopList.first['toko']['id_toko']
+                                            );
+                                          } else {
+                                            addToFavorite(
+                                              context: context,
+                                              idToko: shopList.first['toko']['id_toko']
+                                            );
+                                          }
+                                        },
+                                        icon: Icon(
+                                          favorite ? Icons.favorite : Icons.favorite_outline,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                      );
+                                    }
+
+                                    return const SizedBox();
+                                  },
                                 )
                               ],
                             ),
@@ -229,25 +264,15 @@ class _ShopPageState extends State<ShopPage>{
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Wrap(
-                                  spacing: 5,
-                                  crossAxisAlignment: WrapCrossAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Unggulan',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600
-                                      ),
-                                    ),
-                                    Icon(
-                                      Icons.emoji_events,
-                                      size: 16,
-                                    )
-                                  ],
+                                const Text(
+                                  'Rekomendasi Toko',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600
+                                  ),
                                 ),
                                 const Text(
-                                  'Yang paling disukai di toko ini.',
+                                  'Mungkin kamu suka.',
                                 ),
                                 const Gap(10),
                                 GestureDetector(
@@ -491,7 +516,11 @@ class _ShopPageState extends State<ShopPage>{
             );
           },
         )
-      )
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.pushNamed('cart'),
+        child: const Icon(Icons.shopping_cart_outlined),
+      ),
     );
   }
 

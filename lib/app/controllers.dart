@@ -554,3 +554,51 @@ Future<http.Response> updateCart(int idKeranjang, int qty) async {
 
   return response;
 }
+
+Future<http.Response> getFavorite() async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/favorite/${prefs.getInt('nis')}');
+  final response = await http.get(url, headers: {
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  return response;
+}
+
+void addToFavorite({required BuildContext context, required String idToko}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/favorite/${prefs.getInt('nis')}/add');
+  final response = await http.post(url, body: json.encode({
+    'id_toko': idToko,
+  }),headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  if(!context.mounted) return;
+  if(response.statusCode == 200){
+    successSnackBar(
+      context: context,
+      content: 'Anda menyukai toko ini'
+    );
+  }
+}
+
+void deleteFromFavorite({required BuildContext context, required String idToko}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/favorite/${prefs.getInt('nis')}/delete');
+  final response = await http.post(url, body: json.encode({
+    'id_toko': idToko,
+  }),headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  if(!context.mounted) return;
+  if(response.statusCode == 200){
+    successSnackBar(
+      context: context,
+      content: 'Anda batal menyukai toko ini'
+    );
+  }
+}
