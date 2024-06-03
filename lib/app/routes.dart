@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:espw/app/controllers.dart';
+import 'package:espw/pages/order_created_page.dart';
 import 'package:espw/pages/add_product_oncreate_page.dart';
 import 'package:espw/pages/add_product_page.dart';
 import 'package:espw/pages/change_password.dart';
@@ -138,216 +139,215 @@ final routes = GoRouter(
           name: 'profile',
           path: 'profile',
           builder: (BuildContext context, GoRouterState state) => const ProfilePage(),
+        ),
+        GoRoute(
+          name: 'order',
+          path: 'order',
+          builder: (BuildContext context, GoRouterState state) => OrderPage(
+            initialIndex: state.uri.queryParameters['initial_index'],
+          )
+        ),
+        GoRoute(
+          name: 'login-shop',
+          path: 'login-shop',
+          builder: (BuildContext context, GoRouterState state) => const LoginShopPage(),
+          redirect: (BuildContext context, GoRouterState state) async {
+            final String? isRedirect = state.uri.queryParameters['isRedirect'];
+            final dataKelompok = await kelompok();
+            if(isRedirect == 'false') return null;
+            if(json.decode(dataKelompok.body)['data'].isNotEmpty) return '/home/login-shop/choose-shop';
+
+            return null;
+          },
           routes: [
             GoRoute(
-              name: 'order',
-              path: 'order',
-              builder: (BuildContext context, GoRouterState state) => OrderPage(
-                initialIndex: state.uri.queryParameters['initial_index'],
-              )
-            ),
-            GoRoute(
-              name: 'login-shop',
-              path: 'login-shop',
-              builder: (BuildContext context, GoRouterState state) => const LoginShopPage(),
-              redirect: (BuildContext context, GoRouterState state) async {
-                final String? isRedirect = state.uri.queryParameters['isRedirect'];
-                final dataKelompok = await kelompok();
-                if(isRedirect == 'false') return null;
-                if(json.decode(dataKelompok.body)['data'].isNotEmpty) return '/home/profile/login-shop/choose-shop';
-
-                return null;
-              },
+              name: 'create-shop',
+              path: 'create-shop',
+              builder: (BuildContext context, GoRouterState state) => const CreateShopPage(),
               routes: [
                 GoRoute(
-                  name: 'create-shop',
-                  path: 'create-shop',
-                  builder: (BuildContext context, GoRouterState state) => const CreateShopPage(),
+                  name: 'upload-profile-image',
+                  path: 'upload-profile-image',
+                  builder: (BuildContext context, GoRouterState state) => UploadProfileImagePage(
+                    namaToko: state.uri.queryParameters['nama_toko'],
+                    kelas: state.uri.queryParameters['kelas'],
+                    deskripsiToko: state.uri.queryParameters['deskripsi_toko'],
+                  ),
                   routes: [
                     GoRoute(
-                      name: 'upload-profile-image',
-                      path: 'upload-profile-image',
-                      builder: (BuildContext context, GoRouterState state) => UploadProfileImagePage(
-                        namaToko: state.uri.queryParameters['nama_toko'],
-                        kelas: state.uri.queryParameters['kelas'],
-                        deskripsiToko: state.uri.queryParameters['deskripsi_toko'],
+                      name: 'add-product-oncreate',
+                      path: 'add-product-oncreate',
+                      builder: (BuildContext context, GoRouterState state) => AddProductOnCreatePage(
+                        idToko: state.uri.queryParameters['id_toko']!,
                       ),
                       routes: [
                         GoRoute(
-                          name: 'add-product-oncreate',
-                          path: 'add-product-oncreate',
-                          builder: (BuildContext context, GoRouterState state) => AddProductOnCreatePage(
-                            idToko: state.uri.queryParameters['id_toko']!,
+                          name: 'upload-product-image-oncreate',
+                          path: 'upload-product-image-oncreate',
+                          builder: (BuildContext context, GoRouterState state) => UploadProductImageOnCreatePage(
+                            namaProduk: state.uri.queryParameters['nama_produk'],
+                            harga: state.uri.queryParameters['harga'],
+                            stok: state.uri.queryParameters['stok'],
+                            deskripsiProduk: state.uri.queryParameters['deskripsi_produk'],
+                            detailProduk: state.uri.queryParameters['detail_produk'],
+                            idToko: state.uri.queryParameters['id_toko'],
                           ),
-                          routes: [
-                            GoRoute(
-                              name: 'upload-product-image-oncreate',
-                              path: 'upload-product-image-oncreate',
-                              builder: (BuildContext context, GoRouterState state) => UploadProductImageOnCreatePage(
-                                namaProduk: state.uri.queryParameters['nama_produk'],
-                                harga: state.uri.queryParameters['harga'],
-                                stok: state.uri.queryParameters['stok'],
-                                deskripsiProduk: state.uri.queryParameters['deskripsi_produk'],
-                                detailProduk: state.uri.queryParameters['detail_produk'],
-                                idToko: state.uri.queryParameters['id_toko'],
-                              ),
-                            )
-                          ],
-                        ),
-                      ]
+                        )
+                      ],
                     ),
                   ]
                 ),
-                GoRoute(
-                  name: 'join-shop',
-                  path: 'join-shop',
-                  builder: (BuildContext context, GoRouterState state) => const JoinShopPage(),
-                ),
-                GoRoute(
-                  name: 'choose-shop',
-                  path: 'choose-shop',
-                  builder: (BuildContext context, GoRouterState state) => const ChooseShop(),
-                )
               ]
             ),
             GoRoute(
-              name: 'shop-dash',
-              path: 'shop-dash',
-              builder: (BuildContext context, GoRouterState state) => ShopDashPage(
-                idToko: state.uri.queryParameters['id_toko']!
+              name: 'join-shop',
+              path: 'join-shop',
+              builder: (BuildContext context, GoRouterState state) => const JoinShopPage(),
+            ),
+            GoRoute(
+              name: 'choose-shop',
+              path: 'choose-shop',
+              builder: (BuildContext context, GoRouterState state) => const ChooseShop(),
+            )
+          ]
+        ),
+        GoRoute(
+          name: 'shop-dash',
+          path: 'shop-dash',
+          builder: (BuildContext context, GoRouterState state) => ShopDashPage(
+            idToko: state.uri.queryParameters['id_toko']!
+          ),
+          routes: [
+            GoRoute(
+              name: 'order-status',
+              path: 'order-status',
+              builder: (BuildContext context, GoRouterState state) => OrderStatusPage(
+                idToko: state.uri.queryParameters['id_toko']!,
+                initialIndex: state.uri.queryParameters['initial_index'],
               ),
-              routes: [
-                GoRoute(
-                  name: 'order-status',
-                  path: 'order-status',
-                  builder: (BuildContext context, GoRouterState state) => OrderStatusPage(
-                    initialIndex: state.uri.queryParameters['initial_index'],
-                  ),
-                ),
-                GoRoute(
-                  name: 'add-product',
-                  path: 'add-product',
-                  builder: (BuildContext context, GoRouterState state) => AddProductPage(
-                    idToko: state.uri.queryParameters['id_toko']!,
-                  ),
-                  routes: [
-                    GoRoute(
-                      name: 'upload-product-image',
-                      path: 'upload-product-image',
-                      builder: (BuildContext context, GoRouterState state) => UploadProductImagePage(
-                        namaProduk: state.uri.queryParameters['nama_produk'],
-                        harga: state.uri.queryParameters['harga'],
-                        stok: state.uri.queryParameters['stok'],
-                        deskripsiProduk: state.uri.queryParameters['deskripsi_produk'],
-                        detailProduk: state.uri.queryParameters['detail_produk'],
-                        idToko: state.uri.queryParameters['id_toko'],
-                      )
-                    )
-                  ]
-                ),
-                GoRoute(
-                  name: 'product',
-                  path: 'product',
-                  builder: (BuildContext context, GoRouterState state) => ProductPage(
-                    idToko: state.uri.queryParameters['id_toko']!,
-                  ),
-                  routes: [
-                    GoRoute(
-                      name: 'edit-product',
-                      path: 'edit-product',
-                      builder: (BuildContext context, GoRouterState state) => EditProductPage(
-                        idProduk: state.uri.queryParameters['id_produk']!,
-                        idToko: state.uri.queryParameters['id_toko']!,
-                      )
-                    )
-                  ]
-                ),
-              ]
             ),
             GoRoute(
-              name: 'verify-password',
-              path: 'verify-password',
-              builder: (BuildContext context, GoRouterState state) => const VerifyPassword(),
-            ),
-            GoRoute(
-              name: 'change-password',
-              path: 'change-password',
-              builder: (BuildContext context, GoRouterState state) => const ChangePassword(),
-            ),
-            GoRoute(
-              name: 'favorite',
-              path: 'favorite',
-              builder: (BuildContext context, GoRouterState state) => const FavoritePage(),
-            ),
-            GoRoute(
-              name: 'address',
-              path: 'address',
-              builder: (BuildContext context, GoRouterState state) => const ListAddressPage(),
-              routes: [
-                GoRoute(
-                  name: 'add-address',
-                  path: 'add-address',
-                  builder: (BuildContext context, GoRouterState state) => const MainAddressPage(),
-                ),
-              ]
-            ),
-            GoRoute(
-              name: 'shop-settings',
-              path: 'shop-settings',
-              builder: (BuildContext context, GoRouterState state) => ShopSettingsPage(
+              name: 'add-product',
+              path: 'add-product',
+              builder: (BuildContext context, GoRouterState state) => AddProductPage(
                 idToko: state.uri.queryParameters['id_toko']!,
               ),
               routes: [
                 GoRoute(
-                  name: 'shop-info',
-                  path: 'shop-info',
-                  builder: (BuildContext context, GoRouterState state) => InformationPage(
+                  name: 'upload-product-image',
+                  path: 'upload-product-image',
+                  builder: (BuildContext context, GoRouterState state) => UploadProductImagePage(
+                    namaProduk: state.uri.queryParameters['nama_produk'],
+                    harga: state.uri.queryParameters['harga'],
+                    stok: state.uri.queryParameters['stok'],
+                    deskripsiProduk: state.uri.queryParameters['deskripsi_produk'],
+                    detailProduk: state.uri.queryParameters['detail_produk'],
+                    idToko: state.uri.queryParameters['id_toko'],
+                  )
+                )
+              ]
+            ),
+            GoRoute(
+              name: 'product',
+              path: 'product',
+              builder: (BuildContext context, GoRouterState state) => ProductPage(
+                idToko: state.uri.queryParameters['id_toko']!,
+              ),
+              routes: [
+                GoRoute(
+                  name: 'edit-product',
+                  path: 'edit-product',
+                  builder: (BuildContext context, GoRouterState state) => EditProductPage(
+                    idProduk: state.uri.queryParameters['id_produk']!,
+                    idToko: state.uri.queryParameters['id_toko']!,
+                  )
+                )
+              ]
+            ),
+          ]
+        ),
+        GoRoute(
+          name: 'verify-password',
+          path: 'verify-password',
+          builder: (BuildContext context, GoRouterState state) => const VerifyPassword(),
+        ),
+        GoRoute(
+          name: 'change-password',
+          path: 'change-password',
+          builder: (BuildContext context, GoRouterState state) => const ChangePassword(),
+        ),
+        GoRoute(
+          name: 'favorite',
+          path: 'favorite',
+          builder: (BuildContext context, GoRouterState state) => const FavoritePage(),
+        ),
+        GoRoute(
+          name: 'address',
+          path: 'address',
+          builder: (BuildContext context, GoRouterState state) => const ListAddressPage(),
+          routes: [
+            GoRoute(
+              name: 'add-address',
+              path: 'add-address',
+              builder: (BuildContext context, GoRouterState state) => const MainAddressPage(),
+            ),
+          ]
+        ),
+        GoRoute(
+          name: 'shop-settings',
+          path: 'shop-settings',
+          builder: (BuildContext context, GoRouterState state) => ShopSettingsPage(
+            idToko: state.uri.queryParameters['id_toko']!,
+          ),
+          routes: [
+            GoRoute(
+              name: 'shop-info',
+              path: 'shop-info',
+              builder: (BuildContext context, GoRouterState state) => InformationPage(
+                idToko: state.uri.queryParameters['id_toko']!,
+              ),
+              routes: [
+                GoRoute(
+                  name: 'detail-shop',
+                  path: 'detail-shop',
+                  builder: (BuildContext context, GoRouterState state) => DetailShop(
                     idToko: state.uri.queryParameters['id_toko']!,
                   ),
-                  routes: [
-                    GoRoute(
-                      name: 'detail-shop',
-                      path: 'detail-shop',
-                      builder: (BuildContext context, GoRouterState state) => DetailShop(
-                        idToko: state.uri.queryParameters['id_toko']!,
-                      ),
-                    ),
-                    GoRoute(
-                      name: 'unique-code',
-                      path: 'unique-code',
-                      builder: (BuildContext context, GoRouterState state) => UniqueCode(
-                        idToko: state.uri.queryParameters['id_toko']!,
-                      )
-                    ),
-                    GoRoute(
-                      name: 'member',
-                      path: 'member',
-                      builder: (BuildContext context, GoRouterState state) => MemberPage(
-                        idToko: state.uri.queryParameters['id_toko']!,
-                      )
-                    )
-                  ]
                 ),
                 GoRoute(
-                  name: 'set-schedule',
-                  path: 'set-schedule',
-                  builder: (BuildContext context, GoRouterState state) => SetSchedulePage(
+                  name: 'unique-code',
+                  path: 'unique-code',
+                  builder: (BuildContext context, GoRouterState state) => UniqueCode(
+                    idToko: state.uri.queryParameters['id_toko']!,
+                  )
+                ),
+                GoRoute(
+                  name: 'member',
+                  path: 'member',
+                  builder: (BuildContext context, GoRouterState state) => MemberPage(
                     idToko: state.uri.queryParameters['id_toko']!,
                   )
                 )
               ]
             ),
             GoRoute(
-              name: 'edit-profile',
-              path: 'edit-profile',
-              builder: (BuildContext context, GoRouterState state) => const EditProfilePage(),
-              routes: [
-                GoRoute(
-                  name: 'change-phone',
-                  path: 'change-phone',
-                  builder: (BuildContext context, GoRouterState state) => const ChangePhone(),
-                )
-              ]
+              name: 'set-schedule',
+              path: 'set-schedule',
+              builder: (BuildContext context, GoRouterState state) => SetSchedulePage(
+                idToko: state.uri.queryParameters['id_toko']!,
+              )
+            )
+          ]
+        ),
+        GoRoute(
+          name: 'edit-profile',
+          path: 'edit-profile',
+          builder: (BuildContext context, GoRouterState state) => const EditProfilePage(),
+          routes: [
+            GoRoute(
+              name: 'change-phone',
+              path: 'change-phone',
+              builder: (BuildContext context, GoRouterState state) => const ChangePhone(),
             )
           ]
         ),
@@ -358,6 +358,11 @@ final routes = GoRouter(
             shopID: state.uri.queryParameters['shopID'],
           ),
         ),
+        GoRoute(
+          name: 'order-created',
+          path: 'order-created',
+          builder: (BuildContext context, GoRouterState state) => const OrderCreatedPage(),
+        )
       ],
     ),
   ]

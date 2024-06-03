@@ -18,6 +18,8 @@ class ShopPage extends StatefulWidget{
 
 class _ShopPageState extends State<ShopPage>{
   NumberFormat formatter = NumberFormat("###,###.##", "id_ID");
+  final _catatanKey = GlobalKey<FormFieldState>();
+  String _catatan = '';
   int qty = 0;
   bool subscribe = false;
 
@@ -106,14 +108,19 @@ class _ShopPageState extends State<ShopPage>{
   }
 
   void _addToCart(BuildContext context, String idProduk, int qty){
+    _catatanKey.currentState!.save();
     if(qty != 0){
-      addToCart(idProduk, qty).then((res) => {
+      addToCart(
+        idProduk: idProduk,
+        qty: qty,
+        catatan: _catatan
+      ).then((res){
         if(res.statusCode == 200){
           successSnackBar(
             context: context,
             content: 'Produk berhasil ditambahkan!'
-          ),
-          context.pop()
+          );
+          context.pop();
         }
       });
     } else {
@@ -529,167 +536,192 @@ class _ShopPageState extends State<ShopPage>{
       isScrollControlled: true,
       context: context,
       builder: (BuildContext context){
-        return SingleChildScrollView(
-          child: SafeArea(
-            minimum: const EdgeInsets.only(left: 16, right: 16, top: 20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  children: [
-                    const Center(
-                      child: Text(
-                        'Tambahkan menu',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600
+        return Padding(
+          padding: MediaQuery.of(context).viewInsets,
+          child: SingleChildScrollView(
+            child: SafeArea(
+              minimum: const EdgeInsets.only(left: 16, right: 16, top: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    children: [
+                      const Center(
+                        child: Text(
+                          'Tambahkan menu',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600
+                          ),
                         ),
                       ),
-                    ),
-                    const Gap(20),
-                    GestureDetector(
-                      onTap: (){},
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: CachedNetworkImage(
-                              imageUrl: 'https://$baseUrl/assets/public/${shopList[index]['produk']['foto_produk']}',
-                              width: 100,
-                              height: 100,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 15),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        shopList[index]['produk']['nama_produk'],
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600
-                                        ),
-                                      ),
-                                      Text(
-                                        'Terjual ${shopList[index]['produk']['jumlah_terjual']}',
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const Gap(30),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Rp. ${formatter.format(int.parse(shopList[index]['produk']['harga']))}',
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w600
-                                        ),
-                                      ),
-                                      StatefulBuilder(
-                                        builder: (BuildContext context, StateSetter setState){
-                                          return Row(
-                                            children: [
-                                              IconButton(
-                                                onPressed: (){
-                                                  if(qty > 0){
-                                                    setState(() {
-                                                      qty--;
-                                                    });
-                                                  }
-                                                },
-                                                visualDensity: VisualDensity.compact,
-                                                style: ButtonStyle(
-                                                  backgroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColor),
-                                                  padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-                                                ),
-                                                icon: const Icon(
-                                                  Icons.remove,
-                                                  size: 20,
-                                                  color: Colors.white,
-                                                ),
-                                                constraints: const BoxConstraints(
-                                                  maxWidth: 50,
-                                                  maxHeight: 50
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                width: 30,
-                                                child: Center(
-                                                  child: Text(
-                                                    qty.toString(),
-                                                    style: const TextStyle(
-                                                      fontSize: 16
-                                                    ),
-                                                  ),
-                                                )
-                                              ),
-                                              IconButton(
-                                                onPressed: (){
-                                                  setState(() {
-                                                    qty++;
-                                                  });
-                                                },
-                                                visualDensity: VisualDensity.compact,
-                                                style: ButtonStyle(
-                                                  backgroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColor),
-                                                  padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-                                                ),
-                                                icon: const Icon(
-                                                  Icons.add,
-                                                  size: 20,
-                                                  color: Colors.white,
-                                                ),
-                                                constraints: const BoxConstraints(
-                                                  maxWidth: 50,
-                                                  maxHeight: 50
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      )
-                                    ],
-                                  )
-                                ],
+                      const Gap(20),
+                      GestureDetector(
+                        onTap: (){},
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: CachedNetworkImage(
+                                imageUrl: 'https://$baseUrl/assets/public/${shopList[index]['produk']['foto_produk']}',
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
                               ),
                             ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 15),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          shopList[index]['produk']['nama_produk'],
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600
+                                          ),
+                                        ),
+                                        Text(
+                                          'Terjual ${shopList[index]['produk']['jumlah_terjual']}',
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const Gap(30),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Rp. ${formatter.format(int.parse(shopList[index]['produk']['harga']))}',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w600
+                                          ),
+                                        ),
+                                        StatefulBuilder(
+                                          builder: (BuildContext context, StateSetter setState){
+                                            return Row(
+                                              children: [
+                                                IconButton(
+                                                  onPressed: (){
+                                                    if(qty > 0){
+                                                      setState(() {
+                                                        qty--;
+                                                      });
+                                                    }
+                                                  },
+                                                  visualDensity: VisualDensity.compact,
+                                                  style: ButtonStyle(
+                                                    backgroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColor),
+                                                    padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                                                  ),
+                                                  icon: const Icon(
+                                                    Icons.remove,
+                                                    size: 20,
+                                                    color: Colors.white,
+                                                  ),
+                                                  constraints: const BoxConstraints(
+                                                    maxWidth: 50,
+                                                    maxHeight: 50
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 30,
+                                                  child: Center(
+                                                    child: Text(
+                                                      qty.toString(),
+                                                      style: const TextStyle(
+                                                        fontSize: 16
+                                                      ),
+                                                    ),
+                                                  )
+                                                ),
+                                                IconButton(
+                                                  onPressed: (){
+                                                    setState(() {
+                                                      qty++;
+                                                    });
+                                                  },
+                                                  visualDensity: VisualDensity.compact,
+                                                  style: ButtonStyle(
+                                                    backgroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColor),
+                                                    padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                                                  ),
+                                                  icon: const Icon(
+                                                    Icons.add,
+                                                    size: 20,
+                                                    color: Colors.white,
+                                                  ),
+                                                  constraints: const BoxConstraints(
+                                                    maxWidth: 50,
+                                                    maxHeight: 50
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: TextFormField(
+                      key: _catatanKey,
+                      maxLength: 50,
+                      style: const TextStyle(
+                        fontSize: 14,
+                      ),
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          borderSide: BorderSide(
+                            color: Colors.grey
                           )
-                        ],
+                        ),
+                        contentPadding: EdgeInsets.zero,
+                        prefixIcon: Icon(Icons.sticky_note_2_outlined),
+                        hintText: 'Tambah catatan ...'
                       ),
+                      onSaved: (value) => _catatan = value!,
                     ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: FilledButton(
-                      onPressed: () => _addToCart(context, shopList[index]['produk']['id_produk'], qty),
-                      child: const Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        spacing: 5,
-                        children: [
-                          Icon(Icons.add, size: 14),
-                          Text('Keranjang')
-                        ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: FilledButton(
+                        onPressed: () => _addToCart(context, shopList[index]['produk']['id_produk'], qty),
+                        child: const Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 5,
+                          children: [
+                            Icon(Icons.add, size: 14),
+                            Text('Keranjang')
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                )
-              ],
-            )
+                    )
+                  ),
+                ],
+              )
+            ),
           ),
         );
       }

@@ -53,9 +53,9 @@ class _ListAddressPageState extends State<ListAddressPage>{
           SliverList.builder(
             itemCount: addressList.length,
             itemBuilder: (BuildContext context, int index){
-              final shop = addressList[index];
+              final alamat = addressList[index];
               return GestureDetector(
-                onLongPress: () => Clipboard.setData(ClipboardData(text: shop['alamat'])),
+                onLongPress: () => Clipboard.setData(ClipboardData(text: alamat['alamat'])),
                 child: Card(
                   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                   shape: const RoundedRectangleBorder(
@@ -72,8 +72,12 @@ class _ListAddressPageState extends State<ListAddressPage>{
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          shop['alamat'],
+                        Expanded(
+                          child: Text(
+                            alamat['alamat'],
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                          ),
                         ),
                         IconButton(
                           onPressed: () async {
@@ -98,7 +102,7 @@ class _ListAddressPageState extends State<ListAddressPage>{
                             if(confirm!){
                               deleteAddress(
                                 context: context,
-                                idAddress: shop['id_alamat']
+                                idAddress: alamat['id_alamat']
                               );
                             }
                           },

@@ -1,8 +1,6 @@
 import 'package:espw/app/controllers.dart';
 import 'package:espw/pages/profile_page.dart';
 import 'package:flutter/material.dart';
-
-// Pages
 import 'package:espw/pages/home_page.dart';
 import 'package:espw/pages/cart_page.dart';
 import 'package:espw/pages/notification_page.dart';
@@ -17,7 +15,6 @@ class NavBar extends StatefulWidget{
 
 class _NavBarState extends State<NavBar>{
   int currentPage = 0;
-
   final int cartBadge = 0;
   final int notificationBadge = 0;
   final int chatBadge = 0;

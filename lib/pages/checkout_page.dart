@@ -1,6 +1,8 @@
-import 'package:espw/app/dummy_data.dart';
+import 'dart:convert';
+import 'package:espw/app/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -14,11 +16,17 @@ class CheckoutPage extends StatefulWidget{
 class _CheckoutPageState extends State<CheckoutPage>{
   final formatter = NumberFormat('###,###.###', 'id_ID');
 
-  late List<Map> cartList;
+  List cartList = [];
+  List address = [];
   @override
   void initState() {
     super.initState();
-    cartList = carts;
+    carts().then((res) => setState((){
+      cartList = json.decode(res.body)['data'];
+    }));
+    getAddress().then((res) => setState(() {
+      address = json.decode(res.body)['data'];
+    }));
   }
 
   Widget _isOpen(bool isOpen){
@@ -26,8 +34,8 @@ class _CheckoutPageState extends State<CheckoutPage>{
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
         decoration: const BoxDecoration(
-            color: Colors.green,
-            borderRadius: BorderRadius.all(Radius.circular(15))
+          color: Colors.green,
+          borderRadius: BorderRadius.all(Radius.circular(15))
         ),
         child: const Wrap(
           spacing: 5,
@@ -53,8 +61,8 @@ class _CheckoutPageState extends State<CheckoutPage>{
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
       decoration: const BoxDecoration(
-          color: Colors.red,
-          borderRadius: BorderRadius.all(Radius.circular(15))
+        color: Colors.red,
+        borderRadius: BorderRadius.all(Radius.circular(15))
       ),
       child: const Wrap(
         spacing: 5,
@@ -80,9 +88,38 @@ class _CheckoutPageState extends State<CheckoutPage>{
   double _totalPrice(){
     double totalPrice = 0.0;
     for(int i = 0; i < cartList.length; i++){
-      totalPrice += cartList[i]['product'][0]['price'] * cartList[i]['qty'];
+      totalPrice += int.parse(cartList[i]['produk']['harga']) * cartList[i]['keranjang']['jumlah'];
     }
     return totalPrice;
+  }
+
+  void _submit(){
+    if(address.isNotEmpty){
+      context.goNamed('order-created');
+      for(int i = 0; i < cartList.length; i++){
+        double totalHarga = 0.0;
+        totalHarga += int.parse(cartList[i]['produk']['harga']) * cartList[i]['keranjang']['jumlah'];
+        createOrder(
+          idProduk: cartList[i]['produk']['id_produk'],
+          jumlah: cartList[i]['keranjang']['jumlah'],
+          totalHarga: totalHarga,
+          catatan: cartList[i]['keranjang']['catatan'],
+        );
+      }
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          content: const Text('Anda belum mengatur alamat anda'),
+          actions: [
+            TextButton(
+              onPressed: () => context.pop(),
+              child: const Text('OK'),
+            )
+          ],
+        )
+      );
+    }
   }
 
   @override
@@ -118,15 +155,19 @@ class _CheckoutPageState extends State<CheckoutPage>{
                     children: [
                       const Icon(Icons.location_on_outlined),
                       const Gap(10),
-                      const Expanded(
-                        child: Text(
-                          'Lab. RPL, Gedung Teknologi Informasi lt.2, SMK Negeri 2 Tasikmalaya',
+                      Expanded(
+                        child: address.isNotEmpty ? Text(
+                          address.first['alamat'],
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                        ),
+                        ) : const Text(
+                          'Anda belum mengatur alamat',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        )
                       ),
                       IconButton(
-                        onPressed: (){},
+                        onPressed: () => context.pushNamed('address'),
                         icon: const Icon(Icons.edit_outlined),
                       )
                     ],
@@ -154,8 +195,8 @@ class _CheckoutPageState extends State<CheckoutPage>{
                             crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
                               const Icon(Icons.storefront),
-                              Text(item['product'][0]['shop_name']),
-                              _isOpen(item['product'][0]['is_open'])
+                              Text(item['toko']['nama_toko']),
+                              _isOpen(item['toko']['is_open'])
                             ],
                           ),
                         ],
@@ -167,7 +208,7 @@ class _CheckoutPageState extends State<CheckoutPage>{
                         ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: CachedNetworkImage(
-                            imageUrl: item['product'][0]['product_image'],
+                            imageUrl: 'https://$baseUrl/assets/public/${item['produk']['foto_produk']}',
                             width: 100,
                             height: 100,
                             fit: BoxFit.cover,
@@ -181,26 +222,29 @@ class _CheckoutPageState extends State<CheckoutPage>{
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Text(
-                                  item['product'][0]['product_name'],
+                                  item['produk']['nama_produk'],
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600
                                   ),
                                 ),
-                                Text(
-                                  item['extra'].join(', '),
-                                  overflow: TextOverflow.ellipsis,
+                                SizedBox(
+                                  height: 35,
+                                  child: Text(
+                                    'Catatan: ${item['keranjang']['catatan'] == '' ? '...' : item['keranjang']['catatan']}',
+                                    maxLines: 3,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                                 Text(
-                                  'x${item['qty']}',
+                                  'x${item['keranjang']['jumlah']}',
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                                const Gap(10),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      'Rp. ${formatter.format(item['product'][0]['price'])}',
+                                      'Rp. ${formatter.format(int.parse(item['produk']['harga']))}',
                                       style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600
@@ -214,25 +258,6 @@ class _CheckoutPageState extends State<CheckoutPage>{
                         )
                       ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: TextFormField(
-                        style: const TextStyle(
-                          fontSize: 14,
-                        ),
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            borderSide: BorderSide(
-                              color: Colors.grey
-                            )
-                          ),
-                          contentPadding: EdgeInsets.zero,
-                          prefixIcon: Icon(Icons.sticky_note_2_outlined),
-                            hintText: 'Tambah catatan ...'
-                        ),
-                      ),
-                    )
                   ],
                 ),
               );
@@ -270,13 +295,14 @@ class _CheckoutPageState extends State<CheckoutPage>{
           SizedBox(
             height: 65,
             child: FilledButton(
-              onPressed: (){},
-              style: const ButtonStyle(
-                shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                  borderRadius: BorderRadius.zero
-                ))
+              onPressed: () => _submit(),
+              style: ButtonStyle(
+                shape: const WidgetStatePropertyAll(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(20))
+                )),
+                backgroundColor: address.isNotEmpty ? WidgetStatePropertyAll(Theme.of(context).primaryColor) : const WidgetStatePropertyAll(Colors.grey)
               ),
-              child: const Text('Pesan'),
+              child: const Text('Pesan Sekarang'),
             ),
           )
         ],

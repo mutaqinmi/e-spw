@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:espw/widgets/bottom_snack_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -504,12 +505,13 @@ Future<http.Response> search(String query) async {
   return response;
 }
 
-Future<http.Response> addToCart(String idProduk, int qty) async {
+Future<http.Response> addToCart({required String idProduk, required int qty, String? catatan}) async {
   final SharedPreferences prefs = await _prefs;
   final url = Uri.https(baseUrl, '/api/add-to-cart');
   final response = await http.post(url, body: json.encode({
     'id': idProduk,
     'qty': qty.toString(),
+    'catatan': catatan
   }), headers: {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer ${prefs.get('token')}'
@@ -589,7 +591,7 @@ void deleteFromFavorite({required BuildContext context, required String idToko})
   final url = Uri.https(baseUrl, '/api/favorite/${prefs.getInt('nis')}/delete');
   final response = await http.post(url, body: json.encode({
     'id_toko': idToko,
-  }),headers: {
+  }), headers: {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer ${prefs.get('token')}'
   });
@@ -600,5 +602,83 @@ void deleteFromFavorite({required BuildContext context, required String idToko})
       context: context,
       content: 'Anda batal menyukai toko ini'
     );
+  }
+}
+
+Future<http.Response> orders({required String statusPesanan}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/orders');
+  final response = http.post(url, body: json.encode({
+    'status': statusPesanan
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  return response;
+}
+
+Future<http.Response> ordersByShop({required String idToko, required String statusPesanan}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/shop/orders');
+  final response = http.post(url, body: json.encode({
+    'id_toko': idToko,
+    'status': statusPesanan
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  return response;
+}
+
+void createOrder({required String idProduk, required int jumlah, required double totalHarga, String? catatan}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/orders/new');
+  await http.post(url, body: json.encode({
+    'id_produk': idProduk,
+    'jumlah': jumlah,
+    'total_harga': totalHarga,
+    'catatan': catatan
+  }),headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+}
+
+void updateStatusPesanan({required BuildContext context, required String idTransaksi, required String status, String? idToko}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/orders/update');
+  final response = await http.patch(url, body: json.encode({
+    'id_transaksi': idTransaksi,
+    'status': status,
+  }),headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  if(!context.mounted) return;
+  if(response.statusCode == 200){
+    if(idToko != null){
+      if(status == 'Diproses'){
+        context.goNamed('order-status', queryParameters: {'id_toko': idToko, 'initial_index': '1'});
+        successSnackBar(
+          context: context,
+          content: 'Pesanan dikonfirmasi'
+        );
+      } else if (status == 'Selesai'){
+        context.goNamed('order-status', queryParameters: {'id_toko': idToko, 'initial_index': '2'});
+        successSnackBar(
+          context: context,
+          content: 'Pesanan selesai'
+        );
+      }
+    } else {
+      context.goNamed('order', queryParameters: {'initial_index': '1'});
+      successSnackBar(
+        context: context,
+        content: 'Pesanan selesai'
+      );
+    }
   }
 }

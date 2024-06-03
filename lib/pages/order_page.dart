@@ -1,4 +1,6 @@
-import 'package:espw/app/dummy_data.dart';
+import 'dart:convert';
+
+import 'package:espw/app/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:gap/gap.dart';
@@ -15,13 +17,26 @@ class OrderPage extends StatefulWidget{
 }
 
 class _OrderPageState extends State<OrderPage>{
-  late List<Map> onGoingOrderList;
-  late List<Map> finishedOrderList;
+  List onGoingOrderList = [];
+  List finishedOrderList = [];
   @override
   void initState() {
     super.initState();
-    onGoingOrderList = ordersOnGoing;
-    finishedOrderList = ordersFinished;
+    orders(statusPesanan: 'Menunggu Konfirmasi').then((res) => setState(() {
+      for(int i = 0; i < json.decode(res.body)['data'].length; i++){
+        onGoingOrderList.add(json.decode(res.body)['data'][i]);
+      }
+    }));
+    orders(statusPesanan: 'Diproses').then((res) => setState(() {
+      for(int i = 0; i < json.decode(res.body)['data'].length; i++){
+        onGoingOrderList.add(json.decode(res.body)['data'][i]);
+      }
+    }));
+    orders(statusPesanan: 'Selesai').then((res) => setState(() {
+      for(int i = 0; i < json.decode(res.body)['data'].length; i++){
+        finishedOrderList.add(json.decode(res.body)['data'][i]);
+      }
+    }));
   }
 
   @override
@@ -44,6 +59,7 @@ class _OrderPageState extends State<OrderPage>{
               ),
             ),
             bottom: const TabBar(
+              dividerColor: Colors.transparent,
               tabs: [
                 Tab(text: 'Diproses'),
                 Tab(text: 'Selesai')
@@ -68,13 +84,15 @@ class _OrderPageState extends State<OrderPage>{
         itemBuilder: (BuildContext context, int index){
           final order = onGoingOrderList[index];
           return OrderItem(
-            shopName: order['shop_name'],
-            productImage: order['product_image'],
-            productName: order['product_name'],
-            date: order['transaction_date'],
-            priceTotal: order['price_total'],
-            qty: order['qty'],
-            isFinished: order['is_finished'],
+            shopName: order['toko']['nama_toko'],
+            productImage: 'https://$baseUrl/assets/public/${order['produk']['foto_produk']}',
+            productName: order['produk']['nama_produk'],
+            date: order['transaksi']['waktu'].substring(0, 10),
+            priceTotal: order['transaksi']['total_harga'],
+            qty: order['transaksi']['jumlah'],
+            status: order['transaksi']['status'],
+            catatan: order['transaksi']['catatan'],
+            idTransaksi: order['transaksi']['id_transaksi'],
           );
         },
       ),
@@ -88,13 +106,14 @@ class _OrderPageState extends State<OrderPage>{
         itemBuilder: (BuildContext context, int index){
           final order = finishedOrderList[index];
           return OrderItem(
-            shopName: order['shop_name'],
-            productImage: order['product_image'],
-            productName: order['product_name'],
-            date: order['transaction_date'],
-            priceTotal: order['price_total'],
-            qty: order['qty'],
-            isFinished: order['is_finished'],
+            shopName: order['toko']['nama_toko'],
+            productImage: 'https://$baseUrl/assets/public/${order['produk']['foto_produk']}',
+            productName: order['produk']['nama_produk'],
+            date: order['transaksi']['waktu'].substring(0, 10),
+            priceTotal: order['transaksi']['total_harga'],
+            qty: order['transaksi']['jumlah'],
+            status: order['transaksi']['status'],
+            catatan: order['transaksi']['catatan'],
           );
         },
       ),
@@ -103,17 +122,102 @@ class _OrderPageState extends State<OrderPage>{
 }
 
 class OrderItem extends StatelessWidget{
-  const OrderItem({super.key, required this.shopName, required this.productImage, required this.productName, required this.date, required this.priceTotal, required this.qty, required this.isFinished});
+  const OrderItem({super.key, required this.shopName, required this.productImage, required this.productName, required this.date, required this.priceTotal, required this.qty, required this.status, required this.catatan, this.idTransaksi, this.idToko});
   final String shopName;
   final String productImage;
   final String productName;
   final String date;
   final int priceTotal;
   final int qty;
-  final bool isFinished;
+  final String status;
+  final String catatan;
+  final String? idTransaksi;
+  final String? idToko;
 
-  Widget _isFinished(BuildContext context, bool isFinished){
-    if(isFinished){
+  Widget _status(String status){
+    if(status == 'Menunggu Konfirmasi'){
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+        decoration: const BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.all(Radius.circular(15))
+        ),
+        child: const Wrap(
+          spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Icon(
+              Icons.history,
+              size: 12,
+              color: Colors.white,
+            ),
+            Text(
+              'Menunggu Konfirmasi',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 12
+              ),
+            )
+          ],
+        ),
+      );
+    } else if (status == 'Diproses'){
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+        decoration: const BoxDecoration(
+          color: Colors.green,
+          borderRadius: BorderRadius.all(Radius.circular(15))
+        ),
+        child: const Wrap(
+          spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Icon(
+              Icons.history,
+              size: 12,
+              color: Colors.white,
+            ),
+            Text(
+              'Diproses',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 12
+              ),
+            )
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+      decoration: const BoxDecoration(
+        color: Colors.green,
+        borderRadius: BorderRadius.all(Radius.circular(15))
+      ),
+      child: const Wrap(
+        spacing: 5,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          Icon(
+            Icons.done,
+            size: 12,
+            color: Colors.white,
+          ),
+          Text(
+            'Selesai',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 12
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _isFinished(BuildContext context, String status){
+    if(status == 'Selesai'){
       return Wrap(
         spacing: 10,
         children: [
@@ -127,12 +231,20 @@ class OrderItem extends StatelessWidget{
           ),
         ],
       );
+    } else if (status == 'Diproses'){
+      return FilledButton(
+        onPressed: () => {
+          updateStatusPesanan(
+            context: context,
+            idTransaksi: idTransaksi!,
+            status: 'Selesai',
+          )
+        },
+        child: const Text('Selesaikan Pesanan'),
+      );
     }
 
-    return FilledButton(
-      onPressed: (){},
-      child: const Text('Chat penjual'),
-    );
+    return const SizedBox();
   }
 
   @override
@@ -182,6 +294,8 @@ class OrderItem extends StatelessWidget{
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
+                      _status(status),
+                      const Gap(5),
                       Text(
                         productName,
                         style: const TextStyle(
@@ -207,10 +321,32 @@ class OrderItem extends StatelessWidget{
               ),
             ],
           ),
+          Card(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              side: const BorderSide(
+                width: .5,
+              ),
+              borderRadius: BorderRadius.circular(10)
+            ),
+            margin: const EdgeInsets.symmetric(vertical: 5),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              child: Row(
+                children: [
+                  const Text('Catatan:'),
+                  const Gap(5),
+                  Expanded(
+                    child: Text(catatan == '' ? '...' : catatan),
+                  )
+                ],
+              ),
+            ),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              _isFinished(context, isFinished)
+              _isFinished(context, status)
             ],
           ),
           const Gap(20)

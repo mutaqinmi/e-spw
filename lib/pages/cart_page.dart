@@ -139,6 +139,18 @@ class _CartPageState extends State<CartPage>{
     return totalPrice;
   }
 
+  WidgetStateProperty<Color> _buttonColor(){
+    List item = [];
+    for(int i = 0; i < cartList.length; i++){
+      item.add(cartList[i]['toko']['is_open']);
+    }
+    if(cartList.isNotEmpty && item.contains(true)){
+      return WidgetStatePropertyAll(Theme.of(context).primaryColor);
+    }
+
+    return const WidgetStatePropertyAll(Colors.grey);
+  }
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -305,7 +317,14 @@ class _CartPageState extends State<CartPage>{
                                       fontWeight: FontWeight.w600
                                     ),
                                   ),
-                                  const Gap(40),
+                                  SizedBox(
+                                    height: 50,
+                                    child: Text(
+                                      'Catatan: ${item['keranjang']['catatan'] == '' ? '...' : item['keranjang']['catatan']}',
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
@@ -388,7 +407,7 @@ class _CartPageState extends State<CartPage>{
                             )
                           )
                         ],
-                      )
+                      ),
                     ],
                   ),
                 )
@@ -427,11 +446,20 @@ class _CartPageState extends State<CartPage>{
           SizedBox(
             height: 65,
             child: FilledButton(
-              onPressed: () => context.pushNamed('checkout'),
-              style: const ButtonStyle(
-                shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                  borderRadius: BorderRadius.zero
-                ))
+              onPressed: (){
+                List item = [];
+                for(int i = 0; i < cartList.length; i++){
+                  item.add(cartList[i]['toko']['is_open']);
+                }
+                if(cartList.isNotEmpty && item.contains(true)){
+                  context.pushNamed('checkout');
+                }
+              },
+              style: ButtonStyle(
+                shape: const WidgetStatePropertyAll(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(20))
+                )),
+                backgroundColor: _buttonColor()
               ),
               child: const Text('Checkout'),
             ),

@@ -153,7 +153,7 @@ class _ShopDashPageState extends State<ShopDashPage>{
                                     padding: WidgetStatePropertyAll(EdgeInsets.zero),
                                     overlayColor: WidgetStatePropertyAll(Colors.transparent)
                                   ),
-                                  onPressed: () => context.pushNamed('order-status', queryParameters: {'initial_index': '1'}),
+                                  onPressed: () => context.pushNamed('order-status', queryParameters: {'id_toko': widget.idToko, 'initial_index': '0'}),
                                   child: Column(
                                     children: [
                                       Icon(
@@ -177,7 +177,7 @@ class _ShopDashPageState extends State<ShopDashPage>{
                                     padding: WidgetStatePropertyAll(EdgeInsets.zero),
                                     overlayColor: WidgetStatePropertyAll(Colors.transparent)
                                   ),
-                                  onPressed: () => context.pushNamed('order-status', queryParameters: {'initial_index': '2'}),
+                                  onPressed: () => context.pushNamed('order-status', queryParameters: {'id_toko': widget.idToko, 'initial_index': '1'}),
                                   child: Column(
                                     children: [
                                       Icon(
