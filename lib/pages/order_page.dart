@@ -99,6 +99,7 @@ class _OrderPageState extends State<OrderPage>{
             status: order['transaksi']['status'],
             catatan: order['transaksi']['catatan'],
             idTransaksi: order['transaksi']['id_transaksi'],
+            idToko: order['toko']['id_toko'],
           );
         },
       ),
@@ -122,6 +123,7 @@ class _OrderPageState extends State<OrderPage>{
             catatan: order['transaksi']['catatan'],
             idProduk: order['produk']['id_produk'],
             idTransaksi: order['transaksi']['id_transaksi'],
+            idToko: order['toko']['id_toko'],
             rating: rating,
           );
         },
@@ -236,13 +238,13 @@ class _OrderItemState extends State<OrderItem>{
     );
   }
 
-  Widget _isFinished(BuildContext context, String status){
+  Widget _isFinished(BuildContext context, String status, String? idToko){
     if(status == 'Selesai'){
       return Wrap(
         spacing: 10,
         children: [
           OutlinedButton(
-            onPressed: () => context.goNamed('shop'),
+            onPressed: () => context.goNamed('shop', queryParameters: {'shopID': idToko}),
             child: const Text('Beli lagi'),
           ),
           Visibility(
@@ -380,7 +382,7 @@ class _OrderItemState extends State<OrderItem>{
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              _isFinished(context, widget.status)
+              _isFinished(context, widget.status, widget.idToko)
             ],
           ),
           const Gap(20)
@@ -464,6 +466,9 @@ class _OrderItemState extends State<OrderItem>{
           )
         );
       }
-    );
+    ).whenComplete(() => setState(() {
+      initialRate = 0;
+      _ulasan = '';
+    }));
   }
 }

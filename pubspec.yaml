@@ -23,6 +23,7 @@ dependencies:
   image_cropper: ^6.0.0
   connectivity_plus: ^6.0.3
   dart_jsonwebtoken: ^2.14.0
+  device_info_plus: ^10.1.0
 
 dev_dependencies:
   flutter_test:

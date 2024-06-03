@@ -85,6 +85,11 @@ void changePassword(BuildContext context, String newPassword) async {
 
   if(!context.mounted) return;
   if(response.statusCode == 200){
+    createNotification(
+      type: 'Informasi',
+      title: 'Kata sandi anda diubah',
+      description: 'Kata sandi anda telah dirubah. Jika anda tidak merasa merubah kata sandi anda, segera ubah kata sandi anda kembali!'
+    );
     logout(context);
     successSnackBar(
       context: context,
@@ -741,4 +746,30 @@ void rateProduct({required BuildContext context, required String idProduk, requi
       content: 'Berhasil menambahkan ulasan'
     );
   }
+}
+
+Future<http.Response> getNotification({required String type}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/notifications');
+  final response = await http.post(url, body: json.encode({
+    'type': type,
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  return response;
+}
+
+void createNotification({required String type, required String title, required String description}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/notifications/add');
+  await http.post(url, body: json.encode({
+    'type': type,
+    'title': title,
+    'description': description
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
 }

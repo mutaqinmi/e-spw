@@ -1,4 +1,6 @@
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:espw/app/controllers.dart';
 import 'package:espw/widgets/bottom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -23,13 +25,22 @@ class _VerifyState extends State<Verify> {
     if(_formFieldKey.currentState!.validate()){
       _formFieldKey.currentState!.save();
 
+      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       final verify = JWT.verify(widget.token, SecretKey('espwapp'));
 
       if(!mounted) return;
       if(_password == verify.payload['password']){
         prefs.setBool('isAuthenticated', true);
         prefs.setString('token', widget.token);
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
 
+        createNotification(
+          type: 'Informasi',
+          title: 'Ada aktivitas login di perangkat baru',
+          description: 'Akun anda telah login melalui perangkat ${androidInfo.model}. Jika ini bukan anda, segera amankan akun anda!'
+        );
+
+        if(!mounted) return;
         successSnackBar(
           context: context,
           content: 'Login berhasil!'

@@ -1,4 +1,5 @@
 // import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:espw/app/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -17,10 +18,11 @@ class _ProfilePageState extends State<ProfilePage>{
   Future<List> _getUserData() async {
     List userData = [];
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final verify = JWT.verify(prefs.getString('token')!, SecretKey('espwapp'));
     final nis = prefs.getInt('nis');
     final nama = prefs.getString('nama');
     final kelas = prefs.getString('kelas');
-    final password = prefs.getString('password');
+    final password = verify.payload['password'];
     final telepon = prefs.getString('telepon');
     final fotoProfil = prefs.getString('foto_profil');
 
