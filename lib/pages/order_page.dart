@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:espw/app/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -19,6 +18,7 @@ class OrderPage extends StatefulWidget{
 class _OrderPageState extends State<OrderPage>{
   List onGoingOrderList = [];
   List finishedOrderList = [];
+  List rating = [];
   @override
   void initState() {
     super.initState();
@@ -35,6 +35,12 @@ class _OrderPageState extends State<OrderPage>{
     orders(statusPesanan: 'Selesai').then((res) => setState(() {
       for(int i = 0; i < json.decode(res.body)['data'].length; i++){
         finishedOrderList.add(json.decode(res.body)['data'][i]);
+      }
+    }));
+    getRate().then((res) => setState(() {
+      List response = json.decode(res.body)['data'];
+      for(int i = 0; i < response.length; i++){
+        rating.add(response[i]['ulasan']['id_transaksi']);
       }
     }));
   }
@@ -114,6 +120,9 @@ class _OrderPageState extends State<OrderPage>{
             qty: order['transaksi']['jumlah'],
             status: order['transaksi']['status'],
             catatan: order['transaksi']['catatan'],
+            idProduk: order['produk']['id_produk'],
+            idTransaksi: order['transaksi']['id_transaksi'],
+            rating: rating,
           );
         },
       ),
@@ -121,8 +130,8 @@ class _OrderPageState extends State<OrderPage>{
   }
 }
 
-class OrderItem extends StatelessWidget{
-  const OrderItem({super.key, required this.shopName, required this.productImage, required this.productName, required this.date, required this.priceTotal, required this.qty, required this.status, required this.catatan, this.idTransaksi, this.idToko});
+class OrderItem extends StatefulWidget{
+  const OrderItem({super.key, required this.shopName, required this.productImage, required this.productName, required this.date, required this.priceTotal, required this.qty, required this.status, required this.catatan, this.idTransaksi, this.idToko, this.idProduk, this.rating});
   final String shopName;
   final String productImage;
   final String productName;
@@ -133,6 +142,17 @@ class OrderItem extends StatelessWidget{
   final String catatan;
   final String? idTransaksi;
   final String? idToko;
+  final String? idProduk;
+  final List? rating;
+
+  @override
+  State<OrderItem> createState() => _OrderItemState();
+}
+
+class _OrderItemState extends State<OrderItem>{
+  double initialRate = 0;
+  final _ulasanKey = GlobalKey<FormFieldState>();
+  String _ulasan = '';
 
   Widget _status(String status){
     if(status == 'Menunggu Konfirmasi'){
@@ -225,10 +245,13 @@ class OrderItem extends StatelessWidget{
             onPressed: () => context.goNamed('shop'),
             child: const Text('Beli lagi'),
           ),
-          FilledButton(
-            onPressed: () => _rateOrder(context),
-            child: const Text('Beri penilaian'),
-          ),
+          Visibility(
+            visible: widget.rating!.contains(widget.idTransaksi) ? false : true,
+            child: FilledButton(
+              onPressed: () => _rateOrder(context),
+              child: const Text('Beri penilaian'),
+            ),
+          )
         ],
       );
     } else if (status == 'Diproses'){
@@ -236,7 +259,7 @@ class OrderItem extends StatelessWidget{
         onPressed: () => {
           updateStatusPesanan(
             context: context,
-            idTransaksi: idTransaksi!,
+            idTransaksi: widget.idTransaksi!,
             status: 'Selesai',
           )
         },
@@ -245,6 +268,17 @@ class OrderItem extends StatelessWidget{
     }
 
     return const SizedBox();
+  }
+
+  void _submit(){
+    _ulasanKey.currentState!.save();
+    rateProduct(
+      context: context,
+      idProduk: widget.idProduk!,
+      idTransaksi: widget.idTransaksi!,
+      ulasan: _ulasan,
+      rate: initialRate.toString()
+    );
   }
 
   @override
@@ -266,11 +300,11 @@ class OrderItem extends StatelessWidget{
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     const Icon(Icons.storefront),
-                    Text(shopName),
+                    Text(widget.shopName),
                   ],
                 ),
                 Text(
-                  date
+                  widget.date
                 )
               ],
             )
@@ -281,7 +315,7 @@ class OrderItem extends StatelessWidget{
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: CachedNetworkImage(
-                  imageUrl: productImage,
+                  imageUrl: widget.productImage,
                   width: 100,
                   height: 100,
                   fit: BoxFit.cover,
@@ -294,23 +328,23 @@ class OrderItem extends StatelessWidget{
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      _status(status),
+                      _status(widget.status),
                       const Gap(5),
                       Text(
-                        productName,
+                        widget.productName,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600
                         ),
                       ),
                       Text(
-                        'Rp. ${formatter.format(priceTotal)}',
+                        'Rp. ${formatter.format(widget.priceTotal)}',
                         style: const TextStyle(
                           fontSize: 16,
                         ),
                       ),
                       Text(
-                        'x$qty',
+                        'x${widget.qty}',
                         style: const TextStyle(
                           fontSize: 14,
                         ),
@@ -337,7 +371,7 @@ class OrderItem extends StatelessWidget{
                   const Text('Catatan:'),
                   const Gap(5),
                   Expanded(
-                    child: Text(catatan == '' ? '...' : catatan),
+                    child: Text(widget.catatan == '' ? '...' : widget.catatan),
                   )
                 ],
               ),
@@ -346,7 +380,7 @@ class OrderItem extends StatelessWidget{
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              _isFinished(context, status)
+              _isFinished(context, widget.status)
             ],
           ),
           const Gap(20)
@@ -369,61 +403,61 @@ class OrderItem extends StatelessWidget{
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text('Pelayanan Toko'),
-                        RatingBar(
-                          itemSize: 26,
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: StatefulBuilder(
+                      builder: (BuildContext context, StateSetter setState){
+                        return RatingBar(
+                          itemSize: 40,
                           ratingWidget: RatingWidget(
-                            full: Icon(Icons.star, color: Theme.of(context).primaryColor),
-                            half: Icon(Icons.star_half, color: Theme.of(context).primaryColor),
-                            empty: Icon(Icons.star_outline, color: Theme.of(context).primaryColor)
+                            full: Icon(Icons.star_rounded, color: Theme.of(context).primaryColor),
+                            half: Icon(Icons.star_half_rounded, color: Theme.of(context).primaryColor),
+                            empty: Icon(Icons.star_outline_rounded, color: Theme.of(context).primaryColor)
                           ),
-                          onRatingUpdate: (rating){},
-                        ),
-                      ],
-                    ),
+                          onRatingUpdate: (rating) => setState((){
+                            initialRate = rating;
+                          }),
+                        );
+                      },
+                    )
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text('Kepuasan Produk'),
-                        RatingBar(
-                          itemSize: 26,
-                          ratingWidget: RatingWidget(
-                            full: Icon(Icons.star, color: Theme.of(context).primaryColor),
-                            half: Icon(Icons.star_half, color: Theme.of(context).primaryColor),
-                            empty: Icon(Icons.star_outline, color: Theme.of(context).primaryColor)
-                          ),
-                          onRatingUpdate: (rating){},
-                        ),
-                      ],
-                    ),
+                  const Divider(
+                    thickness: .5,
+                    color: Colors.grey,
                   ),
                   const Gap(10),
-                  TextFormField(
-                    maxLines: 5,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(15))
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Apa yang buat anda puas?',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500
+                        ),
                       ),
-                      hintText: 'Ceritakan tentang produk yang anda beli ...'
-                    ),
+                      const Gap(10),
+                      TextFormField(
+                        key: _ulasanKey,
+                        maxLines: 5,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(15))
+                          ),
+                          hintText: 'Contoh: Rasanya pas tidak terlalu pedas dan tidak terlalu hambar, pengantarannya cepat'
+                        ),
+                        onSaved: (value) => _ulasan = value!,
+                      ),
+                    ],
                   ),
                   const Gap(20),
                   SizedBox(
                     width: double.infinity,
+                    height: 50,
                     child: FilledButton(
-                      onPressed: (){},
+                      onPressed: () => _submit(),
                       child: const Text('Beri penilaian'),
                     )
-                  )
+                  ),
                 ],
               ),
             ),

@@ -682,3 +682,63 @@ void updateStatusPesanan({required BuildContext context, required String idTrans
     }
   }
 }
+
+Future<http.Response> getRate() async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/rate/${prefs.getInt('nis')}');
+  final response = await http.get(url, headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  return response;
+}
+
+Future<http.Response> getRateByShop({required String idToko}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/shop/rate');
+  final response = await http.post(url, body: json.encode({
+    'id_toko': idToko
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  return response;
+}
+
+Future<http.Response> getRateByShopLimited({required String idToko}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/shop/rate-limited');
+  final response = await http.post(url, body: json.encode({
+    'id_toko': idToko
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  return response;
+}
+
+void rateProduct({required BuildContext context, required String idProduk, required String idTransaksi, required String ulasan, required String rate}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(baseUrl, '/api/rate/${prefs.getInt('nis')}/add');
+  final response = await http.post(url, body: json.encode({
+    'id_produk': idProduk,
+    'id_transaksi': idTransaksi,
+    'ulasan': ulasan,
+    'rating': rate
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.get('token')}'
+  });
+
+  if(!context.mounted) return;
+  if(response.statusCode == 200){
+    context.goNamed('home');
+    successSnackBar(
+      context: context,
+      content: 'Berhasil menambahkan ulasan'
+    );
+  }
+}

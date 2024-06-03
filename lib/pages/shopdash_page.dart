@@ -261,7 +261,7 @@ class _ShopDashPageState extends State<ShopDashPage>{
                           ),
                           InkWell(
                             borderRadius: BorderRadius.circular(10),
-                            onTap: () => (),
+                            onTap: () => context.pushNamed('shop-rate', queryParameters: {'id_toko': widget.idToko}),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Card(

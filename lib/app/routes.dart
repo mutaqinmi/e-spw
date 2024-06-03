@@ -23,7 +23,10 @@ import 'package:espw/pages/order_page.dart';
 import 'package:espw/pages/order_status_page.dart';
 import 'package:espw/pages/product_page.dart';
 import 'package:espw/pages/profile_page.dart';
+import 'package:espw/pages/rate_page.dart';
+import 'package:espw/pages/review_area_page.dart';
 import 'package:espw/pages/set_schedule_page.dart';
+import 'package:espw/pages/shop_rate_page.dart';
 import 'package:espw/pages/shop_settings_page.dart';
 import 'package:espw/pages/shopdash_page.dart';
 import 'package:espw/pages/unique_code.dart';
@@ -264,6 +267,13 @@ final routes = GoRouter(
                 )
               ]
             ),
+            GoRoute(
+              name: 'shop-rate',
+              path: 'shop-rate',
+              builder: (BuildContext context, GoRouterState state) => ShopRatePage(
+                idToko: state.uri.queryParameters['id_toko']!,
+              ),
+            )
           ]
         ),
         GoRoute(
@@ -357,11 +367,25 @@ final routes = GoRouter(
           builder: (BuildContext context, GoRouterState state) => ShopPage(
             shopID: state.uri.queryParameters['shopID'],
           ),
+          routes: [
+            GoRoute(
+              name: 'review-area',
+              path: 'review-area',
+              builder: (BuildContext context, GoRouterState state) => ReviewAreaPage(
+                idToko: state.uri.queryParameters['id_toko']!,
+              ),
+            )
+          ]
         ),
         GoRoute(
           name: 'order-created',
           path: 'order-created',
           builder: (BuildContext context, GoRouterState state) => const OrderCreatedPage(),
+        ),
+        GoRoute(
+          name: 'rate',
+          path: 'rate',
+          builder: (BuildContext context, GoRouterState state) => const RatePage(),
         )
       ],
     ),

@@ -502,6 +502,189 @@ class _ShopPageState extends State<ShopPage>{
                         );
                       },
                     ),
+                    SliverToBoxAdapter(
+                      child: SafeArea(
+                        minimum: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Ulasan',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600
+                                  ),
+                                ),
+                                Text(
+                                  'Ulasan terbaru.',
+                                ),
+                              ],
+                            ),
+                            FilledButton(
+                              onPressed: () => context.pushNamed('review-area', queryParameters: {'id_toko': widget.shopID}),
+                              child: const Text('Lihat Semua'),
+                            )
+                          ],
+                        )
+                      )
+                    ),
+                    FutureBuilder(
+                      future: getRateByShopLimited(idToko: widget.shopID!),
+                      builder: (BuildContext context, AsyncSnapshot response){
+                        if(response.hasData){
+                          final rating = json.decode(response.data.body)['data'];
+                          return SliverList.builder(
+                            itemCount: rating.length,
+                            itemBuilder: (BuildContext context, int index){
+                              final rate = rating[index];
+                              return Card(
+                                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                elevation: 0,
+                                child: Column(
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(vertical: 5),
+                                          child: Row(
+                                            children: [
+                                              CircleAvatar(
+                                                radius: 20,
+                                                backgroundImage: NetworkImage(
+                                                  'https://$baseUrl/assets/${rate['siswa']['foto_profil'].isEmpty ? 'images/profile.png' : 'public/${rate['siswa']['foto_profil']}'}'
+                                                ),
+                                              ),
+                                              const Gap(10),
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    rate['siswa']['nama'],
+                                                    style: const TextStyle(
+                                                      fontWeight: FontWeight.w600
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    rate['kelas']['kelas']
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(vertical: 5),
+                                          child: Row(
+                                            children: [
+                                              RatingBar(
+                                                ignoreGestures: true,
+                                                allowHalfRating: true,
+                                                initialRating: double.parse(rate['ulasan']['jumlah_rating']),
+                                                itemSize: 18,
+                                                ratingWidget: RatingWidget(
+                                                  full: Icon(Icons.star, color: Theme.of(context).primaryColor),
+                                                  half: Icon(Icons.star_half, color: Theme.of(context).primaryColor),
+                                                  empty: Icon(Icons.star_outline, color: Theme.of(context).primaryColor)
+                                                ),
+                                                onRatingUpdate: (rating){},
+                                              ),
+                                              const Gap(5),
+                                              Text(
+                                                rate['ulasan']['jumlah_rating']
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        Text(
+                                          rate['transaksi']['waktu'].substring(0, 10),
+                                          style: TextStyle(
+                                            color: Colors.black.withAlpha(150)
+                                          ),
+                                        ),
+                                        const Gap(5),
+                                        Card(
+                                          elevation: 0,
+                                          color: Colors.grey.withAlpha(80),
+                                          shape: RoundedRectangleBorder(
+                                            side: const BorderSide(
+                                              color: Colors.grey,
+                                              width: .5
+                                            ),
+                                            borderRadius: BorderRadius.circular(10)
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                            child: Row(
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                ClipRRect(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  child: CachedNetworkImage(
+                                                    imageUrl: 'https://$baseUrl/assets/public/${rate['produk']['foto_produk']}',
+                                                    width: 45,
+                                                    height: 45,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left: 15),
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      children: [
+                                                        Text(
+                                                          rate['toko']['nama_toko'],
+                                                          style: TextStyle(
+                                                            color: Colors.black.withAlpha(150)
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          rate['produk']['nama_produk'],
+                                                          style: TextStyle(
+                                                            fontSize: 18,
+                                                            fontWeight: FontWeight.w600,
+                                                            color: Colors.black.withAlpha(150)
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )
+                                                )
+                                              ],
+                                            ),
+                                          )
+                                        ),
+                                        const Gap(5),
+                                        Text(
+                                          rate['ulasan']['deskripsi_ulasan']
+                                        )
+                                      ],
+                                    ),
+                                    const Gap(5),
+                                    const Divider(
+                                      thickness: .5,
+                                      color: Colors.grey,
+                                    )
+                                  ],
+                                )
+                              );
+                            },
+                          );
+                        }
+
+                        return const SliverFillRemaining(
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      },
+                    )
                   ],
                 );
               } else if (shopList.isEmpty){
