@@ -21,7 +21,7 @@ class _SignInPageState extends State<SignInPage>{
       setState(() {
         _buttonClicked = true;
       });
-      signIn(context, _nis);
+      login(context, _nis);
     }
   }
 

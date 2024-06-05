@@ -10,12 +10,12 @@ import 'package:http/http.dart' as http;
 
 // initializing global variable
 final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-// const String baseUrl = 'lucky-premium-redfish.ngrok-free.app';
 const String baseUrl = 'espw.my.id';
+const String apiBaseUrl = 'api.espw.my.id';
 
-void signIn(BuildContext context, String nis) async {
+void login(BuildContext context, String nis) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/login');
+  final url = Uri.https(apiBaseUrl, '/api/v2/v2/user/auth/login');
   final response = await http.post(url, body: json.encode({
     'nis': int.parse(nis)
   }), headers: {
@@ -39,9 +39,9 @@ void signIn(BuildContext context, String nis) async {
 
 void logout(BuildContext context) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/logout');
+  final url = Uri.https(apiBaseUrl, '/api/v2/v2/user/auth/logout');
   final response = await http.post(url, headers: {
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   if(response.statusCode == 200){
@@ -54,12 +54,12 @@ void logout(BuildContext context) async {
 
 void updateTelepon({required BuildContext context, required String telepon}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/user/${prefs.getInt('nis')}/update-telepon');
+  final url = Uri.https(apiBaseUrl, '/api/v2/v2/user/update/telepon/${prefs.getInt('nis')}');
   final response = await http.patch(url, body: json.encode({
     'telepon': telepon
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   if(!context.mounted) return;
@@ -75,12 +75,12 @@ void updateTelepon({required BuildContext context, required String telepon}) asy
 
 void changePassword(BuildContext context, String newPassword) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/user/${prefs.getInt('nis')}/change-password');
+  final url = Uri.https(apiBaseUrl, '/api/v2/v2/user/update/password/${prefs.getInt('nis')}');
   final response = await http.patch(url, body: json.encode({
     'password': newPassword
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   if(!context.mounted) return;
@@ -100,9 +100,9 @@ void changePassword(BuildContext context, String newPassword) async {
 
 Future<http.Response> getAddress() async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/user/${prefs.getInt('nis')}/address');
+  final url = Uri.https(apiBaseUrl, '/api/v2/user/alamat/${prefs.getInt('nis')}');
   final response = await http.get(url, headers: {
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   return response;
@@ -110,12 +110,12 @@ Future<http.Response> getAddress() async {
 
 void addAddress({required BuildContext context, required String address}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/user/${prefs.getInt('nis')}/add-address');
+  final url = Uri.https(apiBaseUrl, '/api/v2/user/alamat/add/${prefs.getInt('nis')}');
   final response = await http.post(url, body: json.encode({
     'address': address
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   if(!context.mounted) return;
@@ -130,12 +130,12 @@ void addAddress({required BuildContext context, required String address}) async 
 
 void deleteAddress({required BuildContext context, required int idAddress}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/user/${prefs.getInt('nis')}/delete-address');
+  final url = Uri.https(apiBaseUrl, '/api/v2/user/alamat/delete/${prefs.getInt('nis')}');
   final response = await http.post(url, body: json.encode({
     'id_address': idAddress
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   if(!context.mounted) return;
@@ -150,12 +150,11 @@ void deleteAddress({required BuildContext context, required int idAddress}) asyn
 
 void updateProfilePicture({required BuildContext context, required File profilePicture}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/user/${prefs.getInt('nis')}/update-profile-picture');
+  final url = Uri.https(apiBaseUrl, '/api/v2/user/update/profile-picture/${prefs.getInt('nis')}');
   final request = http.MultipartRequest('POST', url);
   request.headers.addAll({
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
-  request.fields['old_image'] = prefs.getString('foto_profil') ?? '';
   request.files.add(http.MultipartFile.fromBytes('profile_picture', File(profilePicture.path).readAsBytesSync(), filename: profilePicture.path));
   final response = await request.send();
   if(response.statusCode == 200){
@@ -171,7 +170,7 @@ void updateProfilePicture({required BuildContext context, required File profileP
 }
 
 Future<http.Response> kelas() async {
-  final url = Uri.https(baseUrl, '/api/kelas');
+  final url = Uri.https(apiBaseUrl, '/api/v2/kelas');
   final response = await http.get(url);
 
   return response;
@@ -179,9 +178,9 @@ Future<http.Response> kelas() async {
 
 Future<http.Response> shop() async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/shop');
+  final url = Uri.https(apiBaseUrl, '/api/v2/toko');
   final response = await http.get(url, headers: {
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   return response;
@@ -194,10 +193,10 @@ void createShop(
     required String deskripsiToko,
     File? bannerToko}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/shop/create');
+  final url = Uri.https(apiBaseUrl, '/api/v2/toko/create');
   final request = http.MultipartRequest('POST', url);
   request.headers.addAll({
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
   request.fields['nama_toko'] = namaToko;
   request.fields['id_kelas'] = kelas;
@@ -219,10 +218,10 @@ void createShop(
 
 void updateShopBanner({required BuildContext context, required String idToko, required File bannerToko, required String oldImage}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/shop/$idToko/update-profile-picture');
+  final url = Uri.https(apiBaseUrl, '/api/v2/toko/update/banner/$idToko');
   final request = http.MultipartRequest('POST', url);
   request.headers.addAll({
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
   request.fields['old_image'] = oldImage;
   request.files.add(http.MultipartFile.fromBytes('banner_toko', File(bannerToko.path).readAsBytesSync(), filename: bannerToko.path));
@@ -239,13 +238,13 @@ void updateShopBanner({required BuildContext context, required String idToko, re
 
 void updateShop({required BuildContext context, required String deskripsiToko, required String idToko}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/shop/update');
+  final url = Uri.https(apiBaseUrl, '/api/v2/toko/update');
   final response = await http.patch(url, body: json.encode({
     'id_toko': idToko,
     'deskripsi_toko': deskripsiToko
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   if(!context.mounted) return;
@@ -260,12 +259,12 @@ void updateShop({required BuildContext context, required String deskripsiToko, r
 
 void deleteShop({required BuildContext context, required String idToko}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/shop/delete');
+  final url = Uri.https(apiBaseUrl, '/api/v2/toko/delete');
   final response = await http.post(url, body: json.encode({
     'id_toko': idToko
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   if(!context.mounted) return;
@@ -280,13 +279,13 @@ void deleteShop({required BuildContext context, required String idToko}) async {
 
 void updateJadwal({required BuildContext context, required String idToko, required bool isOpen}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/shop/update-jadwal');
+  final url = Uri.https(apiBaseUrl, '/api/v2/toko/update/jadwal');
   final response = await http.post(url, body: json.encode({
     'id_toko': idToko,
     'is_open': isOpen,
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   if(!context.mounted) return;
@@ -300,12 +299,12 @@ void updateJadwal({required BuildContext context, required String idToko, requir
 
 Future<http.Response> getAllDataKelompok(String idToko) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/kelompok/all');
+  final url = Uri.https(apiBaseUrl, '/api/v2/kelompok/all');
   final response = await http.post(url, body: json.encode({
     'id_toko': idToko
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   return response;
@@ -313,12 +312,12 @@ Future<http.Response> getAllDataKelompok(String idToko) async {
 
 void joinKelompok({required BuildContext context, required String kodeUnik}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/kelompok/join');
+  final url = Uri.https(apiBaseUrl, '/api/v2/kelompok/join');
   final response = await http.post(url, body: json.encode({
     'kode_unik': kodeUnik
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   if(!context.mounted) return;
@@ -338,12 +337,12 @@ void joinKelompok({required BuildContext context, required String kodeUnik}) asy
 
 void removeFromKelompok({required BuildContext context, required String idToko}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/kelompok/remove');
+  final url = Uri.https(apiBaseUrl, '/api/v2/kelompok/delete');
   final response = await http.post(url, body: json.encode({
     'id_toko': idToko
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   if(!context.mounted) return;
@@ -358,7 +357,7 @@ void removeFromKelompok({required BuildContext context, required String idToko})
 
 Future<http.Response> kelompok() async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/kelompok');
+  final url = Uri.https(apiBaseUrl, '/api/v2/kelompok');
   final response = await http.get(url, headers: {
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
@@ -368,9 +367,9 @@ Future<http.Response> kelompok() async {
 
 Future<http.Response> products() async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/products');
+  final url = Uri.https(apiBaseUrl, '/api/v2/produk');
   final response = await http.get(url, headers: {
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   return response;
@@ -378,9 +377,9 @@ Future<http.Response> products() async {
 
 Future<http.Response> productById(idProduk) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/products/$idProduk');
+  final url = Uri.https(apiBaseUrl, '/api/v2/produk/$idProduk');
   final response = await http.get(url, headers: {
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   return response;
@@ -397,10 +396,10 @@ void addProduct(
     required String idToko,
     required bool isCreate}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/products/add');
+  final url = Uri.https(apiBaseUrl, '/api/v2/produk/add');
   final request = http.MultipartRequest('POST', url);
   request.headers.addAll({
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
   request.fields['nama_produk'] = namaProduk;
   request.fields['harga'] = harga;
@@ -424,10 +423,10 @@ void addProduct(
 
 void updateFotoProduk({required BuildContext context, required String idProduk, required File fotoProduk, required String oldImage, required String idToko}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/products/$idProduk/update-profile-picture');
+  final url = Uri.https(apiBaseUrl, '/api/v2/produk/update/foto/$idProduk');
   final request = http.MultipartRequest('POST', url);
   request.headers.addAll({
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
   request.fields['old_image'] = oldImage;
   request.files.add(http.MultipartFile.fromBytes('foto_produk', File(fotoProduk.path).readAsBytesSync(), filename: fotoProduk.path));
@@ -444,7 +443,7 @@ void updateFotoProduk({required BuildContext context, required String idProduk, 
 
 void updateProduk({required BuildContext context, required String namaProduk, required String harga, required String stok, required String deskripsiProduk, required String detailProduk, required String idProduk, required String idToko}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/products/update');
+  final url = Uri.https(apiBaseUrl, '/api/v2/produk/update');
   final response = await http.patch(url, body: json.encode({
     'id_produk': idProduk,
     'nama_produk': namaProduk,
@@ -454,7 +453,7 @@ void updateProduk({required BuildContext context, required String namaProduk, re
     'detail_produk': detailProduk
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   if(!context.mounted) return;
@@ -469,12 +468,12 @@ void updateProduk({required BuildContext context, required String namaProduk, re
 
 void removeProduct({required BuildContext context, required String idProduk}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/products/delete');
+  final url = Uri.https(apiBaseUrl, '/api/v2/produk/delete');
   final response = await http.post(url, body: json.encode({
     'id_produk': idProduk
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   if(!context.mounted) return;
@@ -489,9 +488,9 @@ void removeProduct({required BuildContext context, required String idProduk}) as
 
 Future<http.Response> shopById(String? shopId) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/shop/$shopId');
+  final url = Uri.https(apiBaseUrl, '/api/v2/toko/$shopId');
   final response = await http.get(url, headers: {
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   return response;
@@ -499,12 +498,12 @@ Future<http.Response> shopById(String? shopId) async {
 
 Future<http.Response> search(String query) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/search');
+  final url = Uri.https(apiBaseUrl, '/api/v2/search');
   final response = await http.post(url, body: json.encode({
     'query': query
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   return response;
@@ -512,14 +511,14 @@ Future<http.Response> search(String query) async {
 
 Future<http.Response> addToCart({required String idProduk, required int qty, String? catatan}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/add-to-cart');
+  final url = Uri.https(apiBaseUrl, '/api/v2/user/keranjang/add');
   final response = await http.post(url, body: json.encode({
     'id': idProduk,
     'qty': qty.toString(),
     'catatan': catatan
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   return response;
@@ -527,9 +526,9 @@ Future<http.Response> addToCart({required String idProduk, required int qty, Str
 
 Future<http.Response> carts() async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/cart');
+  final url = Uri.https(apiBaseUrl, '/api/v2/user/keranjang');
   final response = await http.get(url, headers: {
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   return response;
@@ -537,12 +536,12 @@ Future<http.Response> carts() async {
 
 Future<http.Response> deleteCart(int idKeranjang) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/cart/delete');
+  final url = Uri.https(apiBaseUrl, '/api/v2/user/keranjang/delete');
   final response = await http.delete(url, body: json.encode({
     'id': idKeranjang.toString(),
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   return response;
@@ -550,13 +549,13 @@ Future<http.Response> deleteCart(int idKeranjang) async {
 
 Future<http.Response> updateCart(int idKeranjang, int qty) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/cart/update');
+  final url = Uri.https(apiBaseUrl, '/api/v2/user/keranjang/update');
   final response = await http.post(url, body: json.encode({
     'id': idKeranjang.toString(),
     'qty': qty.toString(),
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   return response;
@@ -564,9 +563,9 @@ Future<http.Response> updateCart(int idKeranjang, int qty) async {
 
 Future<http.Response> getFavorite() async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/favorite/${prefs.getInt('nis')}');
+  final url = Uri.https(apiBaseUrl, '/api/v2/user/favorit/${prefs.getInt('nis')}');
   final response = await http.get(url, headers: {
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   return response;
@@ -574,12 +573,12 @@ Future<http.Response> getFavorite() async {
 
 void addToFavorite({required BuildContext context, required String idToko}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/favorite/${prefs.getInt('nis')}/add');
+  final url = Uri.https(apiBaseUrl, '/api/v2/user/favorit/add/${prefs.getInt('nis')}');
   final response = await http.post(url, body: json.encode({
     'id_toko': idToko,
   }),headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   if(!context.mounted) return;
@@ -593,12 +592,12 @@ void addToFavorite({required BuildContext context, required String idToko}) asyn
 
 void deleteFromFavorite({required BuildContext context, required String idToko}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/favorite/${prefs.getInt('nis')}/delete');
+  final url = Uri.https(apiBaseUrl, '/api/v2/user/favorit/delete/${prefs.getInt('nis')}');
   final response = await http.post(url, body: json.encode({
     'id_toko': idToko,
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   if(!context.mounted) return;
@@ -612,12 +611,12 @@ void deleteFromFavorite({required BuildContext context, required String idToko})
 
 Future<http.Response> orders({required String statusPesanan}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/orders');
+  final url = Uri.https(apiBaseUrl, '/api/v2/order');
   final response = http.post(url, body: json.encode({
     'status': statusPesanan
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   return response;
@@ -625,13 +624,13 @@ Future<http.Response> orders({required String statusPesanan}) async {
 
 Future<http.Response> ordersByShop({required String idToko, required String statusPesanan}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/shop/orders');
+  final url = Uri.https(apiBaseUrl, '/api/v2/toko/orders');
   final response = http.post(url, body: json.encode({
     'id_toko': idToko,
     'status': statusPesanan
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   return response;
@@ -639,7 +638,7 @@ Future<http.Response> ordersByShop({required String idToko, required String stat
 
 void createOrder({required String idProduk, required int jumlah, required double totalHarga, String? catatan}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/orders/new');
+  final url = Uri.https(apiBaseUrl, '/api/v2/order/new');
   await http.post(url, body: json.encode({
     'id_produk': idProduk,
     'jumlah': jumlah,
@@ -647,19 +646,19 @@ void createOrder({required String idProduk, required int jumlah, required double
     'catatan': catatan
   }),headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 }
 
 void updateStatusPesanan({required BuildContext context, required String idTransaksi, required String status, String? idToko}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/orders/update');
+  final url = Uri.https(apiBaseUrl, '/api/v2/order/update');
   final response = await http.patch(url, body: json.encode({
     'id_transaksi': idTransaksi,
     'status': status,
   }),headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   if(!context.mounted) return;
@@ -690,10 +689,10 @@ void updateStatusPesanan({required BuildContext context, required String idTrans
 
 Future<http.Response> getRate() async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/rate/${prefs.getInt('nis')}');
+  final url = Uri.https(apiBaseUrl, '/api/v2/user/rate/${prefs.getInt('nis')}');
   final response = await http.get(url, headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   return response;
@@ -701,12 +700,12 @@ Future<http.Response> getRate() async {
 
 Future<http.Response> getRateByShop({required String idToko}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/shop/rate');
+  final url = Uri.https(apiBaseUrl, '/api/v2/toko/rate');
   final response = await http.post(url, body: json.encode({
     'id_toko': idToko
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   return response;
@@ -714,12 +713,12 @@ Future<http.Response> getRateByShop({required String idToko}) async {
 
 Future<http.Response> getRateByShopLimited({required String idToko}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/shop/rate-limited');
+  final url = Uri.https(apiBaseUrl, '/api/v2/toko/rate-limited');
   final response = await http.post(url, body: json.encode({
     'id_toko': idToko
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   return response;
@@ -727,7 +726,7 @@ Future<http.Response> getRateByShopLimited({required String idToko}) async {
 
 void rateProduct({required BuildContext context, required String idProduk, required String idTransaksi, required String ulasan, required String rate}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/rate/${prefs.getInt('nis')}/add');
+  final url = Uri.https(apiBaseUrl, '/api/v2/user/rate/add/${prefs.getInt('nis')}');
   final response = await http.post(url, body: json.encode({
     'id_produk': idProduk,
     'id_transaksi': idTransaksi,
@@ -735,7 +734,7 @@ void rateProduct({required BuildContext context, required String idProduk, requi
     'rating': rate
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   if(!context.mounted) return;
@@ -750,12 +749,12 @@ void rateProduct({required BuildContext context, required String idProduk, requi
 
 Future<http.Response> getNotification({required String type}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/notifications');
+  final url = Uri.https(apiBaseUrl, '/api/v2/user/notifikasi');
   final response = await http.post(url, body: json.encode({
     'type': type,
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
   return response;
@@ -763,13 +762,40 @@ Future<http.Response> getNotification({required String type}) async {
 
 void createNotification({required String type, required String title, required String description}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(baseUrl, '/api/notifications/add');
+  final url = Uri.https(apiBaseUrl, '/api/v2/user/notifikasi/add');
   await http.post(url, body: json.encode({
     'type': type,
     'title': title,
     'description': description
   }), headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.get('token')}'
+    'Authorization': 'Bearer ${prefs.getString('token')}'
+  });
+}
+
+Future<http.Response> getTokoNotification({required String type}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(apiBaseUrl, '/api/v2/toko/notifikasi');
+  final response = await http.post(url, body: json.encode({
+    'type': type,
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.getString('token')}'
+  });
+
+  return response;
+}
+
+void createTokoNotification({required String type, required String title, required String description, required String idToko}) async {
+  final SharedPreferences prefs = await _prefs;
+  final url = Uri.https(apiBaseUrl, '/api/v2/toko/notifikasi/add');
+  await http.post(url, body: json.encode({
+    'id_toko': idToko,
+    'type': type,
+    'title': title,
+    'description': description
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 }

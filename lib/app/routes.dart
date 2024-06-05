@@ -50,16 +50,8 @@ final routes = GoRouter(
   routes: [
     GoRoute(
       name: 'signin',
-      path: '/',
+      path: '/signin',
       builder: (BuildContext context, GoRouterState state) => const SignInPage(),
-      redirect: (BuildContext context, GoRouterState state) async {
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        final bool? isAuthenticated = prefs.getBool('isAuthenticated');
-        if(isAuthenticated == null) prefs.setBool('isAuthenticated', false);
-
-        if(isAuthenticated!) return '/home';
-        return null;
-      },
       routes: [
         GoRoute(
           name: 'verify',
@@ -77,8 +69,14 @@ final routes = GoRouter(
     ),
     GoRoute(
       name: 'home',
-      path: '/home',
+      path: '/',
       builder: (BuildContext context, GoRouterState state) => const NavBar(),
+      redirect: (BuildContext context, GoRouterState state) async {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        final bool? isAuthenticated = prefs.getBool('isAuthenticated');
+        if(!isAuthenticated!) return '/signin';
+        return null;
+      },
       onExit: (BuildContext context, GoRouterState state) async {
         bool? confirmDialog;
         if(state.uri.path == '/home'){
