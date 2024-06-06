@@ -46,7 +46,7 @@ class _ReviewAreaPageState extends State<ReviewAreaPage>{
                                     CircleAvatar(
                                       radius: 20,
                                       backgroundImage: NetworkImage(
-                                        'https://$baseUrl/assets/${rate['siswa']['foto_profil'].isEmpty ? 'images/profile.png' : 'public/${rate['siswa']['foto_profil']}'}'
+                                        rate['siswa']['foto_profil'].isEmpty ? 'https://$baseUrl/images/profile.png' : 'https://$apiBaseUrl/public/${rate['siswa']['foto_profil']}'
                                       ),
                                     ),
                                     const Gap(10),
@@ -116,7 +116,7 @@ class _ReviewAreaPageState extends State<ReviewAreaPage>{
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(10),
                                         child: CachedNetworkImage(
-                                          imageUrl: 'https://$baseUrl/assets/public/${rate['produk']['foto_produk']}',
+                                          imageUrl: 'https://$apiBaseUrl/public/${rate['produk']['foto_produk']}',
                                           width: 45,
                                           height: 45,
                                           fit: BoxFit.cover,

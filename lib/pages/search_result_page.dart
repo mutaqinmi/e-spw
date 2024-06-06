@@ -101,7 +101,7 @@ class _SearchPageState extends State<SearchResult>{
               itemBuilder: (BuildContext context, int index){
                 final product = productList[index];
                 return ProductResult(
-                  imageURL: 'https://$baseUrl/assets/public/${product['produk']['foto_produk']}',
+                  imageURL: 'https://$apiBaseUrl/public/${product['produk']['foto_produk']}',
                   shopName: product['toko']['nama_toko'],
                   productName: product['produk']['nama_produk'],
                   soldTotal: product['produk']['jumlah_terjual'],
@@ -136,7 +136,7 @@ class _SearchPageState extends State<SearchResult>{
               itemBuilder: (BuildContext context, int index){
                 final shop = shopList[index];
                 return ShopResult(
-                  imageURL: 'http://$baseUrl/assets/public/${shop['toko']['banner_toko']}',
+                  imageURL: 'http://$apiBaseUrl/public/${shop['toko']['banner_toko']}',
                   className: shop['kelas']['kelas'],
                   shopName: shop['toko']['nama_toko'],
                   onTap: () => context.pushNamed('shop', queryParameters: {'shopID': shop['toko']['id_toko']}),
@@ -342,7 +342,7 @@ class ShopResult extends StatelessWidget{
                         ClipRRect(
                           borderRadius: BorderRadius.circular(15),
                           child: CachedNetworkImage(
-                            imageUrl: 'https://$baseUrl/assets/public/$fotoProduk',
+                            imageUrl: 'https://$apiBaseUrl/public/$fotoProduk',
                             width: double.infinity,
                             height: 200,
                             fit: BoxFit.cover,

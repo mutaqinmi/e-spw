@@ -86,7 +86,7 @@ class _NavBarState extends State<NavBar>{
                 if(response.hasData){
                   return CircleAvatar(
                     radius: 14,
-                    backgroundImage: NetworkImage('https://$baseUrl/assets/${response.data.isEmpty ? 'images/profile.png' : 'public/${response.data}'}'),
+                    backgroundImage: NetworkImage(response.data.isEmpty ? 'https://$baseUrl/images/profile.png' : 'https://$apiBaseUrl/public/${response.data}'),
                   );
                 }
 

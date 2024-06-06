@@ -91,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage>{
                           CircleAvatar(
                             radius: 40,
                             backgroundImage: NetworkImage(
-                              'https://$baseUrl/assets/${profilePicture.isEmpty ? 'images/profile.png' : 'public/$profilePicture'}'
+                              profilePicture.isEmpty ? 'https://$baseUrl/images/profile.png' : 'https://$apiBaseUrl/public/$profilePicture'
                             ),
                           ),
                           const Gap(20),
@@ -151,7 +151,7 @@ class _ProfilePageState extends State<ProfilePage>{
                                     style: const ButtonStyle(
                                       backgroundColor: WidgetStatePropertyAll(Colors.transparent)
                                     ),
-                                    onPressed: () => context.pushNamed('login-shop'),
+                                    onPressed: () => context.goNamed('login-shop'),
                                     child: const Wrap(
                                       spacing: 5,
                                       crossAxisAlignment: WrapCrossAlignment.center,

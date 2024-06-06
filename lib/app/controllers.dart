@@ -15,7 +15,7 @@ const String apiBaseUrl = 'api.espw.my.id';
 
 void login(BuildContext context, String nis) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/v2/user/auth/login');
+  final url = Uri.https(apiBaseUrl, '/api/v2/user/auth/login');
   final response = await http.post(url, body: json.encode({
     'nis': int.parse(nis)
   }), headers: {
@@ -24,22 +24,23 @@ void login(BuildContext context, String nis) async {
 
   if(!context.mounted) return;
   if(response.statusCode == 200){
+    context.pop();
     prefs.setInt('nis', json.decode(response.body)['data']['siswa']['nis']);
     prefs.setString('nama', json.decode(response.body)['data']['siswa']['nama']);
     prefs.setString('kelas', json.decode(response.body)['data']['kelas']['kelas']);
     prefs.setString('telepon', json.decode(response.body)['data']['siswa']['telepon']);
     prefs.setString('foto_profil', json.decode(response.body)['data']['siswa']['foto_profil']);
-    context.pushNamed('verify', queryParameters: {
+    context.goNamed('verify', queryParameters: {
       'token': json.decode(response.body)['token'],
     });
   } else {
-    context.pushNamed('login-failed');
+    context.goNamed('login-failed');
   }
 }
 
 void logout(BuildContext context) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/v2/user/auth/logout');
+  final url = Uri.https(apiBaseUrl, '/api/v2/user/auth/logout');
   final response = await http.post(url, headers: {
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
@@ -54,7 +55,7 @@ void logout(BuildContext context) async {
 
 void updateTelepon({required BuildContext context, required String telepon}) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/v2/user/update/telepon/${prefs.getInt('nis')}');
+  final url = Uri.https(apiBaseUrl, '/api/v2/user/update/telepon/${prefs.getInt('nis')}');
   final response = await http.patch(url, body: json.encode({
     'telepon': telepon
   }), headers: {
@@ -75,7 +76,7 @@ void updateTelepon({required BuildContext context, required String telepon}) asy
 
 void changePassword(BuildContext context, String newPassword) async {
   final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/v2/user/update/password/${prefs.getInt('nis')}');
+  final url = Uri.https(apiBaseUrl, '/api/v2/user/update/password/${prefs.getInt('nis')}');
   final response = await http.patch(url, body: json.encode({
     'password': newPassword
   }), headers: {
@@ -120,6 +121,7 @@ void addAddress({required BuildContext context, required String address}) async 
 
   if(!context.mounted) return;
   if(response.statusCode == 200){
+    context.pop();
     context.goNamed('address');
     successSnackBar(
       context: context,
@@ -208,6 +210,7 @@ void createShop(
   if(response.statusCode == 200){
     final data = json.decode(await response.stream.bytesToString());
     if(!context.mounted) return;
+    context.pop();
     context.goNamed('add-product-oncreate', queryParameters: {'id_toko': data['toko'].first['id_toko'], 'isRedirect': 'false'});
     successSnackBar(
       context: context,
@@ -413,6 +416,7 @@ void addProduct(
 
   if(response.statusCode == 200){
     if(!context.mounted) return;
+    context.pop();
     context.goNamed('shop-dash', queryParameters: {'id_toko': idToko, 'isRedirect': 'false'});
     successSnackBar(
       context: context,
@@ -724,14 +728,16 @@ Future<http.Response> getRateByShopLimited({required String idToko}) async {
   return response;
 }
 
-void rateProduct({required BuildContext context, required String idProduk, required String idTransaksi, required String ulasan, required String rate}) async {
+void rateProduct({required BuildContext context, required String idProduk, required String idTransaksi, required String ulasan, required String rate, required String idToko}) async {
+  print(idToko);
   final SharedPreferences prefs = await _prefs;
   final url = Uri.https(apiBaseUrl, '/api/v2/user/rate/add/${prefs.getInt('nis')}');
   final response = await http.post(url, body: json.encode({
     'id_produk': idProduk,
     'id_transaksi': idTransaksi,
     'ulasan': ulasan,
-    'rating': rate
+    'rating': rate,
+    'id_toko': idToko
   }), headers: {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer ${prefs.getString('token')}'

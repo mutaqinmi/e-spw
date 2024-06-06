@@ -91,7 +91,7 @@ class _OrderPageState extends State<OrderPage>{
           final order = onGoingOrderList[index];
           return OrderItem(
             shopName: order['toko']['nama_toko'],
-            productImage: 'https://$baseUrl/assets/public/${order['produk']['foto_produk']}',
+            productImage: 'https://$apiBaseUrl/public/${order['produk']['foto_produk']}',
             productName: order['produk']['nama_produk'],
             date: order['transaksi']['waktu'].substring(0, 10),
             priceTotal: order['transaksi']['total_harga'],
@@ -114,7 +114,7 @@ class _OrderPageState extends State<OrderPage>{
           final order = finishedOrderList[index];
           return OrderItem(
             shopName: order['toko']['nama_toko'],
-            productImage: 'https://$baseUrl/assets/public/${order['produk']['foto_produk']}',
+            productImage: 'https://$apiBaseUrl/public/${order['produk']['foto_produk']}',
             productName: order['produk']['nama_produk'],
             date: order['transaksi']['waktu'].substring(0, 10),
             priceTotal: order['transaksi']['total_harga'],
@@ -279,7 +279,8 @@ class _OrderItemState extends State<OrderItem>{
       idProduk: widget.idProduk!,
       idTransaksi: widget.idTransaksi!,
       ulasan: _ulasan,
-      rate: initialRate.toString()
+      rate: initialRate.toString(),
+      idToko: widget.idToko!
     );
   }
 

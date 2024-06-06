@@ -192,7 +192,7 @@ class _ProductPageState extends State<ProductPage>{
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
                                   child: CachedNetworkImage(
-                                    imageUrl: 'https://$baseUrl/assets/public/${item['foto_produk']}',
+                                    imageUrl: 'https://$apiBaseUrl/public/${item['foto_produk']}',
                                     width: 100,
                                     height: 100,
                                     fit: BoxFit.cover,

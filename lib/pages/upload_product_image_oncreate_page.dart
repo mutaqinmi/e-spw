@@ -21,12 +21,25 @@ class UploadProductImageOnCreatePage extends StatefulWidget{
 
 class _UploadProductImageOnCreatePageState extends State<UploadProductImageOnCreatePage>{
   File? filePath;
-  bool _buttonClicked = false;
 
   void _submit(){
-    setState(() {
-      _buttonClicked = true;
-    });
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => const AlertDialog(
+        backgroundColor: Colors.transparent,
+        content: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(
+              strokeWidth: 6,
+            ),
+          ]
+        ),
+      )
+    );
     addProduct(
       context: context,
       namaProduk: widget.namaProduk!,
@@ -116,13 +129,7 @@ class _UploadProductImageOnCreatePageState extends State<UploadProductImageOnCre
             height: 50,
             child: FilledButton(
               onPressed: () => _submit(),
-              child: _buttonClicked ? const SizedBox(
-                width: 22,
-                height: 22,
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                ),
-              ) : const Text('Selesai!'),
+              child: const Text('Selesai!'),
             ),
           ),
         )

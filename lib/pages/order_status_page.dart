@@ -40,6 +40,7 @@ class _OrderStatusPageState extends State<OrderStatusPage>{
 
   @override
   Widget build(BuildContext context){
+    print(newOrderList);
     return DefaultTabController(
       initialIndex: widget.initialIndex == null ? 0 : int.parse(widget.initialIndex.toString()),
       length: 3,
@@ -87,7 +88,7 @@ class _OrderStatusPageState extends State<OrderStatusPage>{
         itemBuilder: (BuildContext context, int index){
           final order = finishedOrderList[index];
           return OrderItem(
-            productImage: 'https://$baseUrl/assets/public/${order['produk']['foto_produk']}',
+            productImage: 'https://$apiBaseUrl/public/${order['produk']['foto_produk']}',
             productName: order['produk']['nama_produk'],
             date: order['transaksi']['waktu'].substring(0, 10),
             priceTotal: order['transaksi']['total_harga'],
@@ -107,7 +108,7 @@ class _OrderStatusPageState extends State<OrderStatusPage>{
         itemBuilder: (BuildContext context, int index){
           final order = newOrderList[index];
           return OrderItem(
-            productImage: 'https://$baseUrl/assets/public/${order['produk']['foto_produk']}',
+            productImage: 'https://$apiBaseUrl/public/${order['produk']['foto_produk']}',
             productName: order['produk']['nama_produk'],
             date: order['transaksi']['waktu'].substring(0, 10),
             priceTotal: order['transaksi']['total_harga'],
@@ -129,7 +130,7 @@ class _OrderStatusPageState extends State<OrderStatusPage>{
         itemBuilder: (BuildContext context, int index){
           final order = onGoingOrderList[index];
           return OrderItem(
-            productImage: 'https://$baseUrl/assets/public/${order['produk']['foto_produk']}',
+            productImage: 'https://$apiBaseUrl/public/${order['produk']['foto_produk']}',
             productName: order['produk']['nama_produk'],
             date: order['transaksi']['waktu'].substring(0, 10),
             priceTotal: order['transaksi']['total_harga'],

@@ -58,7 +58,7 @@ class _FavoritePageState extends State<FavoritePage>{
                               CircleAvatar(
                                 radius: 30,
                                 backgroundImage: NetworkImage(
-                                  'https://$baseUrl/assets/public/${shop['toko']['banner_toko']}'
+                                  'https://$apiBaseUrl/public/${shop['toko']['banner_toko']}'
                                 ),
                               ),
                               const Gap(10),

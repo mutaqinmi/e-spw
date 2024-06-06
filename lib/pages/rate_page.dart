@@ -77,7 +77,7 @@ class _RatePageState extends State<RatePage>{
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(10),
                                         child: CachedNetworkImage(
-                                          imageUrl: 'https://$baseUrl/assets/public/${rate['produk']['foto_produk']}',
+                                          imageUrl: 'https://$apiBaseUrl/public/${rate['produk']['foto_produk']}',
                                           width: 45,
                                           height: 45,
                                           fit: BoxFit.cover,

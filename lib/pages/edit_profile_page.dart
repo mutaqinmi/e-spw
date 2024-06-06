@@ -97,7 +97,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
                   CircleAvatar(
                     radius: 50,
                     backgroundImage: NetworkImage(
-                      'https://$baseUrl/assets/${profilePicture.isEmpty ? 'images/profile.png' : 'public/$profilePicture'}'
+                      profilePicture.isEmpty ? 'https://$baseUrl/images/profile.png' : 'https://$apiBaseUrl/public/$profilePicture'
                     ),
                   ),
                   TextButton(

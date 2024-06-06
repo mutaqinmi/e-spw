@@ -55,7 +55,7 @@ class _MemberPageState extends State<MemberPage>{
                           CircleAvatar(
                             radius: 25,
                             backgroundImage: NetworkImage(
-                              'https://$baseUrl/assets/${kelompok['siswa']['foto_profil'].isEmpty ? 'images/profile.png' : 'public/${kelompok['siswa']['foto_profil']}'}'
+                              kelompok['siswa']['foto_profil'].isEmpty ? 'https://$baseUrl/images/profile.png' : 'https://$apiBaseUrl/public/${kelompok['siswa']['foto_profil']}'
                             ),
                           ),
                           const Gap(10),

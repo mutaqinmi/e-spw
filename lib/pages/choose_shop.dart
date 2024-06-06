@@ -72,7 +72,7 @@ class _ChooseShopState extends State<ChooseShop>{
                         CircleAvatar(
                           radius: 30,
                           backgroundImage: NetworkImage(
-                            'https://$baseUrl/assets/public/${shop['toko']['banner_toko']}'
+                            'https://$apiBaseUrl/public/${shop['toko']['banner_toko']}'
                           ),
                         ),
                         const Gap(10),

@@ -10,16 +10,29 @@ class MainAddressPage extends StatefulWidget{
 }
 
 class _MainAddressPageState extends State<MainAddressPage>{
-  bool _buttonClick = false;
   final _addressKey = GlobalKey<FormFieldState>();
   String _address = '';
 
   void _submit(){
     if(_addressKey.currentState!.validate()){
       _addressKey.currentState!.save();
-      setState(() {
-        _buttonClick = true;
-      });
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => const AlertDialog(
+          backgroundColor: Colors.transparent,
+          content: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(
+                strokeWidth: 6,
+              ),
+            ]
+          ),
+        )
+      );
       addAddress(
         context: context,
         address: _address
@@ -90,13 +103,7 @@ class _MainAddressPageState extends State<MainAddressPage>{
                   )
                 ),
               ),
-              child: _buttonClick ? const SizedBox(
-                width: 22,
-                height: 22,
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                ),
-              ) : const Text(
+              child: const Text(
                 'Simpan Alamat',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,

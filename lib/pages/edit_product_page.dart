@@ -114,7 +114,7 @@ class _EditProductPageState extends State<EditProductPage>{
                           CircleAvatar(
                             radius: 50,
                             backgroundImage: NetworkImage(
-                              'https://$baseUrl/assets/public/${produk['foto_produk']}'
+                              'https://$apiBaseUrl/public/${produk['foto_produk']}'
                             ),
                           ),
                           const Gap(5),

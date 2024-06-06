@@ -160,7 +160,7 @@ class _ShopPageState extends State<ShopPage>{
                       expandedHeight: 200,
                       flexibleSpace: FlexibleSpaceBar(
                         background: CachedNetworkImage(
-                          imageUrl: 'https://$baseUrl/assets/${shopList.first['toko']['banner_toko'].isEmpty ? 'images/shop-profile.png' : 'public/${shopList.first['toko']['banner_toko']}'}',
+                          imageUrl: 'https://$apiBaseUrl/public/${shopList.first['toko']['banner_toko']}',
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -294,7 +294,7 @@ class _ShopPageState extends State<ShopPage>{
                                               ClipRRect(
                                                 borderRadius: BorderRadius.circular(15),
                                                 child: CachedNetworkImage(
-                                                  imageUrl: 'https://$baseUrl/assets/public/${shopList.first['produk']['foto_produk']}',
+                                                  imageUrl: 'https://$apiBaseUrl/public/${shopList.first['produk']['foto_produk']}',
                                                   width: double.infinity,
                                                   height: 200,
                                                   fit: BoxFit.cover,
@@ -436,7 +436,7 @@ class _ShopPageState extends State<ShopPage>{
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(10),
                                       child: CachedNetworkImage(
-                                        imageUrl: 'https://$baseUrl/assets/public/${product['produk']['foto_produk']}',
+                                        imageUrl: 'https://$apiBaseUrl/public/${product['produk']['foto_produk']}',
                                         width: 100,
                                         height: 100,
                                         fit: BoxFit.cover,
@@ -555,7 +555,7 @@ class _ShopPageState extends State<ShopPage>{
                                               CircleAvatar(
                                                 radius: 20,
                                                 backgroundImage: NetworkImage(
-                                                  'https://$baseUrl/assets/${rate['siswa']['foto_profil'].isEmpty ? 'images/profile.png' : 'public/${rate['siswa']['foto_profil']}'}'
+                                                  rate['siswa']['foto_profil'].isEmpty ? 'https://$baseUrl/images/profile.png' : 'https://$apiBaseUrl/public/${rate['siswa']['foto_profil']}'
                                                 ),
                                               ),
                                               const Gap(10),
@@ -625,7 +625,7 @@ class _ShopPageState extends State<ShopPage>{
                                                 ClipRRect(
                                                   borderRadius: BorderRadius.circular(10),
                                                   child: CachedNetworkImage(
-                                                    imageUrl: 'https://$baseUrl/assets/public/${rate['produk']['foto_produk']}',
+                                                    imageUrl: 'https://$apiBaseUrl/public/${rate['produk']['foto_produk']}',
                                                     width: 45,
                                                     height: 45,
                                                     fit: BoxFit.cover,
@@ -747,7 +747,7 @@ class _ShopPageState extends State<ShopPage>{
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: CachedNetworkImage(
-                                imageUrl: 'https://$baseUrl/assets/public/${shopList[index]['produk']['foto_produk']}',
+                                imageUrl: 'https://$apiBaseUrl/public/${shopList[index]['produk']['foto_produk']}',
                                 width: 100,
                                 height: 100,
                                 fit: BoxFit.cover,

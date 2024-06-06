@@ -18,12 +18,14 @@ class _CartPageState extends State<CartPage>{
   final formatter = NumberFormat('###,###.###', 'id_ID');
 
   List cartList = [];
+  int cartCount = 0;
   @override
   void initState() {
     super.initState();
     carts().then((res) => {
       setState((){
         cartList = json.decode(res.body)['data'];
+        cartCount = cartList.length;
       })
     });
   }
@@ -297,7 +299,7 @@ class _CartPageState extends State<CartPage>{
                           ClipRRect(
                             borderRadius: BorderRadius.circular(10),
                             child: CachedNetworkImage(
-                              imageUrl: 'https://$baseUrl/assets/public/${item['produk']['foto_produk']}',
+                              imageUrl: 'https://$apiBaseUrl/public/${item['produk']['foto_produk']}',
                               width: 100,
                               height: 100,
                               fit: BoxFit.cover,
@@ -461,7 +463,7 @@ class _CartPageState extends State<CartPage>{
                 )),
                 backgroundColor: _buttonColor()
               ),
-              child: const Text('Checkout'),
+              child: Text('Checkout ($cartCount)'),
             ),
           )
         ],

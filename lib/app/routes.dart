@@ -64,7 +64,7 @@ final routes = GoRouter(
           name: 'login-failed',
           path: 'login-failed',
           builder: (BuildContext context, GoRouterState state) => const LoginFailed(),
-        )
+        ),
       ]
     ),
     GoRoute(
@@ -73,8 +73,7 @@ final routes = GoRouter(
       builder: (BuildContext context, GoRouterState state) => const NavBar(),
       redirect: (BuildContext context, GoRouterState state) async {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
-        final bool? isAuthenticated = prefs.getBool('isAuthenticated');
-        if(!isAuthenticated!) return '/signin';
+        if(prefs.getBool('isAuthenticated') == null || false) return '/signin';
         return null;
       },
       onExit: (BuildContext context, GoRouterState state) async {
@@ -154,11 +153,16 @@ final routes = GoRouter(
           builder: (BuildContext context, GoRouterState state) => const LoginShopPage(),
           redirect: (BuildContext context, GoRouterState state) async {
             final String? isRedirect = state.uri.queryParameters['isRedirect'];
-            final dataKelompok = await kelompok();
             if(isRedirect == 'false') return null;
-            if(json.decode(dataKelompok.body)['data'].isNotEmpty) return '/home/login-shop/choose-shop';
+            final redirectTo = kelompok().then((res){
+              if(json.decode(res.body)['data'].isNotEmpty){
+                return '/choose-shop';
+              } else {
+                return null;
+              }
+            });
 
-            return null;
+            return redirectTo;
           },
           routes: [
             GoRoute(
@@ -205,12 +209,12 @@ final routes = GoRouter(
               path: 'join-shop',
               builder: (BuildContext context, GoRouterState state) => const JoinShopPage(),
             ),
-            GoRoute(
-              name: 'choose-shop',
-              path: 'choose-shop',
-              builder: (BuildContext context, GoRouterState state) => const ChooseShop(),
-            )
           ]
+        ),
+        GoRoute(
+          name: 'choose-shop',
+          path: 'choose-shop',
+          builder: (BuildContext context, GoRouterState state) => const ChooseShop(),
         ),
         GoRoute(
           name: 'shop-dash',

@@ -94,7 +94,7 @@ class _DetailShopState extends State<DetailShop>{
                           CircleAvatar(
                             radius: 50,
                             backgroundImage: NetworkImage(
-                              'https://$baseUrl/assets/public/${toko['banner_toko']}'
+                              'https://$apiBaseUrl/public/${toko['banner_toko']}'
                             ),
                           ),
                           const Gap(5),

@@ -13,14 +13,27 @@ class SignInPage extends StatefulWidget{
 class _SignInPageState extends State<SignInPage>{
   final _signInKey = GlobalKey<FormFieldState>();
   String _nis = '';
-  bool _buttonClicked = false;
 
   void _submit(){
     if(_signInKey.currentState!.validate()){
       _signInKey.currentState!.save();
-      setState(() {
-        _buttonClicked = true;
-      });
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => const AlertDialog(
+          backgroundColor: Colors.transparent,
+          content: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(
+                strokeWidth: 6,
+              ),
+            ]
+          ),
+        )
+      );
       login(context, _nis);
     }
   }
@@ -139,13 +152,7 @@ class _SignInPageState extends State<SignInPage>{
                       )
                     ),
                   ),
-                  child: _buttonClicked ? const SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                    ),
-                  ) : const Text(
+                  child: const Text(
                     "AYO MULAI!",
                     style: TextStyle(
                       fontWeight: FontWeight.w600,

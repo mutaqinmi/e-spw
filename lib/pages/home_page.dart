@@ -114,13 +114,13 @@ class _HomePageState extends State<HomePage> {
                   //     builder: (BuildContext context, AsyncSnapshot response){
                   //       if(response.hasData){
                   //         return ProfilePicture(
-                  //           imageURL: 'https://$baseUrl/assets/${response.data.isEmpty ? 'images/profile.png' : 'public/${response.data}'}',
+                  //           imageURL: 'https://$apiBaseUrl/public/${response.data.isEmpty ? 'images/profile.png' : 'public/${response.data}'}',
                   //           onTap: () => context.pushNamed('profile'),
                   //         );
                   //       }
                   //
                   //       return ProfilePicture(
-                  //         imageURL: 'https://$baseUrl/assets/images/profile.png',
+                  //         imageURL: 'https://$apiBaseUrl/public/images/profile.png',
                   //         onTap: () => context.pushNamed('profile'),
                   //       );
                   //     },
@@ -196,7 +196,7 @@ class _HomePageState extends State<HomePage> {
                           itemBuilder: (BuildContext context, int index){
                             final shop = shopList[index];
                             return ShopCard(
-                              imageURL: 'https://$baseUrl/assets/${shop['toko']['banner_toko'].isEmpty ? 'images/shop-profile.png' : 'public/${shop['toko']['banner_toko']}'}',
+                              imageURL: 'https://$apiBaseUrl/public/${shop['toko']['banner_toko']}',
                               className: shop['kelas']['kelas'],
                               shopName: shop['toko']['nama_toko'],
                               rating: double.parse(shop['toko']['rating_toko']),
@@ -282,7 +282,7 @@ class _HomePageState extends State<HomePage> {
                       itemBuilder: (BuildContext context, int index){
                         final product = productList[index];
                         return ProductCard(
-                          imageURL: 'https://$baseUrl/assets/public/${product['produk']['foto_produk']}',
+                          imageURL: 'https://$apiBaseUrl/public/${product['produk']['foto_produk']}',
                           productName: product['produk']['nama_produk'],
                           description: product['produk']['deskripsi_produk'],
                           soldTotal: product['produk']['jumlah_terjual'],
@@ -354,7 +354,7 @@ class _HomePageState extends State<HomePage> {
 //       );
 //     } else {
 //       return const CircleAvatar(
-//         backgroundImage: NetworkImage('https://$baseUrl/assets/images/profile.png'),
+//         backgroundImage: NetworkImage('https://$apiBaseUrl/public/images/profile.png'),
 //       );
 //     }
 //   }

@@ -17,12 +17,25 @@ class UploadProfileImagePage extends StatefulWidget{
 
 class _UploadProfileImagePageState extends State<UploadProfileImagePage>{
   File? filePath;
-  bool _buttonClicked = false;
 
   void _submit(){
-    setState(() {
-      _buttonClicked = true;
-    });
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => const AlertDialog(
+        backgroundColor: Colors.transparent,
+        content: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(
+              strokeWidth: 6,
+            ),
+          ]
+        ),
+      )
+    );
     createShop(
       context: context,
       namaToko: widget.namaToko!,
@@ -109,13 +122,7 @@ class _UploadProfileImagePageState extends State<UploadProfileImagePage>{
             height: 50,
             child: FilledButton(
               onPressed: () => _submit(),
-              child: _buttonClicked ? const SizedBox(
-                width: 22,
-                height: 22,
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                ),
-              ) : const Text('Selanjutnya'),
+              child: const Text('Selanjutnya'),
             ),
           ),
         )
