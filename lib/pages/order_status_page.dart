@@ -40,7 +40,6 @@ class _OrderStatusPageState extends State<OrderStatusPage>{
 
   @override
   Widget build(BuildContext context){
-    print(newOrderList);
     return DefaultTabController(
       initialIndex: widget.initialIndex == null ? 0 : int.parse(widget.initialIndex.toString()),
       length: 3,

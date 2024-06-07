@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
@@ -729,7 +728,6 @@ Future<http.Response> getRateByShopLimited({required String idToko}) async {
 }
 
 void rateProduct({required BuildContext context, required String idProduk, required String idTransaksi, required String ulasan, required String rate, required String idToko}) async {
-  print(idToko);
   final SharedPreferences prefs = await _prefs;
   final url = Uri.https(apiBaseUrl, '/api/v2/user/rate/add/${prefs.getInt('nis')}');
   final response = await http.post(url, body: json.encode({
