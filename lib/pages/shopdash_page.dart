@@ -305,42 +305,9 @@ class _ShopDashPageState extends State<ShopDashPage>{
                             ),
                           ),
                           const Gap(5),
-                          // InkWell(
-                          //   borderRadius: BorderRadius.circular(10),
-                          //   onTap: () => (),
-                          //   child: Padding(
-                          //     padding: const EdgeInsets.symmetric(vertical: 10),
-                          //     child: Card(
-                          //       color: Colors.transparent,
-                          //       elevation: 0,
-                          //       child: Row(
-                          //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //         children: [
-                          //           Wrap(
-                          //             crossAxisAlignment: WrapCrossAlignment.center,
-                          //             spacing: 10,
-                          //             children: [
-                          //               Icon(
-                          //                 Icons.ads_click,
-                          //                 color: Theme.of(context).primaryColor,
-                          //               ),
-                          //               const Text(
-                          //                 'Promosi',
-                          //                 style: TextStyle(
-                          //                   fontSize: 16,
-                          //                 ),
-                          //               ),
-                          //             ],
-                          //           ),
-                          //           const Icon(Icons.keyboard_arrow_right)
-                          //         ],
-                          //       ),
-                          //     ),
-                          //   )
-                          // ),
                           InkWell(
                             borderRadius: BorderRadius.circular(10),
-                            onTap: () => (),
+                            onTap: () => context.pushNamed('quick-mode', queryParameters: {'id_toko': widget.idToko}),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Card(
@@ -358,7 +325,7 @@ class _ShopDashPageState extends State<ShopDashPage>{
                                           color: Theme.of(context).primaryColor,
                                         ),
                                         const Text(
-                                          'Live Mode',
+                                          'Quick Mode',
                                           style: TextStyle(
                                             fontSize: 16,
                                           ),
@@ -411,18 +378,23 @@ class _ShopDashPageState extends State<ShopDashPage>{
                 ),
               );
             } else if (json.decode(response.data.body)['data'].isEmpty){
-              return const Center(
+              return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       'Toko anda belum memiliki produk',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 18,
                         fontWeight: FontWeight.w600
                       ),
                     ),
-                    Text('Tambahkan produk untuk memulai'),
+                    const Text('Tambahkan produk untuk memulai'),
+                    const Gap(20),
+                    FilledButton(
+                      onPressed: () => context.pushNamed('add-product', queryParameters: {'id_toko': widget.idToko}),
+                      child: const Text('Tambahkan Produk'),
+                    )
                   ],
                 ),
               );
@@ -434,26 +406,6 @@ class _ShopDashPageState extends State<ShopDashPage>{
           );
         },
       ),
-      floatingActionButton: FutureBuilder(
-        future: shopById(widget.idToko),
-        builder: (BuildContext context, AsyncSnapshot response){
-          if(response.hasData){
-            if(json.decode(response.data.body)['data'].isNotEmpty){
-              return FloatingActionButton.extended(
-                onPressed: (){},
-                icon: const Icon(Icons.assignment_outlined),
-                label: const Text('Laporan'),
-              );
-            }
-          }
-
-          return FloatingActionButton.extended(
-            onPressed: () => context.pushNamed('add-product', queryParameters: {'id_toko': widget.idToko}),
-            icon: const Icon(Icons.add),
-            label: const Text('Tambah Produk'),
-          );
-        },
-      )
     );
   }
 }

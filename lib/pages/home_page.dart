@@ -15,8 +15,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool _isOpen = false;
-
   List shopList = [];
   List productList = [];
   @override
@@ -29,12 +27,6 @@ class _HomePageState extends State<HomePage> {
       productList = json.decode(res.body)['data'];
     }));
   }
-
-  // Future<String> _getFotoProfil() async {
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   final fotoProfil = prefs.getString('foto_profil');
-  //   return fotoProfil!;
-  // }
 
   Widget _bannerList(BuildContext context){
     return const Carousel(
@@ -108,24 +100,6 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-                  // actions: [
-                  //   FutureBuilder(
-                  //     future: _getFotoProfil(),
-                  //     builder: (BuildContext context, AsyncSnapshot response){
-                  //       if(response.hasData){
-                  //         return ProfilePicture(
-                  //           imageURL: 'https://$apiBaseUrl/public/${response.data.isEmpty ? 'images/profile.png' : 'public/${response.data}'}',
-                  //           onTap: () => context.pushNamed('profile'),
-                  //         );
-                  //       }
-                  //
-                  //       return ProfilePicture(
-                  //         imageURL: 'https://$apiBaseUrl/public/images/profile.png',
-                  //         onTap: () => context.pushNamed('profile'),
-                  //       );
-                  //     },
-                  //   )
-                  // ],
                 ),
               ),
             ),
@@ -155,25 +129,12 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         const Gap(5),
-                        Wrap(
-                          spacing: 5,
-                          children: [
-                            ChoiceChip(
-                              label: const Text('Semua Toko'),
-                              selected: true,
-                              onSelected: (bool selected){},
-                            ),
-                            ChoiceChip(
-                              label: const Text('Toko yang Buka'),
-                              selected: _isOpen,
-                              onSelected: (bool selected){
-                                setState(() {
-                                  _isOpen = !_isOpen;
-                                });
-                              },
-                            )
-                          ],
-                        )
+                        ChoiceChip(
+                          label: const Text('Semua Toko'),
+                          selected: true,
+                          onSelected: (bool selected){},
+                          showCheckmark: false,
+                        ),
                       ],
                     )
                   ],
@@ -287,7 +248,7 @@ class _HomePageState extends State<HomePage> {
                           description: product['produk']['deskripsi_produk'],
                           soldTotal: product['produk']['jumlah_terjual'],
                           price: int.parse(product['produk']['harga']),
-                          rating: double.parse(product['produk']['rating_produk']),
+                          rating: double.parse(product['toko']['rating_toko']),
                           onTap: () => context.pushNamed('shop', queryParameters: {'shopID': product['produk']['id_toko']}),
                         );
                       },
@@ -341,35 +302,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-// class ProfilePicture extends StatelessWidget{
-//   const ProfilePicture({super.key, required this.imageURL, this.onTap});
-//   final String imageURL;
-//   final void Function()? onTap;
-//
-//   Widget _isContainProfilePicture(){
-//     if(imageURL.isNotEmpty){
-//       return CircleAvatar(
-//         backgroundImage: NetworkImage(imageURL),
-//       );
-//     } else {
-//       return const CircleAvatar(
-//         backgroundImage: NetworkImage('https://$apiBaseUrl/public/images/profile.png'),
-//       );
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context){
-//     return Container(
-//       margin: const EdgeInsets.only(right: 16),
-//       child: GestureDetector(
-//         onTap: onTap,
-//         child: _isContainProfilePicture(),
-//       ),
-//     );
-//   }
-// }
 
 class Carousel extends StatelessWidget{
   const Carousel({super.key, required this.banner});

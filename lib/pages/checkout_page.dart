@@ -104,6 +104,7 @@ class _CheckoutPageState extends State<CheckoutPage>{
           jumlah: cartList[i]['keranjang']['jumlah'],
           totalHarga: totalHarga,
           catatan: cartList[i]['keranjang']['catatan'],
+          alamat: address.first['alamat']
         );
       }
     } else {

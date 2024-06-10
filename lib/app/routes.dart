@@ -23,6 +23,7 @@ import 'package:espw/pages/order_page.dart';
 import 'package:espw/pages/order_status_page.dart';
 import 'package:espw/pages/product_page.dart';
 import 'package:espw/pages/profile_page.dart';
+import 'package:espw/pages/quick_mode_page.dart';
 import 'package:espw/pages/rate_page.dart';
 import 'package:espw/pages/review_area_page.dart';
 import 'package:espw/pages/set_schedule_page.dart';
@@ -275,6 +276,13 @@ final routes = GoRouter(
               builder: (BuildContext context, GoRouterState state) => ShopRatePage(
                 idToko: state.uri.queryParameters['id_toko']!,
               ),
+            ),
+            GoRoute(
+              name: 'quick-mode',
+              path: 'quick-mode',
+              builder: (BuildContext context, GoRouterState state) => QuickModePage(
+                idToko: state.uri.queryParameters['id_toko']!,
+              )
             )
           ]
         ),

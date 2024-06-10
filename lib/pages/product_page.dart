@@ -82,7 +82,7 @@ class _ProductPageState extends State<ProductPage>{
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Swipe untuk mengatur produk',
+                          'Swipe untuk menghapus produk',
                           style: TextStyle(
                             fontSize: 12,
                             fontStyle: FontStyle.italic
@@ -134,14 +134,14 @@ class _ProductPageState extends State<ProductPage>{
                         DismissDirection.endToStart: .9
                       },
                       background: Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor
+                        decoration: const BoxDecoration(
+                          color: Colors.red
                         ),
                         child: const Padding(
                           padding: EdgeInsets.only(left: 30),
                           child: Row(
                             children: [
-                              Icon(Icons.edit, color: Colors.white)
+                              Icon(Icons.delete, color: Colors.white)
                             ],
                           ),
                         )
@@ -160,73 +160,66 @@ class _ProductPageState extends State<ProductPage>{
                           ),
                         )
                       ),
-                      confirmDismiss: (DismissDirection dismissDirection){
-                        if(dismissDirection == DismissDirection.endToStart){
-                          return _confirmDismiss(context, item['nama_produk']);
-                        } else if (dismissDirection == DismissDirection.startToEnd){
-                          return context.pushNamed('edit-product', queryParameters: {'id_produk': item['id_produk'], 'id_toko': widget.idToko});
-                        }
-
-                        return Future.value(false);
-                      },
+                      confirmDismiss: (DismissDirection dismissDirection) => _confirmDismiss(context, item['nama_produk']),
                       onDismissed: (DismissDirection dismissDirection){
-                        if(dismissDirection == DismissDirection.endToStart){
-                          removeProduct(
-                            context: context,
-                            idProduk: item['id_produk']
-                          );
-                          setState(() {
-                            item.removeAt[index];
-                          });
-                        }
+                        removeProduct(
+                          context: context,
+                          idProduk: item['id_produk']
+                        );
+                        setState(() {
+                          item.removeAt[index];
+                        });
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Column(
-                          children: [
-                            const Gap(10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: CachedNetworkImage(
-                                    imageUrl: 'https://$apiBaseUrl/public/${item['foto_produk']}',
-                                    width: 100,
-                                    height: 100,
-                                    fit: BoxFit.cover,
+                      child: InkWell(
+                        onTap: () => context.pushNamed('edit-product', queryParameters: {'id_produk': item['id_produk'], 'id_toko': widget.idToko}),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Column(
+                            children: [
+                              const Gap(10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: CachedNetworkImage(
+                                      imageUrl: 'https://$apiBaseUrl/public/${item['foto_produk']}',
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
-                                ),
-                                const Gap(10),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        item['nama_produk'],
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600
+                                  const Gap(10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          item['nama_produk'],
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600
+                                          ),
                                         ),
-                                      ),
-                                      Text(
-                                        'Rp. ${formatter.format(int.parse(item['harga']))}',
-                                      ),
-                                      const Gap(35),
-                                      Text(
-                                        'Stok: ${item['stok']}'
-                                      )
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                            const Gap(10),
-                          ],
-                        )
-                      ),
+                                        Text(
+                                          'Rp. ${formatter.format(int.parse(item['harga']))}',
+                                        ),
+                                        const Gap(35),
+                                        Text(
+                                          'Stok: ${item['stok']}'
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                              const Gap(10),
+                            ],
+                          )
+                        ),
+                      )
                     );
                   },
                 )

@@ -94,6 +94,9 @@ class _OrderStatusPageState extends State<OrderStatusPage>{
             qty: order['transaksi']['jumlah'],
             status: order['transaksi']['status'],
             catatan: order['transaksi']['catatan'],
+            nama: order['siswa']['nama'],
+            fotoProfil: order['siswa']['foto_profil'],
+            alamat: order['transaksi']['alamat'],
           );
         },
       ),
@@ -116,6 +119,9 @@ class _OrderStatusPageState extends State<OrderStatusPage>{
             catatan: order['transaksi']['catatan'],
             idTransaksi: order['transaksi']['id_transaksi'],
             idToko: widget.idToko,
+            nama: order['siswa']['nama'],
+            fotoProfil: order['siswa']['foto_profil'],
+            alamat: order['transaksi']['alamat'],
           );
         },
       ),
@@ -138,6 +144,9 @@ class _OrderStatusPageState extends State<OrderStatusPage>{
             catatan: order['transaksi']['catatan'],
             idTransaksi: order['transaksi']['id_transaksi'],
             idToko: widget.idToko,
+            nama: order['siswa']['nama'],
+            fotoProfil: order['siswa']['foto_profil'],
+            alamat: order['transaksi']['alamat'],
           );
         },
       ),
@@ -146,7 +155,7 @@ class _OrderStatusPageState extends State<OrderStatusPage>{
 }
 
 class OrderItem extends StatelessWidget{
-  const OrderItem({super.key, required this.productImage, required this.productName, required this.date, required this.priceTotal, required this.qty, required this.status, required this.catatan, this.idTransaksi, this.idToko});
+  const OrderItem({super.key, required this.productImage, required this.productName, required this.date, required this.priceTotal, required this.qty, required this.status, required this.catatan, this.idTransaksi, this.idToko, required this.nama, required this.fotoProfil, required this.alamat});
   final String productImage;
   final String productName;
   final String date;
@@ -156,6 +165,9 @@ class OrderItem extends StatelessWidget{
   final String catatan;
   final String? idTransaksi;
   final String? idToko;
+  final String nama;
+  final String fotoProfil;
+  final String alamat;
 
   Widget _status(BuildContext context, String status){
     if(status == 'Menunggu Konfirmasi'){
@@ -250,15 +262,55 @@ class OrderItem extends StatelessWidget{
             margin: const EdgeInsets.symmetric(vertical: 5),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-              child: Row(
+              child: Column(
                 children: [
-                  const Text('Catatan:'),
-                  const Gap(5),
-                  Expanded(
-                    child: Text(catatan == '' ? '...' : catatan),
-                  )
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Nama Pemesan:',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600
+                        ),
+                      ),
+                      const Gap(5),
+                      Expanded(
+                        child: Text(nama),
+                      )
+                    ],
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Alamat:',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600
+                        ),
+                      ),
+                      const Gap(5),
+                      Expanded(
+                        child: Text(alamat),
+                      )
+                    ],
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Catatan:',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600
+                        ),
+                      ),
+                      const Gap(5),
+                      Expanded(
+                        child: Text(catatan == '' ? '...' : catatan),
+                      )
+                    ],
+                  ),
                 ],
-              ),
+              )
             ),
           ),
           Row(
