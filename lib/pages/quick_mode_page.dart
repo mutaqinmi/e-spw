@@ -4,6 +4,7 @@ import 'package:espw/app/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
 
 class QuickModePage extends StatefulWidget{
   const QuickModePage({super.key, required this.idToko});
@@ -194,7 +195,11 @@ class _QuickModePageState extends State<QuickModePage>{
                                         totalHarga: double.parse(product['harga']) * qty,
                                         catatan: 'Ini adalah pesanan dari Quick Mode ${productList.first['toko']['nama_toko']}',
                                         alamat: 'Quick Mode'
-                                      ),
+                                      ).then((res) => {
+                                        if(res.statusCode == 200){
+                                          context.pop()
+                                        }
+                                      }),
                                       child: const Text('Beli Langsung'),
                                     ),
                                   )

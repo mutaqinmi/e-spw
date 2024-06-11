@@ -79,7 +79,7 @@ final routes = GoRouter(
       },
       onExit: (BuildContext context, GoRouterState state) async {
         bool? confirmDialog;
-        if(state.uri.path == '/home'){
+        if(state.uri.path == '/'){
           confirmDialog = await showDialog(
             context: context,
             builder: (BuildContext context) => AlertDialog(

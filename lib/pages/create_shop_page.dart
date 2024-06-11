@@ -15,7 +15,7 @@ class _CreateShopPageState extends State<CreateShopPage>{
   final _namaTokoKey = GlobalKey<FormFieldState>();
   final _deskripsiTokoKey = GlobalKey<FormFieldState>();
   String _namaToko = '';
-  String? _kelasValue = 'X DPIB 1';
+  String? _kelasValue = 'X PPLG';
   String _deskripsiToko = '';
 
   void submit(){

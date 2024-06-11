@@ -639,10 +639,10 @@ Future<http.Response> ordersByShop({required String idToko, required String stat
   return response;
 }
 
-void createOrder({required String idProduk, required int jumlah, required double totalHarga, String? catatan, required String alamat}) async {
+Future<http.Response> createOrder({required String idProduk, required int jumlah, required double totalHarga, String? catatan, required String alamat}) async {
   final SharedPreferences prefs = await _prefs;
   final url = Uri.https(apiBaseUrl, '/api/v2/order/new');
-  await http.post(url, body: json.encode({
+  final response = await http.post(url, body: json.encode({
     'id_produk': idProduk,
     'jumlah': jumlah,
     'total_harga': totalHarga,
@@ -652,6 +652,8 @@ void createOrder({required String idProduk, required int jumlah, required double
     'Content-Type': 'application/json',
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
+
+  return response;
 }
 
 void updateStatusPesanan({required BuildContext context, required String idTransaksi, required String status, String? idToko}) async {
