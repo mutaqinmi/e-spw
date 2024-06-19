@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
@@ -8,15 +9,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 // initializing global variable
-final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 const String baseUrl = 'espw.my.id';
 const String apiBaseUrl = 'api.espw.my.id';
 
-void login(BuildContext context, String nis) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/user/auth/login');
+void getDataSiswa({required BuildContext context, required String nis}) async {
+  final url = Uri.https(apiBaseUrl, '/v3/user');
   final response = await http.post(url, body: json.encode({
-    'nis': int.parse(nis)
+    'nis': nis
   }), headers: {
     'Content-Type': 'application/json',
   });
@@ -24,37 +23,43 @@ void login(BuildContext context, String nis) async {
   if(!context.mounted) return;
   if(response.statusCode == 200){
     context.pop();
-    prefs.setInt('nis', json.decode(response.body)['data']['siswa']['nis']);
-    prefs.setString('nama', json.decode(response.body)['data']['siswa']['nama']);
-    prefs.setString('kelas', json.decode(response.body)['data']['kelas']['kelas']);
-    prefs.setString('telepon', json.decode(response.body)['data']['siswa']['telepon']);
-    prefs.setString('foto_profil', json.decode(response.body)['data']['siswa']['foto_profil']);
-    context.goNamed('verify', queryParameters: {
+    return context.goNamed('verify', queryParameters: {
       'token': json.decode(response.body)['token'],
     });
-  } else {
-    context.goNamed('login-failed');
   }
+
+  return context.goNamed('login-failed');
 }
 
-void logout(BuildContext context) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/user/auth/logout');
+void signin({required BuildContext context, required String nis, required String token}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/auth/signin');
+  final response = await http.post(url, body: json.encode({
+    'nis': nis
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.getString('token')}',
+  });
+}
+
+void signout({required BuildContext context}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/auth/signout');
   final response = await http.post(url, headers: {
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
+  if(!context.mounted) return;
   if(response.statusCode == 200){
-    if(!context.mounted) return;
     prefs.clear();
     prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    return context.goNamed('signin');
   }
 }
 
 void updateTelepon({required BuildContext context, required String telepon}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/user/update/telepon/${prefs.getInt('nis')}');
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/update/telepon');
   final response = await http.patch(url, body: json.encode({
     'telepon': telepon
   }), headers: {
@@ -64,20 +69,28 @@ void updateTelepon({required BuildContext context, required String telepon}) asy
 
   if(!context.mounted) return;
   if(response.statusCode == 200){
-    prefs.setString('telepon', telepon);
-    context.goNamed('home');
+    addNotifikasi(
+      type: 'Informasi',
+      title: 'Nomor telepon anda diubah!',
+      description: 'Nomor telepon anda telah diubah. Jika anda tidak merasa merubah nomor telepon anda, segera amankan akun anda!'
+    );
     successSnackBar(
       context: context,
       content: 'Nomor telepon berhasil diubah!'
     );
+    return context.goNamed('home');
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    return context.goNamed('signin');
   }
 }
 
-void changePassword(BuildContext context, String newPassword) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/user/update/password/${prefs.getInt('nis')}');
+void updatePassword(BuildContext context, String password) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/update/password');
   final response = await http.patch(url, body: json.encode({
-    'password': newPassword
+    'password': password
   }), headers: {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer ${prefs.getString('token')}'
@@ -85,32 +98,47 @@ void changePassword(BuildContext context, String newPassword) async {
 
   if(!context.mounted) return;
   if(response.statusCode == 200){
-    createNotification(
+    addNotifikasi(
       type: 'Informasi',
       title: 'Kata sandi anda diubah',
-      description: 'Kata sandi anda telah dirubah. Jika anda tidak merasa merubah kata sandi anda, segera ubah kata sandi anda kembali!'
+      description: 'Kata sandi anda telah diubah. Jika anda tidak merasa merubah kata sandi anda, segera ubah kata sandi anda kembali!'
     );
-    logout(context);
     successSnackBar(
       context: context,
       content: 'Password berhasil diubah!'
     );
+    return signout(
+      context: context
+    );
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    return context.goNamed('signin');
   }
 }
 
-Future<http.Response> getAddress() async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/user/alamat/${prefs.getInt('nis')}');
+Future<http.Response?> getAlamat({required BuildContext context}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/alamat');
   final response = await http.get(url, headers: {
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
-  return response;
+  if(!context.mounted) return null;
+  if(response.statusCode == 200){
+    return response;
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    context.goNamed('signin');
+  }
+
+  return null;
 }
 
-void addAddress({required BuildContext context, required String address}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/user/alamat/add/${prefs.getInt('nis')}');
+void addAlamat({required BuildContext context, required String address}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/alamat/add');
   final response = await http.post(url, body: json.encode({
     'address': address
   }), headers: {
@@ -121,19 +149,28 @@ void addAddress({required BuildContext context, required String address}) async 
   if(!context.mounted) return;
   if(response.statusCode == 200){
     context.pop();
-    context.goNamed('address');
+    addNotifikasi(
+      type: 'Informasi',
+      title: 'Alamat baru ditambahkan!',
+      description: 'Anda telah menambahkan alamat baru. Jika anda tidak merasa menambahkan alamat baru, segera amankan akun anda!'
+    );
     successSnackBar(
       context: context,
       content: 'Alamat berhasil disimpan!'
     );
+    return context.goNamed('address');
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    return context.goNamed('signin');
   }
 }
 
-void deleteAddress({required BuildContext context, required int idAddress}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/user/alamat/delete/${prefs.getInt('nis')}');
+void deleteAlamat({required BuildContext context, required int idAlamat}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/alamat/delete');
   final response = await http.post(url, body: json.encode({
-    'id_address': idAddress
+    'id_address': idAlamat
   }), headers: {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer ${prefs.getString('token')}'
@@ -146,40 +183,58 @@ void deleteAddress({required BuildContext context, required int idAddress}) asyn
       context: context,
       content: 'Alamat dihapus!'
     );
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    return context.goNamed('signin');
   }
 }
 
-void updateProfilePicture({required BuildContext context, required File profilePicture}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/user/update/profile-picture/${prefs.getInt('nis')}');
+void updateFotoProfilSiswa({required BuildContext context, required File profilePicture}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/update/profile-picture');
   final request = http.MultipartRequest('POST', url);
   request.headers.addAll({
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
   request.files.add(http.MultipartFile.fromBytes('profile_picture', File(profilePicture.path).readAsBytesSync(), filename: profilePicture.path));
   final response = await request.send();
+
+
+  if(!context.mounted) return;
   if(response.statusCode == 200){
-    final data = json.decode(await response.stream.bytesToString());
-    prefs.setString('foto_profil', data['siswa'].first['foto_profil']);
-    if(!context.mounted) return;
-    context.goNamed('home');
     successSnackBar(
       context: context,
       content: 'Foto profil berhasil diubah!'
     );
+    return context.goNamed('home');
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    return context.goNamed('signin');
   }
 }
 
-Future<http.Response> kelas() async {
-  final url = Uri.https(apiBaseUrl, '/api/v2/kelas');
+Future<http.Response?> getDataKelas({required BuildContext context}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/kelas');
   final response = await http.get(url);
 
-  return response;
+  if(!context.mounted) return null;
+  if(response.statusCode == 200){
+    return response;
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    context.goNamed('signin');
+  }
+
+  return null;
 }
 
-Future<http.Response> shop() async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/toko');
+Future<http.Response?> getDataToko() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/toko');
   final response = await http.get(url, headers: {
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
@@ -187,14 +242,9 @@ Future<http.Response> shop() async {
   return response;
 }
 
-void createShop(
-    {required BuildContext context,
-    required String namaToko,
-    required String kelas,
-    required String deskripsiToko,
-    File? bannerToko}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/toko/create');
+void addToko({required BuildContext context, required String namaToko, required String kelas, required String deskripsiToko, File? bannerToko}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/toko/create');
   final request = http.MultipartRequest('POST', url);
   request.headers.addAll({
     'Authorization': 'Bearer ${prefs.getString('token')}'
@@ -203,24 +253,34 @@ void createShop(
   request.fields['id_kelas'] = kelas;
   request.fields['deskripsi_toko'] = deskripsiToko;
   request.files.add(http.MultipartFile.fromBytes('banner_toko', File(bannerToko!.path).readAsBytesSync(), filename: bannerToko.path));
-
   final response = await request.send();
 
   if(response.statusCode == 200){
     final data = json.decode(await response.stream.bytesToString());
     if(!context.mounted) return;
     context.pop();
-    context.goNamed('add-product-oncreate', queryParameters: {'id_toko': data['toko'].first['id_toko'], 'isRedirect': 'false'});
+    addNotifikasiToko(
+      type: 'Informasi',
+      title: 'Toko berhasil dibuat!',
+      description: 'Selamat datang di eSPW! explore seluruh fitur aplikasi untuk membantu anda mulai berjualan.',
+      idToko: data['toko'].first['id_toko']
+    );
     successSnackBar(
       context: context,
       content: 'Toko berhasil dibuat!'
     );
+    return context.goNamed('add-product-oncreate', queryParameters: {'id_toko': data['toko'].first['id_toko'], 'isRedirect': 'false'});
+  } else if (response.statusCode == 401){
+    if(!context.mounted) return;
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    return context.goNamed('signin');
   }
 }
 
-void updateShopBanner({required BuildContext context, required String idToko, required File bannerToko, required String oldImage}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/toko/update/banner/$idToko');
+void updateFotoProfilToko({required BuildContext context, required String idToko, required File bannerToko, required String oldImage}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/toko/update/banner/$idToko');
   final request = http.MultipartRequest('POST', url);
   request.headers.addAll({
     'Authorization': 'Bearer ${prefs.getString('token')}'
@@ -228,19 +288,24 @@ void updateShopBanner({required BuildContext context, required String idToko, re
   request.fields['old_image'] = oldImage;
   request.files.add(http.MultipartFile.fromBytes('banner_toko', File(bannerToko.path).readAsBytesSync(), filename: bannerToko.path));
   final response = await request.send();
+
+  if(!context.mounted) return;
   if(response.statusCode == 200){
-    if(!context.mounted) return;
-    context.goNamed('shop-dash', queryParameters: {'id_toko': idToko});
     successSnackBar(
       context: context,
       content: 'Foto profil berhasil diubah!'
     );
+    return context.goNamed('shop-dash', queryParameters: {'id_toko': idToko});
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    return context.goNamed('signin');
   }
 }
 
-void updateShop({required BuildContext context, required String deskripsiToko, required String idToko}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/toko/update');
+void updateDeskripsiToko({required BuildContext context, required String deskripsiToko, required String idToko}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/toko/update');
   final response = await http.patch(url, body: json.encode({
     'id_toko': idToko,
     'deskripsi_toko': deskripsiToko
@@ -251,17 +316,27 @@ void updateShop({required BuildContext context, required String deskripsiToko, r
 
   if(!context.mounted) return;
   if(response.statusCode == 200){
-    context.goNamed('shop-dash', queryParameters: {'id_toko': idToko});
+    addNotifikasiToko(
+      type: 'Informasi',
+      title: 'Deskripsi toko diubah!',
+      description: 'Deskripsi toko anda telah diubah.',
+      idToko: idToko
+    );
     successSnackBar(
       context: context,
       content: 'Informasi toko berhasil diubah!'
     );
+    return context.goNamed('shop-dash', queryParameters: {'id_toko': idToko});
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    return context.goNamed('signin');
   }
 }
 
-void deleteShop({required BuildContext context, required String idToko}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/toko/delete');
+void deleteToko({required BuildContext context, required String idToko}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/toko/delete');
   final response = await http.post(url, body: json.encode({
     'id_toko': idToko
   }), headers: {
@@ -276,12 +351,16 @@ void deleteShop({required BuildContext context, required String idToko}) async {
       context: context,
       content: 'Toko dihapus!'
     );
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    return context.goNamed('signin');
   }
 }
 
-void updateJadwal({required BuildContext context, required String idToko, required bool isOpen}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/toko/update/jadwal');
+void updateJadwalToko({required BuildContext context, required String idToko, required bool isOpen}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/toko/update/jadwal');
   final response = await http.post(url, body: json.encode({
     'id_toko': idToko,
     'is_open': isOpen,
@@ -296,12 +375,16 @@ void updateJadwal({required BuildContext context, required String idToko, requir
       context: context,
       content: 'Jadwal toko berhasil diubah'
     );
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    return context.goNamed('signin');
   }
 }
 
-Future<http.Response> getAllDataKelompok(String idToko) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/kelompok/all');
+Future<http.Response?> getDataKelompok({required BuildContext context, required String idToko}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/kelompok/all');
   final response = await http.post(url, body: json.encode({
     'id_toko': idToko
   }), headers: {
@@ -309,12 +392,21 @@ Future<http.Response> getAllDataKelompok(String idToko) async {
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
-  return response;
+  if(!context.mounted) return null;
+  if(response.statusCode == 200){
+    return response;
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    context.goNamed('signin');
+  }
+
+  return null;
 }
 
-void joinKelompok({required BuildContext context, required String kodeUnik}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/kelompok/join');
+void addToKelompok({required BuildContext context, required String kodeUnik}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/kelompok/join');
   final response = await http.post(url, body: json.encode({
     'kode_unik': kodeUnik
   }), headers: {
@@ -324,11 +416,21 @@ void joinKelompok({required BuildContext context, required String kodeUnik}) asy
 
   if(!context.mounted) return;
   if(response.statusCode == 200){
-    context.goNamed('shop-dash', queryParameters: {'id_toko': json.decode(response.body)['id_toko']});
+    addNotifikasiToko(
+      type: 'Informasi',
+      title: 'Seorang anggota bergabung menggunakan kode toko ini!',
+      description: 'Anggota baru ditambahkan.',
+      idToko: json.decode(response.body)['id_toko']
+    );
     successSnackBar(
       context: context,
       content: 'Anda bergabung ke ${json.decode(response.body)['nama_toko']}'
     );
+    return context.goNamed('shop-dash', queryParameters: {'id_toko': json.decode(response.body)['id_toko']});
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    return context.goNamed('signin');
   } else {
     alertSnackBar(
       context: context,
@@ -338,8 +440,8 @@ void joinKelompok({required BuildContext context, required String kodeUnik}) asy
 }
 
 void removeFromKelompok({required BuildContext context, required String idToko}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/kelompok/delete');
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/kelompok/delete');
   final response = await http.post(url, body: json.encode({
     'id_toko': idToko
   }), headers: {
@@ -349,56 +451,84 @@ void removeFromKelompok({required BuildContext context, required String idToko})
 
   if(!context.mounted) return;
   if(response.statusCode == 200){
-    context.goNamed('home');
+    addNotifikasiToko(
+      type: 'Informasi',
+      title: 'Seorang anggota keluar dari toko ini!',
+      description: 'Salah satu anggota toko ini keluar.',
+      idToko: idToko
+    );
     successSnackBar(
       context: context,
       content: 'Anda keluar dari kelompok'
     );
+    return context.goNamed('home');
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    return context.goNamed('signin');
   }
 }
 
-Future<http.Response> kelompok() async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/kelompok');
+Future<http.Response?> getSelfKelompok({required BuildContext context}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/kelompok');
   final response = await http.get(url, headers: {
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
-  return response;
+  if(!context.mounted) return null;
+  if(response.statusCode == 200){
+    return response;
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    context.goNamed('signin');
+  }
+
+  return null;
 }
 
-Future<http.Response> products() async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/produk');
+Future<http.Response?> getDataProduk({required BuildContext context}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/produk');
   final response = await http.get(url, headers: {
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
-  return response;
+  if(!context.mounted) return null;
+  if(response.statusCode == 200){
+    return response;
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    context.goNamed('signin');
+  }
+
+  return null;
 }
 
-Future<http.Response> productById(idProduk) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/produk/$idProduk');
+Future<http.Response?> getProdukByIdProduk({required BuildContext context, required String idProduk}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/produk/$idProduk');
   final response = await http.get(url, headers: {
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
-  return response;
+  if(!context.mounted) return null;
+  if(response.statusCode == 200){
+    return response;
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    context.goNamed('signin');
+  }
+
+  return null;
 }
 
-void addProduct(
-    {required BuildContext context,
-    required String namaProduk,
-    required String harga,
-    required String stok,
-    String? deskripsiProduk,
-    required String detailProduk,
-    required File? fotoProduk,
-    required String idToko,
-    required bool isCreate}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/produk/add');
+void addProduk({required BuildContext context, required String namaProduk, required String harga, required String stok, String? deskripsiProduk, required String detailProduk, required File? fotoProduk, required String idToko}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/produk/add');
   final request = http.MultipartRequest('POST', url);
   request.headers.addAll({
     'Authorization': 'Bearer ${prefs.getString('token')}'
@@ -410,23 +540,32 @@ void addProduct(
   request.fields['detail_produk'] = detailProduk;
   request.fields['id_toko'] = idToko;
   request.files.add(http.MultipartFile.fromBytes('foto_produk', File(fotoProduk!.path).readAsBytesSync(), filename: fotoProduk.path));
-
   final response = await request.send();
 
+  if(!context.mounted) return;
   if(response.statusCode == 200){
-    if(!context.mounted) return;
     context.pop();
-    context.goNamed('shop-dash', queryParameters: {'id_toko': idToko, 'isRedirect': 'false'});
+    addNotifikasiToko(
+      type: 'Informasi',
+      title: 'Produk baru berhasil ditambahkan!',
+      description: 'Produk $namaProduk baru berhasil ditambahkan! produk akan segera ditampilkan di etalase toko!',
+      idToko: idToko
+    );
     successSnackBar(
       context: context,
       content: 'Produk berhasil ditambahkan!'
     );
+    return context.goNamed('shop-dash', queryParameters: {'id_toko': idToko, 'isRedirect': 'false'});
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    return context.goNamed('signin');
   }
 }
 
 void updateFotoProduk({required BuildContext context, required String idProduk, required File fotoProduk, required String oldImage, required String idToko}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/produk/update/foto/$idProduk');
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/produk/update/foto/$idProduk');
   final request = http.MultipartRequest('POST', url);
   request.headers.addAll({
     'Authorization': 'Bearer ${prefs.getString('token')}'
@@ -434,19 +573,24 @@ void updateFotoProduk({required BuildContext context, required String idProduk, 
   request.fields['old_image'] = oldImage;
   request.files.add(http.MultipartFile.fromBytes('foto_produk', File(fotoProduk.path).readAsBytesSync(), filename: fotoProduk.path));
   final response = await request.send();
+
+  if(!context.mounted) return;
   if(response.statusCode == 200){
-    if(!context.mounted) return;
-    context.goNamed('shop-dash', queryParameters: {'id_toko': idToko});
     successSnackBar(
       context: context,
       content: 'Foto produk berhasil diubah!'
     );
+    return context.goNamed('shop-dash', queryParameters: {'id_toko': idToko});
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    return context.goNamed('signin');
   }
 }
 
 void updateProduk({required BuildContext context, required String namaProduk, required String harga, required String stok, required String deskripsiProduk, required String detailProduk, required String idProduk, required String idToko}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/produk/update');
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/produk/update');
   final response = await http.patch(url, body: json.encode({
     'id_produk': idProduk,
     'nama_produk': namaProduk,
@@ -461,17 +605,27 @@ void updateProduk({required BuildContext context, required String namaProduk, re
 
   if(!context.mounted) return;
   if(response.statusCode == 200){
-    context.goNamed('shop-dash', queryParameters: {'id_toko': idToko});
+    addNotifikasiToko(
+      type: 'Informasi',
+      title: 'Informasi produk berhasil diubah!',
+      description: 'Informasi produk $namaProduk berhasil diubah!',
+      idToko: idToko
+    );
     successSnackBar(
       context: context,
       content: 'Informasi produk berhasil diubah!'
     );
+    return context.goNamed('shop-dash', queryParameters: {'id_toko': idToko});
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    return context.goNamed('signin');
   }
 }
 
 void removeProduct({required BuildContext context, required String idProduk}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/produk/delete');
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/produk/delete');
   final response = await http.post(url, body: json.encode({
     'id_produk': idProduk
   }), headers: {
@@ -481,27 +635,40 @@ void removeProduct({required BuildContext context, required String idProduk}) as
 
   if(!context.mounted) return;
   if(response.statusCode == 200){
-    context.goNamed('shop-dash', queryParameters: {'id_toko': prefs.getInt('id_toko').toString()});
     successSnackBar(
       context: context,
       content: 'Produk berhasil dihapus!'
     );
+    return context.goNamed('shop-dash', queryParameters: {'id_toko': prefs.getInt('id_toko').toString()});
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    return context.goNamed('signin');
   }
 }
 
-Future<http.Response> shopById(String? shopId) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/toko/$shopId');
+Future<http.Response?> getTokoByIdToko({required BuildContext context, required String shopId}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/toko/$shopId');
   final response = await http.get(url, headers: {
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
-  return response;
+  if(!context.mounted) return null;
+  if(response.statusCode == 200){
+    return response;
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    context.goNamed('signin');
+  }
+
+  return null;
 }
 
-Future<http.Response> search(String query) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/search');
+Future<http.Response?> search({required BuildContext context, required String query}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/search');
   final response = await http.post(url, body: json.encode({
     'query': query
   }), headers: {
@@ -509,12 +676,21 @@ Future<http.Response> search(String query) async {
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
-  return response;
+  if(!context.mounted) return null;
+  if(response.statusCode == 200){
+    return response;
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    context.goNamed('signin');
+  }
+
+  return null;
 }
 
-Future<http.Response> addToCart({required String idProduk, required int qty, String? catatan}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/user/keranjang/add');
+Future<http.Response?> addToKeranjang({required BuildContext context, required String idProduk, required int qty, String? catatan}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/keranjang/add');
   final response = await http.post(url, body: json.encode({
     'id': idProduk,
     'qty': qty.toString(),
@@ -524,22 +700,40 @@ Future<http.Response> addToCart({required String idProduk, required int qty, Str
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
-  return response;
+  if(!context.mounted) return null;
+  if(response.statusCode == 200){
+    return response;
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    context.goNamed('signin');
+  }
+
+  return null;
 }
 
-Future<http.Response> carts() async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/user/keranjang');
+Future<http.Response?> getDataKeranjang({required BuildContext context}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/keranjang');
   final response = await http.get(url, headers: {
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
-  return response;
+  if(!context.mounted) return null;
+  if(response.statusCode == 200){
+    return response;
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    context.goNamed('signin');
+  }
+
+  return null;
 }
 
-Future<http.Response> deleteCart(int idKeranjang) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/user/keranjang/delete');
+Future<http.Response?> deleteFromKeranjang({required BuildContext context, required int idKeranjang}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/keranjang/delete');
   final response = await http.delete(url, body: json.encode({
     'id': idKeranjang.toString(),
   }), headers: {
@@ -547,12 +741,21 @@ Future<http.Response> deleteCart(int idKeranjang) async {
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
-  return response;
+  if(!context.mounted) return null;
+  if(response.statusCode == 200){
+    return response;
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    context.goNamed('signin');
+  }
+
+  return null;
 }
 
-Future<http.Response> updateCart(int idKeranjang, int qty) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/user/keranjang/update');
+Future<http.Response?> updateKeranjang({required BuildContext context, required int idKeranjang, required int qty}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/keranjang/update');
   final response = await http.post(url, body: json.encode({
     'id': idKeranjang.toString(),
     'qty': qty.toString(),
@@ -561,22 +764,40 @@ Future<http.Response> updateCart(int idKeranjang, int qty) async {
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
-  return response;
+  if(!context.mounted) return null;
+  if(response.statusCode == 200){
+    return response;
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    context.goNamed('signin');
+  }
+
+  return null;
 }
 
-Future<http.Response> getFavorite() async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/user/favorit/${prefs.getInt('nis')}');
+Future<http.Response?> getFavorit({required BuildContext context}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/favorit');
   final response = await http.get(url, headers: {
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
-  return response;
+  if(!context.mounted) return null;
+  if(response.statusCode == 200){
+    return response;
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    context.goNamed('signin');
+  }
+
+  return null;
 }
 
-void addToFavorite({required BuildContext context, required String idToko}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/user/favorit/add/${prefs.getInt('nis')}');
+void addToFavorit({required BuildContext context, required String idToko}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/favorit/add');
   final response = await http.post(url, body: json.encode({
     'id_toko': idToko,
   }),headers: {
@@ -586,16 +807,26 @@ void addToFavorite({required BuildContext context, required String idToko}) asyn
 
   if(!context.mounted) return;
   if(response.statusCode == 200){
+    addNotifikasiToko(
+      type: 'Informasi',
+      title: 'Seseorang menyukai toko anda!',
+      description: 'Selamat! Seorang pelanggan menyukai toko anda!',
+      idToko: idToko
+    );
     successSnackBar(
       context: context,
       content: 'Anda menyukai toko ini'
     );
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    return context.goNamed('signin');
   }
 }
 
-void deleteFromFavorite({required BuildContext context, required String idToko}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/user/favorit/delete/${prefs.getInt('nis')}');
+void removeFromFavorite({required BuildContext context, required String idToko}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/favorit/delete');
   final response = await http.post(url, body: json.encode({
     'id_toko': idToko,
   }), headers: {
@@ -609,26 +840,39 @@ void deleteFromFavorite({required BuildContext context, required String idToko})
       context: context,
       content: 'Anda batal menyukai toko ini'
     );
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    return context.goNamed('signin');
   }
 }
 
-Future<http.Response> orders({required String statusPesanan}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/order');
-  final response = http.post(url, body: json.encode({
+Future<http.Response?> getDataPesanan({required BuildContext context, required String statusPesanan}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/order');
+  final response = await http.post(url, body: json.encode({
     'status': statusPesanan
   }), headers: {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
-  return response;
+  if(!context.mounted) return null;
+  if(response.statusCode == 200){
+    return response;
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    context.goNamed('signin');
+  }
+
+  return null;
 }
 
-Future<http.Response> ordersByShop({required String idToko, required String statusPesanan}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/toko/orders');
-  final response = http.post(url, body: json.encode({
+Future<http.Response?> getPesananByToko({required BuildContext context, required String idToko, required String statusPesanan}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/toko/orders');
+  final response = await http.post(url, body: json.encode({
     'id_toko': idToko,
     'status': statusPesanan
   }), headers: {
@@ -636,12 +880,21 @@ Future<http.Response> ordersByShop({required String idToko, required String stat
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
-  return response;
+  if(!context.mounted) return null;
+  if(response.statusCode == 200){
+    return response;
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    context.goNamed('signin');
+  }
+
+  return null;
 }
 
-Future<http.Response> createOrder({required String idProduk, required int jumlah, required double totalHarga, String? catatan, required String alamat}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/order/new');
+Future<http.Response?> createPesanan({required BuildContext context, required String idProduk, required int jumlah, required double totalHarga, String? catatan, required String alamat, required String idToko}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/order/new');
   final response = await http.post(url, body: json.encode({
     'id_produk': idProduk,
     'jumlah': jumlah,
@@ -653,12 +906,32 @@ Future<http.Response> createOrder({required String idProduk, required int jumlah
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
-  return response;
+  if(!context.mounted) return null;
+  if(response.statusCode == 200){
+    addNotifikasiToko(
+      type: 'Informasi',
+      title: 'Pesanan baru!',
+      description: 'Anda menerima pesanan baru! segera proses pesanan anda!',
+      idToko: idToko
+    );
+    addNotifikasi(
+      type: 'Informasi',
+      title: 'Pesanan anda sedang diproses!',
+      description: 'Mohon untuk menunggu penjual melakukan konfirmasi pada pesanan anda.',
+    );
+    return response;
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    context.goNamed('signin');
+  }
+
+  return null;
 }
 
 void updateStatusPesanan({required BuildContext context, required String idTransaksi, required String status, String? idToko}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/order/update');
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/order/update');
   final response = await http.patch(url, body: json.encode({
     'id_transaksi': idTransaksi,
     'status': status,
@@ -671,42 +944,60 @@ void updateStatusPesanan({required BuildContext context, required String idTrans
   if(response.statusCode == 200){
     if(idToko != null){
       if(status == 'Diproses'){
-        context.goNamed('order-status', queryParameters: {'id_toko': idToko, 'initial_index': '1'});
         successSnackBar(
           context: context,
           content: 'Pesanan dikonfirmasi'
         );
+        return context.goNamed('order-status', queryParameters: {'id_toko': idToko, 'initial_index': '1'});
       } else if (status == 'Selesai'){
-        context.goNamed('order-status', queryParameters: {'id_toko': idToko, 'initial_index': '2'});
         successSnackBar(
           context: context,
           content: 'Pesanan selesai'
         );
+        return context.goNamed('order-status', queryParameters: {'id_toko': idToko, 'initial_index': '2'});
       }
     } else {
-      context.goNamed('order', queryParameters: {'initial_index': '1'});
+      addNotifikasi(
+        type: 'Informasi',
+        title: 'Pesanan anda selesai!',
+        description: 'Mohon untuk mengecek kesesuaian pesanan anda.',
+      );
       successSnackBar(
         context: context,
         content: 'Pesanan selesai'
       );
+      return context.goNamed('order', queryParameters: {'initial_index': '1'});
     }
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    return context.goNamed('signin');
   }
 }
 
-Future<http.Response> getRate() async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/user/rate/${prefs.getInt('nis')}');
+Future<http.Response?> getUlasan({required BuildContext context}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/rate');
   final response = await http.get(url, headers: {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
-  return response;
+  if(!context.mounted) return null;
+  if(response.statusCode == 200){
+    return response;
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    context.goNamed('signin');
+  }
+
+  return null;
 }
 
-Future<http.Response> getRateByShop({required String idToko}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/toko/rate');
+Future<http.Response?> getUlasanByToko({required BuildContext context, required String idToko}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/toko/rate');
   final response = await http.post(url, body: json.encode({
     'id_toko': idToko
   }), headers: {
@@ -714,25 +1005,21 @@ Future<http.Response> getRateByShop({required String idToko}) async {
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
-  return response;
+  if(!context.mounted) return null;
+  if(response.statusCode == 200){
+    return response;
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    context.goNamed('signin');
+  }
+
+  return null;
 }
 
-Future<http.Response> getRateByShopLimited({required String idToko}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/toko/rate-limited');
-  final response = await http.post(url, body: json.encode({
-    'id_toko': idToko
-  }), headers: {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${prefs.getString('token')}'
-  });
-
-  return response;
-}
-
-void rateProduct({required BuildContext context, required String idProduk, required String idTransaksi, required String ulasan, required String rate, required String idToko}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/user/rate/add/${prefs.getInt('nis')}');
+void addUlasan({required BuildContext context, required String idProduk, required String idTransaksi, required String ulasan, required String rate, required String idToko}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/rate/add');
   final response = await http.post(url, body: json.encode({
     'id_produk': idProduk,
     'id_transaksi': idTransaksi,
@@ -746,17 +1033,27 @@ void rateProduct({required BuildContext context, required String idProduk, requi
 
   if(!context.mounted) return;
   if(response.statusCode == 200){
-    context.goNamed('home');
+    addNotifikasiToko(
+      type: 'Informasi',
+      title: 'Seorang pelanggan menambahkan ulasan baru!',
+      description: 'Anda menerima ulasan baru! cek ulasan dan bantu tingkatkan kepuasan pelangganmu!',
+      idToko: idToko
+    );
     successSnackBar(
       context: context,
       content: 'Berhasil menambahkan ulasan'
     );
+    return context.goNamed('home');
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    return context.goNamed('signin');
   }
 }
 
-Future<http.Response> getNotification({required String type}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/user/notifikasi');
+Future<http.Response?> getDataNotifikasi({required BuildContext context, required String type}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/notifikasi');
   final response = await http.post(url, body: json.encode({
     'type': type,
   }), headers: {
@@ -764,12 +1061,21 @@ Future<http.Response> getNotification({required String type}) async {
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
-  return response;
+  if(!context.mounted) return null;
+  if(response.statusCode == 200){
+    return response;
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    context.goNamed('signin');
+  }
+
+  return null;
 }
 
-void createNotification({required String type, required String title, required String description}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/user/notifikasi/add');
+void addNotifikasi({required String type, required String title, required String description}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/notifikasi/add');
   await http.post(url, body: json.encode({
     'type': type,
     'title': title,
@@ -780,9 +1086,9 @@ void createNotification({required String type, required String title, required S
   });
 }
 
-Future<http.Response> getTokoNotification({required String type}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/toko/notifikasi');
+Future<http.Response?> getDataNotifikasiToko({required BuildContext context, required String type}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/toko/notifikasi');
   final response = await http.post(url, body: json.encode({
     'type': type,
   }), headers: {
@@ -790,12 +1096,21 @@ Future<http.Response> getTokoNotification({required String type}) async {
     'Authorization': 'Bearer ${prefs.getString('token')}'
   });
 
-  return response;
+  if(!context.mounted) return null;
+  if(response.statusCode == 200){
+    return response;
+  } else if (response.statusCode == 401){
+    prefs.clear();
+    prefs.setBool('isAuthenticated', false);
+    context.goNamed('signin');
+  }
+
+  return null;
 }
 
-void createTokoNotification({required String type, required String title, required String description, required String idToko}) async {
-  final SharedPreferences prefs = await _prefs;
-  final url = Uri.https(apiBaseUrl, '/api/v2/toko/notifikasi/add');
+void addNotifikasiToko({required String type, required String title, required String description, required String idToko}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/toko/notifikasi/add');
   await http.post(url, body: json.encode({
     'id_toko': idToko,
     'type': type,
