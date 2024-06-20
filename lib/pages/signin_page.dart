@@ -34,7 +34,7 @@ class _SignInPageState extends State<SignInPage>{
           ),
         )
       );
-      getDataSiswa(
+      checkDataSiswa(
         context: context,
         nis: _nis
       );

@@ -1,10 +1,8 @@
-// import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+import 'dart:convert';
 import 'package:espw/app/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget{
   const ProfilePage({super.key});
@@ -14,73 +12,19 @@ class ProfilePage extends StatefulWidget{
 }
 
 class _ProfilePageState extends State<ProfilePage>{
-  String profilePicture = '';
-  Future<List> _getUserData() async {
-    List userData = [];
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final verify = JWT.verify(prefs.getString('token')!, SecretKey('espwapp'));
-    final nis = prefs.getInt('nis');
-    final nama = prefs.getString('nama');
-    final kelas = prefs.getString('kelas');
-    final password = verify.payload['password'];
-    final telepon = prefs.getString('telepon');
-    final fotoProfil = prefs.getString('foto_profil');
-
-    userData.add({
-      "nis": nis,
-      "nama": nama,
-      "kelas": kelas,
-      "password": password,
-      "telepon": telepon,
-      "foto_profil": fotoProfil
-    });
-
-    return userData;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _getUserData().then((res) => setState(() {
-      profilePicture = res.first['foto_profil'];
-    }));
-  }
-
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      body: FutureBuilder(
-        future: _getUserData(),
+      body: StreamBuilder(
+        stream: Stream.periodic(const Duration(seconds: 1)).asyncMap((i) => getDataSiswa(context: context)),
         builder: (BuildContext context, AsyncSnapshot response){
           if(response.hasData){
+            final siswa = json.decode(response.data.body)['siswa'];
+            final kelas = json.decode(response.data.body)['kelas'];
             return SingleChildScrollView(
               child: Column(
                 children: [
                   const Gap(50),
-                  Visibility(
-                    visible: response.data.first['password'] == '12345' ? true : false,
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: Card(
-                        elevation: 0,
-                        color: Colors.red,
-                        margin: const EdgeInsets.only(bottom: 20, left: 16, right: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 10),
-                          child: Text(
-                            'Kata sandi anda dalam keadaan default. Untuk keamanan, segera ubah kata sandi anda!',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                  ),
                   Card(
                     margin: const EdgeInsets.symmetric(horizontal: 16),
                     elevation: 0,
@@ -88,10 +32,13 @@ class _ProfilePageState extends State<ProfilePage>{
                       padding: const EdgeInsets.only(top: 10),
                       child: Column(
                         children: [
-                          CircleAvatar(
-                            radius: 40,
-                            backgroundImage: NetworkImage(
-                              profilePicture.isEmpty ? 'https://$baseUrl/images/profile.png' : 'https://$apiBaseUrl/public/$profilePicture'
+                          GestureDetector(
+                            onTap: () => context.pushNamed('edit-profile'),
+                            child: CircleAvatar(
+                              radius: 40,
+                              backgroundImage: NetworkImage(
+                                siswa['foto_profil'].isEmpty ? 'https://$baseUrl/images/profile.png' : 'https://$apiBaseUrl/public/${siswa['foto_profil']}'
+                              ),
                             ),
                           ),
                           const Gap(20),
@@ -99,14 +46,14 @@ class _ProfilePageState extends State<ProfilePage>{
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                response.data.first['nama'],
+                                siswa['nama'],
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600
                                 ),
                               ),
                               Text(
-                                '${response.data.first['nis'].toString()} | ${response.data.first['kelas']}',
+                                '${siswa['nis'].toString()} | ${kelas['kelas']}',
                                 style: const TextStyle(
                                   fontSize: 12
                                 ),
@@ -208,7 +155,7 @@ class _ProfilePageState extends State<ProfilePage>{
                                             foregroundColor: WidgetStatePropertyAll(Colors.black),
                                             overlayColor: WidgetStatePropertyAll(Colors.transparent),
                                             shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.zero
+                                              borderRadius: BorderRadius.zero
                                             ))
                                           ),
                                           onPressed: () => context.pushNamed('order', queryParameters: {'initial_index': '0'}),

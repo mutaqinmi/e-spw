@@ -1,10 +1,10 @@
+import 'dart:convert';
 import 'package:espw/app/controllers.dart';
 import 'package:espw/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:espw/pages/home_page.dart';
 import 'package:espw/pages/cart_page.dart';
 import 'package:espw/pages/notification_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class NavBar extends StatefulWidget{
   const NavBar({super.key});
@@ -18,12 +18,6 @@ class _NavBarState extends State<NavBar>{
   final int cartBadge = 0;
   final int notificationBadge = 0;
   final int chatBadge = 0;
-
-  Future<String> _getFotoProfil() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final fotoProfil = prefs.getString('foto_profil');
-    return fotoProfil!;
-  }
 
   @override
   Widget build(BuildContext context){
@@ -75,22 +69,21 @@ class _NavBarState extends State<NavBar>{
             label: 'Notifikasi',
           ),
           NavigationDestination(
-            // selectedIcon: Badge(
-            //   isLabelVisible: notificationBadge == 0 ? false : true,
-            //   label: Text(notificationBadge.toString()),
-            //   child: const Icon(Icons.chat),
-            // ),
-            icon: FutureBuilder(
-              future: _getFotoProfil(),
+            icon: StreamBuilder(
+              stream: Stream.periodic(const Duration(seconds: 1)).asyncMap((i) => getDataSiswa(context: context)),
               builder: (BuildContext context, AsyncSnapshot response){
                 if(response.hasData){
+                  final data = json.decode(response.data.body)['siswa']['foto_profil'];
                   return CircleAvatar(
                     radius: 14,
-                    backgroundImage: NetworkImage(response.data.isEmpty ? 'https://$baseUrl/images/profile.png' : 'https://$apiBaseUrl/public/${response.data}'),
+                    backgroundImage: NetworkImage(data.isEmpty ? 'https://$baseUrl/images/profile.png' : 'https://$apiBaseUrl/public/$data'),
                   );
                 }
 
-                return const CircularProgressIndicator();
+                return const CircleAvatar(
+                  radius: 14,
+                  backgroundImage: NetworkImage('https://$baseUrl/images/profile.png'),
+                );
               },
             ),
             label: 'Profil',

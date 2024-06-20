@@ -11,8 +11,64 @@ import 'package:http/http.dart' as http;
 // initializing global variable
 const String baseUrl = 'espw.my.id';
 const String apiBaseUrl = 'api.espw.my.id';
+void _sessionExpired(BuildContext context) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  if(!context.mounted) return;
+  showModalBottomSheet(
+    isDismissible: false,
+    enableDrag: false,
+    context: context,
+    builder: (BuildContext context) => Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Image.asset(
+                  'assets/image/no-session.png',
+                  width: 250
+                ),
+                const Gap(30),
+                const Text(
+                  'Sesi anda telah berakhir',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600
+                  ),
+                ),
+                const Text(
+                  'Sesi anda telah berakhir, silahkan untuk kembali masuk.',
+                  textAlign: TextAlign.center,
+                )
+              ],
+            ),
+          ),
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: FilledButton(
+              onPressed: (){
+                prefs.clear();
+                prefs.setBool('isAuthenticated', false);
+                context.goNamed('signin');
+              },
+              child: const Text('Masuk'),
+            ),
+          )
+        ],
+      ),
+    )
+  );
+}
 
-void getDataSiswa({required BuildContext context, required String nis}) async {
+void checkDataSiswa({required BuildContext context, required String nis}) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final url = Uri.https(apiBaseUrl, '/v3/user');
   final response = await http.post(url, body: json.encode({
@@ -87,6 +143,24 @@ void getDataSiswa({required BuildContext context, required String nis}) async {
   );
 }
 
+Future<http.Response?> getDataSiswa({required BuildContext context}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/detail');
+  final response = await http.get(url, headers: {
+    'Authorization': 'Bearer ${prefs.getString('token')}'
+  });
+
+  if(!context.mounted) return null;
+  if(response.statusCode == 401){
+    _sessionExpired(context);
+  }
+  if(response.statusCode == 200){
+    return response;
+  }
+
+  return null;
+}
+
 void signin({required BuildContext context, required String nis, required String password, required String token}) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -153,9 +227,7 @@ void verifyPassword({required BuildContext context, required String password}) a
 
   if(!context.mounted) return;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     successSnackBar(
@@ -177,9 +249,7 @@ void updateTelepon({required BuildContext context, required String telepon}) asy
 
   if(!context.mounted) return;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     addNotifikasi(
@@ -207,9 +277,7 @@ void updatePassword({required BuildContext context, required String password}) a
 
   if(!context.mounted) return;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     addNotifikasi(
@@ -236,9 +304,7 @@ Future<http.Response?> getAlamat({required BuildContext context}) async {
 
   if(!context.mounted) return null;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     return response;
@@ -259,9 +325,7 @@ void addAlamat({required BuildContext context, required String address}) async {
 
   if(!context.mounted) return;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     context.pop();
@@ -290,9 +354,7 @@ void deleteAlamat({required BuildContext context, required int idAlamat}) async 
 
   if(!context.mounted) return;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     context.goNamed('home');
@@ -315,9 +377,7 @@ void updateFotoProfilSiswa({required BuildContext context, required File profile
 
   if(!context.mounted) return;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     successSnackBar(
@@ -349,9 +409,7 @@ Future<http.Response?> getDataToko({required BuildContext context}) async {
 
   if(!context.mounted) return null;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     return response;
@@ -376,9 +434,7 @@ void addToko({required BuildContext context, required String namaToko, required 
 
   if(response.statusCode == 401){
     if(!context.mounted) return;
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     final data = json.decode(await response.stream.bytesToString());
@@ -411,9 +467,7 @@ void updateFotoProfilToko({required BuildContext context, required String idToko
 
   if(!context.mounted) return;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     successSnackBar(
@@ -437,9 +491,7 @@ void updateDeskripsiToko({required BuildContext context, required String deskrip
 
   if(!context.mounted) return;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     addNotifikasiToko(
@@ -468,9 +520,7 @@ void deleteToko({required BuildContext context, required String idToko}) async {
 
   if(!context.mounted) return;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     context.goNamed('home');
@@ -494,9 +544,7 @@ void updateJadwalToko({required BuildContext context, required String idToko, re
 
   if(!context.mounted) return;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     successSnackBar(
@@ -518,9 +566,7 @@ Future<http.Response?> getDataKelompok({required BuildContext context, required 
 
   if(!context.mounted) return null;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     return response;
@@ -541,9 +587,7 @@ void addToKelompok({required BuildContext context, required String kodeUnik}) as
 
   if(!context.mounted) return;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     addNotifikasiToko(
@@ -577,9 +621,7 @@ void removeFromKelompok({required BuildContext context, required String idToko})
 
   if(!context.mounted) return;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     addNotifikasiToko(
@@ -605,9 +647,7 @@ Future<http.Response?> getSelfKelompok({required BuildContext context}) async {
 
   if(!context.mounted) return null;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     return response;
@@ -625,9 +665,7 @@ Future<http.Response?> getDataProduk({required BuildContext context}) async {
 
   if(!context.mounted) return null;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     return response;
@@ -645,9 +683,7 @@ Future<http.Response?> getProdukByIdProduk({required BuildContext context, requi
 
   if(!context.mounted) return null;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     return response;
@@ -674,9 +710,7 @@ void addProduk({required BuildContext context, required String namaProduk, requi
 
   if(!context.mounted) return;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     context.pop();
@@ -707,9 +741,7 @@ void updateFotoProduk({required BuildContext context, required String idProduk, 
 
   if(!context.mounted) return;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     successSnackBar(
@@ -737,9 +769,7 @@ void updateProduk({required BuildContext context, required String namaProduk, re
 
   if(!context.mounted) return;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     addNotifikasiToko(
@@ -768,9 +798,7 @@ void removeProduct({required BuildContext context, required String idProduk}) as
 
   if(!context.mounted) return;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     successSnackBar(
@@ -790,9 +818,7 @@ Future<http.Response?> getTokoByIdToko({required BuildContext context, required 
 
   if(!context.mounted) return null;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     return response;
@@ -813,9 +839,7 @@ Future<http.Response?> search({required BuildContext context, required String qu
 
   if(!context.mounted) return null;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     return response;
@@ -838,9 +862,7 @@ Future<http.Response?> addToKeranjang({required BuildContext context, required S
 
   if(!context.mounted) return null;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     return response;
@@ -858,9 +880,7 @@ Future<http.Response?> getDataKeranjang({required BuildContext context}) async {
 
   if(!context.mounted) return null;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     return response;
@@ -881,9 +901,7 @@ Future<http.Response?> deleteFromKeranjang({required BuildContext context, requi
 
   if(!context.mounted) return null;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     return response;
@@ -905,9 +923,7 @@ Future<http.Response?> updateKeranjang({required BuildContext context, required 
 
   if(!context.mounted) return null;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     return response;
@@ -925,9 +941,7 @@ Future<http.Response?> getFavorit({required BuildContext context}) async {
 
   if(!context.mounted) return null;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     return response;
@@ -948,9 +962,7 @@ void addToFavorit({required BuildContext context, required String idToko}) async
 
   if(!context.mounted) return;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     addNotifikasiToko(
@@ -978,9 +990,7 @@ void removeFromFavorite({required BuildContext context, required String idToko})
 
   if(!context.mounted) return;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     successSnackBar(
@@ -1002,9 +1012,7 @@ Future<http.Response?> getDataPesanan({required BuildContext context, required S
 
   if(!context.mounted) return null;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     return response;
@@ -1026,9 +1034,7 @@ Future<http.Response?> getPesananByToko({required BuildContext context, required
 
   if(!context.mounted) return null;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     return response;
@@ -1053,9 +1059,7 @@ Future<http.Response?> createPesanan({required BuildContext context, required St
 
   if(!context.mounted) return null;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     addNotifikasiToko(
@@ -1088,9 +1092,7 @@ void updateStatusPesanan({required BuildContext context, required String idTrans
 
   if(!context.mounted) return;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     if(idToko != null){
@@ -1132,9 +1134,7 @@ Future<http.Response?> getUlasan({required BuildContext context}) async {
 
   if(!context.mounted) return null;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     return response;
@@ -1155,9 +1155,7 @@ Future<http.Response?> getUlasanByToko({required BuildContext context, required 
 
   if(!context.mounted) return null;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     return response;
@@ -1182,9 +1180,7 @@ void addUlasan({required BuildContext context, required String idProduk, require
 
   if(!context.mounted) return;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     addNotifikasiToko(
@@ -1213,9 +1209,7 @@ Future<http.Response?> getDataNotifikasi({required BuildContext context, require
 
   if(!context.mounted) return null;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     return response;
@@ -1249,9 +1243,7 @@ Future<http.Response?> getDataNotifikasiToko({required BuildContext context, req
 
   if(!context.mounted) return null;
   if(response.statusCode == 401){
-    prefs.clear();
-    prefs.setBool('isAuthenticated', false);
-    context.goNamed('signin');
+    _sessionExpired(context);
   }
   if(response.statusCode == 200){
     return response;

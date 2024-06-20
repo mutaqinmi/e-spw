@@ -15,7 +15,6 @@ import 'package:espw/pages/favorite_page.dart';
 import 'package:espw/pages/information_page.dart';
 import 'package:espw/pages/join_shop_page.dart';
 import 'package:espw/pages/list_address_page.dart';
-import 'package:espw/pages/login_failed.dart';
 import 'package:espw/pages/login_shop_page.dart';
 import 'package:espw/pages/main_address_page.dart';
 import 'package:espw/pages/member_page.dart';
@@ -60,11 +59,6 @@ final routes = GoRouter(
           builder: (BuildContext context, GoRouterState state) => Verify(
             token: state.uri.queryParameters['token']!,
           ),
-        ),
-        GoRoute(
-          name: 'login-failed',
-          path: 'login-failed',
-          builder: (BuildContext context, GoRouterState state) => const LoginFailed(),
         ),
       ]
     ),
