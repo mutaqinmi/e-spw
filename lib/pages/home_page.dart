@@ -6,6 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,11 +21,12 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    shop().then((res) => setState(() {
-      shopList = json.decode(res.body)['data'];
+    checkPassword();
+    getDataToko(context: context).then((res) => setState(() {
+      shopList = json.decode(res!.body)['data'];
     }));
-    products().then((res) => setState(() {
-      productList = json.decode(res.body)['data'];
+    getDataProduk(context: context).then((res) => setState(() {
+      productList = json.decode(res!.body)['data'];
     }));
   }
 
@@ -44,16 +46,72 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Future<void> checkPassword() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final isDefaultPassword = prefs.getBool('isDefaultPassword');
+    if(!mounted) return;
+    if(isDefaultPassword!){
+      return showModalBottomSheet(
+        isDismissible: false,
+        enableDrag: false,
+        context: context,
+        builder: (BuildContext context) => Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Image.asset(
+                      'assets/image/not-secure.png',
+                      width: 250
+                    ),
+                    const Gap(30),
+                    const Text(
+                      'Amankan akun anda',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600
+                      ),
+                    ),
+                    const Text(
+                      'Anda belum mengatur kata sandi anda. Untuk keamanan akun, segera ubah kata sandi anda!',
+                      textAlign: TextAlign.center,
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: FilledButton(
+                  onPressed: () => context.pushNamed('change-password'),
+                  child: const Text('Ubah kata sandi'),
+                ),
+              )
+            ],
+          ),
+        )
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () => Future.delayed(const Duration(seconds: 1), (){
-          shop().then((res) => setState(() {
-            shopList = json.decode(res.body)['data'];
+          getDataToko(context: context).then((res) => setState(() {
+            shopList = json.decode(res!.body)['data'];
           }));
-          products().then((res) => setState(() {
-            productList = json.decode(res.body)['data'];
+          getDataProduk(context: context).then((res) => setState(() {
+            productList = json.decode(res!.body)['data'];
           }));
         }),
         child: CustomScrollView(
@@ -146,7 +204,7 @@ class _HomePageState extends State<HomePage> {
                 height: 250,
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: FutureBuilder(
-                  future: shop(),
+                  future: getDataToko(context: context),
                   builder: (BuildContext context, AsyncSnapshot response){
                     if(response.connectionState == ConnectionState.done){
                       if(json.decode(response.data.body)['data'].isNotEmpty){
@@ -234,7 +292,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             FutureBuilder(
-              future: products(),
+              future: getDataProduk(context: context),
               builder: (BuildContext context, AsyncSnapshot response){
                 if(response.connectionState == ConnectionState.done){
                   if(json.decode(response.data.body)['data'].isNotEmpty){

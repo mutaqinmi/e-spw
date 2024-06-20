@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:espw/app/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,7 +28,7 @@ class UniqueCode extends StatelessWidget{
             ),
             Center(
               child: FutureBuilder(
-                future: shopById(idToko),
+                future: getTokoByIdToko(context: context, shopId: idToko),
                 builder: (BuildContext context, AsyncSnapshot response){
                   if(response.hasData){
                     return Padding(

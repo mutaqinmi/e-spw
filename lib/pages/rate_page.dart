@@ -42,7 +42,7 @@ class _RatePageState extends State<RatePage>{
             )
           ),
           FutureBuilder(
-            future: getRate(),
+            future: getUlasan(context: context),
             builder: (BuildContext context, AsyncSnapshot response){
               if(response.hasData){
                 final rating = json.decode(response.data.body)['data'];

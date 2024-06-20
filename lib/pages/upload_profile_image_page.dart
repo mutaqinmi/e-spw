@@ -36,7 +36,7 @@ class _UploadProfileImagePageState extends State<UploadProfileImagePage>{
         ),
       )
     );
-    createShop(
+    addToko(
       context: context,
       namaToko: widget.namaToko!,
       kelas: widget.kelas!,

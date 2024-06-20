@@ -37,7 +37,7 @@ class _CreateShopPageState extends State<CreateShopPage>{
     return Scaffold(
       appBar: AppBar(),
       body: FutureBuilder(
-        future: kelas(),
+        future: getDataKelas(context: context),
         builder: (BuildContext context, AsyncSnapshot response){
           if(response.hasData || response.connectionState == ConnectionState.done){
             final data = json.decode(response.data.body)['data'];

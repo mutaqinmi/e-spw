@@ -22,17 +22,20 @@ class _CartPageState extends State<CartPage>{
   @override
   void initState() {
     super.initState();
-    carts().then((res) => {
+    getDataKeranjang(context: context).then((res) => {
       setState((){
-        cartList = json.decode(res.body)['data'];
+        cartList = json.decode(res!.body)['data'];
         cartCount = cartList.length;
       })
     });
   }
 
   void _deleteFromCart(BuildContext context, int idKeranjang){
-    deleteCart(idKeranjang).then((res) => {
-      if(res.statusCode == 200){
+    deleteFromKeranjang(
+      context: context,
+      idKeranjang: idKeranjang
+    ).then((res) => {
+      if(res!.statusCode == 200){
         successSnackBar(
           context: context,
           content: 'Produk berhasil dihapus!'
@@ -43,12 +46,20 @@ class _CartPageState extends State<CartPage>{
 
   void _addQty(int qty, int idKeranjang){
     qty++;
-    updateCart(idKeranjang, qty);
+    updateKeranjang(
+      context: context,
+      idKeranjang: idKeranjang,
+      qty: qty
+    );
   }
 
   void _removeQty(int qty, int idKeranjang){
     qty--;
-    updateCart(idKeranjang, qty);
+    updateKeranjang(
+      context: context,
+      idKeranjang: idKeranjang,
+      qty: qty
+    );
   }
 
   Widget _isOpen(bool isOpen){

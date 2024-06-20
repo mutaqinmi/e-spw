@@ -407,7 +407,7 @@ class _ProfilePageState extends State<ProfilePage>{
                                     child: const Text('Batal'),
                                   ),
                                   FilledButton(
-                                    onPressed: () => logout(context),
+                                    onPressed: () => signout(context: context),
                                     child: const Text('Keluar'),
                                   )
                                 ],

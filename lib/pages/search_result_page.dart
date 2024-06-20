@@ -21,8 +21,8 @@ class _SearchPageState extends State<SearchResult>{
   @override
   void initState() {
     super.initState();
-    search(widget.searchQuery!).then((res) => setState(() {
-      productList = json.decode(res.body)['dataProduk'];
+    search(context: context, query: widget.searchQuery!).then((res) => setState(() {
+      productList = json.decode(res!.body)['dataProduk'];
       shopList = json.decode(res.body)['dataToko'];
     }));
   }
@@ -93,7 +93,7 @@ class _SearchPageState extends State<SearchResult>{
   Widget _productResult(){
     return Scaffold(
       body: FutureBuilder(
-        future: search(widget.searchQuery!),
+        future: search(context: context, query: widget.searchQuery!),
         builder: (BuildContext context, AsyncSnapshot response){
           if(response.hasData && response.connectionState == ConnectionState.done && json.decode(response.data.body)['dataProduk'].isNotEmpty){
             return ListView.builder(
@@ -128,7 +128,7 @@ class _SearchPageState extends State<SearchResult>{
   Widget _shopResult(){
     return Scaffold(
       body: FutureBuilder(
-        future: search(widget.searchQuery!),
+        future: search(context: context, query: widget.searchQuery!),
         builder: (BuildContext context, AsyncSnapshot response){
           if(response.hasData && response.connectionState == ConnectionState.done && json.decode(response.data.body)['dataToko'].isNotEmpty){
             return ListView.builder(

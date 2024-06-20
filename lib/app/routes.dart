@@ -375,7 +375,7 @@ final routes = GoRouter(
           name: 'shop',
           path: 'shop',
           builder: (BuildContext context, GoRouterState state) => ShopPage(
-            shopID: state.uri.queryParameters['shopID'],
+            shopID: state.uri.queryParameters['shopID']!,
           ),
           routes: [
             GoRoute(

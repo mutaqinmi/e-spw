@@ -17,8 +17,8 @@ class _ShopDashPageState extends State<ShopDashPage>{
   @override
   void initState() {
     super.initState();
-    shopById(widget.idToko).then((res) => setState(() {
-      hasData = json.decode(res.body)['data'];
+    getTokoByIdToko(context: context, shopId: widget.idToko).then((res) => setState(() {
+      hasData = json.decode(res!.body)['data'];
     }));
   }
   @override
@@ -34,7 +34,7 @@ class _ShopDashPageState extends State<ShopDashPage>{
         ),
       ),
       body: FutureBuilder(
-        future: shopById(widget.idToko),
+        future: getTokoByIdToko(context: context, shopId: widget.idToko),
         builder: (BuildContext context, AsyncSnapshot response){
           if(response.hasData){
             if(json.decode(response.data.body)['data'].isNotEmpty){

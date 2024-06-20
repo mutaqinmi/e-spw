@@ -97,7 +97,7 @@ class _JoinShopPageState extends State<JoinShopPage>{
             width: double.infinity,
             height: 50,
             child: FilledButton(
-              onPressed: () => joinKelompok(
+              onPressed: () => addToKelompok(
                 context: context,
                 kodeUnik: kodeUnik
               ),

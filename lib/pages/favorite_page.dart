@@ -40,7 +40,7 @@ class _FavoritePageState extends State<FavoritePage>{
             )
           ),
           FutureBuilder(
-            future: getFavorite(),
+            future: getFavorit(context: context),
             builder: (BuildContext context, AsyncSnapshot response){
               if(response.hasData){
                 final shopList = json.decode(response.data.body)['data'];
@@ -86,12 +86,12 @@ class _FavoritePageState extends State<FavoritePage>{
                                   });
 
                                   if(!favorite){
-                                    deleteFromFavorite(
+                                    removeFromFavorite(
                                       context: context,
                                       idToko: shopList.first['toko']['id_toko']
                                     );
                                   } else {
-                                    addToFavorite(
+                                    addToFavorit(
                                       context: context,
                                       idToko: shopList.first['toko']['id_toko']
                                     );

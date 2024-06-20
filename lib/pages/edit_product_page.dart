@@ -96,7 +96,7 @@ class _EditProductPageState extends State<EditProductPage>{
         ),
       ),
       body: FutureBuilder(
-        future: productById(widget.idProduk),
+        future: getProdukByIdProduk(context: context, idProduk: widget.idProduk),
         builder: (BuildContext context, AsyncSnapshot response){
           if(response.connectionState == ConnectionState.done){
             final produk = json.decode(response.data.body)['data'].first['produk'];

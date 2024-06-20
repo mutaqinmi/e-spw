@@ -9,8 +9,8 @@ import 'package:espw/app/controllers.dart';
 import 'package:espw/widgets/bottom_snack_bar.dart';
 
 class ShopPage extends StatefulWidget{
-  const ShopPage({super.key, this.shopID});
-  final String? shopID;
+  const ShopPage({super.key, required this.shopID});
+  final String shopID;
 
   @override
   State<ShopPage> createState() => _ShopPageState();
@@ -28,11 +28,11 @@ class _ShopPageState extends State<ShopPage>{
   @override
   void initState() {
     super.initState();
-    shopById(widget.shopID).then((res) => setState(() {
-      shopList = json.decode(res.body)['data'];
+    getTokoByIdToko(context: context, shopId: widget.shopID).then((res) => setState(() {
+      shopList = json.decode(res!.body)['data'];
     }));
-    getFavorite().then((res){
-      List data = json.decode(res.body)['data'];
+    getFavorit(context: context).then((res){
+      List data = json.decode(res!.body)['data'];
       for(int i = 0; i < data.length; i++){
         if(data[i]['toko']['id_toko'] != shopList.first['toko']['id_toko']){
           Future.delayed(const Duration(seconds: 1), (){
@@ -110,12 +110,13 @@ class _ShopPageState extends State<ShopPage>{
   void _addToCart(BuildContext context, String idProduk, int qty){
     _catatanKey.currentState!.save();
     if(qty != 0){
-      addToCart(
+      addToKeranjang(
+        context: context,
         idProduk: idProduk,
         qty: qty,
         catatan: _catatan
       ).then((res){
-        if(res.statusCode == 200){
+        if(res!.statusCode == 200){
           successSnackBar(
             context: context,
             content: 'Produk berhasil ditambahkan!'
@@ -144,12 +145,12 @@ class _ShopPageState extends State<ShopPage>{
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () => Future.delayed(const Duration(seconds: 1), (){
-          shopById(widget.shopID).then((res) => setState(() {
-            shopList = json.decode(res.body)['data'];
+          getTokoByIdToko(context: context, shopId: widget.shopID).then((res) => setState(() {
+            shopList = json.decode(res!.body)['data'];
           }));
         }),
         child: FutureBuilder(
-          future: shopById(widget.shopID),
+          future: getTokoByIdToko(context: context, shopId: widget.shopID),
           builder: (BuildContext context, AsyncSnapshot response){
             if(response.hasData){
               if(shopList.isNotEmpty){
@@ -234,7 +235,7 @@ class _ShopPageState extends State<ShopPage>{
                                   ),
                                 ),
                                 FutureBuilder(
-                                  future: getFavorite(),
+                                  future: getFavorit(context: context),
                                   builder: (BuildContext context, AsyncSnapshot response){
                                     if(response.hasData){
                                       return IconButton(
@@ -244,12 +245,12 @@ class _ShopPageState extends State<ShopPage>{
                                           });
 
                                           if(!favorite){
-                                            deleteFromFavorite(
+                                            removeFromFavorite(
                                               context: context,
                                               idToko: shopList.first['toko']['id_toko']
                                             );
                                           } else {
-                                            addToFavorite(
+                                            addToFavorit(
                                               context: context,
                                               idToko: shopList.first['toko']['id_toko']
                                             );
@@ -532,7 +533,7 @@ class _ShopPageState extends State<ShopPage>{
                       )
                     ),
                     FutureBuilder(
-                      future: getRateByShopLimited(idToko: widget.shopID!),
+                      future: getUlasanByToko(context: context, idToko: widget.shopID),
                       builder: (BuildContext context, AsyncSnapshot response){
                         if(response.hasData){
                           final rating = json.decode(response.data.body)['data'];

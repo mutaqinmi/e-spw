@@ -52,7 +52,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
     File? file = File(image!.path);
     file = await _cropImage(imageFile: file);
     if(!mounted) return;
-    return updateProfilePicture(
+    return updateFotoProfilSiswa(
       context: context,
       profilePicture: file!
     );

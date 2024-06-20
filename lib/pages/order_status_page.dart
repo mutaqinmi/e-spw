@@ -21,18 +21,18 @@ class _OrderStatusPageState extends State<OrderStatusPage>{
   @override
   void initState() {
     super.initState();
-    ordersByShop(idToko: widget.idToko, statusPesanan: 'Menunggu Konfirmasi').then((res) => setState(() {
-      for(int i = 0; i < json.decode(res.body)['data'].length; i++){
+    getPesananByToko(context: context, idToko: widget.idToko, statusPesanan: 'Menunggu Konfirmasi').then((res) => setState(() {
+      for(int i = 0; i < json.decode(res!.body)['data'].length; i++){
         newOrderList.add(json.decode(res.body)['data'][i]);
       }
     }));
-    ordersByShop(idToko: widget.idToko, statusPesanan: 'Diproses').then((res) => setState(() {
-      for(int i = 0; i < json.decode(res.body)['data'].length; i++){
+    getPesananByToko(context: context, idToko: widget.idToko, statusPesanan: 'Diproses').then((res) => setState(() {
+      for(int i = 0; i < json.decode(res!.body)['data'].length; i++){
         onGoingOrderList.add(json.decode(res.body)['data'][i]);
       }
     }));
-    ordersByShop(idToko: widget.idToko, statusPesanan: 'Selesai').then((res) => setState(() {
-      for(int i = 0; i < json.decode(res.body)['data'].length; i++){
+    getPesananByToko(context: context, idToko: widget.idToko, statusPesanan: 'Selesai').then((res) => setState(() {
+      for(int i = 0; i < json.decode(res!.body)['data'].length; i++){
         finishedOrderList.add(json.decode(res.body)['data'][i]);
       }
     }));

@@ -40,7 +40,7 @@ class _MemberPageState extends State<MemberPage>{
             )
           ),
           FutureBuilder(
-            future: getAllDataKelompok(widget.idToko),
+            future: getDataKelompok(context: context, idToko: widget.idToko),
             builder: (BuildContext context, AsyncSnapshot response){
               if(response.connectionState == ConnectionState.done){
                 final kelompok = json.decode(response.data.body)['data'];

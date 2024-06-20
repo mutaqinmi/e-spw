@@ -21,11 +21,11 @@ class _CheckoutPageState extends State<CheckoutPage>{
   @override
   void initState() {
     super.initState();
-    carts().then((res) => setState((){
-      cartList = json.decode(res.body)['data'];
+    getDataKeranjang(context: context).then((res) => setState((){
+      cartList = json.decode(res!.body)['data'];
     }));
-    getAddress().then((res) => setState(() {
-      address = json.decode(res.body)['data'];
+    getAlamat(context: context).then((res) => setState(() {
+      address = json.decode(res!.body)['data'];
     }));
   }
 
@@ -99,12 +99,14 @@ class _CheckoutPageState extends State<CheckoutPage>{
       for(int i = 0; i < cartList.length; i++){
         double totalHarga = 0.0;
         totalHarga += int.parse(cartList[i]['produk']['harga']) * cartList[i]['keranjang']['jumlah'];
-        createOrder(
+        createPesanan(
+          context: context,
           idProduk: cartList[i]['produk']['id_produk'],
           jumlah: cartList[i]['keranjang']['jumlah'],
           totalHarga: totalHarga,
           catatan: cartList[i]['keranjang']['catatan'],
-          alamat: address.first['alamat']
+          alamat: address.first['alamat'],
+          idToko: cartList[i]['toko']['id_toko']
         );
       }
     } else {

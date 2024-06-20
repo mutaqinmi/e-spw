@@ -1,11 +1,7 @@
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:espw/app/controllers.dart';
-import 'package:espw/widgets/bottom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Verify extends StatefulWidget {
   const Verify({super.key, required this.token});
@@ -20,39 +16,21 @@ class _VerifyState extends State<Verify> {
   bool _obscureText = true;
   String _password = '';
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   void _submit() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     if(_formFieldKey.currentState!.validate()){
       _formFieldKey.currentState!.save();
-
-      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       final verify = JWT.verify(widget.token, SecretKey('espwapp'));
-
-      if(!mounted) return;
-      if(_password == verify.payload['password']){
-        prefs.setBool('isAuthenticated', true);
-        prefs.setString('token', widget.token);
-        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-
-        createNotification(
-          type: 'Informasi',
-          title: 'Ada aktivitas login di perangkat baru',
-          description: 'Akun anda telah login melalui perangkat ${androidInfo.model}. Jika ini bukan anda, segera amankan akun anda!'
-        );
-
-        if(!mounted) return;
-        successSnackBar(
-          context: context,
-          content: 'Login berhasil!'
-        );
-
-        context.goNamed('home');
-      } else {
-        alertSnackBar(
-          context: context,
-          content: 'Password salah!'
-        );
-      }
+      signin(
+        context: context,
+        nis: verify.payload['nis'],
+        password: _password,
+        token: widget.token
+      );
     }
   }
 
@@ -67,12 +45,6 @@ class _VerifyState extends State<Verify> {
             fontWeight: FontWeight.w600
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: (){},
-            icon: const Icon(Icons.help_outline),
-          )
-        ],
       ),
       body: SafeArea(
         minimum: const EdgeInsets.symmetric(horizontal: 16),

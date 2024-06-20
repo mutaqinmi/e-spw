@@ -17,8 +17,8 @@ class _ListAddressPageState extends State<ListAddressPage>{
   @override
   void initState() {
     super.initState();
-    getAddress().then((res) => setState(() {
-      addressList = json.decode(res.body)['data'];
+    getAlamat(context: context).then((res) => setState(() {
+      addressList = json.decode(res!.body)['data'];
     }));
   }
 
@@ -100,9 +100,9 @@ class _ListAddressPageState extends State<ListAddressPage>{
 
                             if(!context.mounted) return;
                             if(confirm!){
-                              deleteAddress(
+                              deleteAlamat(
                                 context: context,
-                                idAddress: alamat['id_alamat']
+                                idAlamat: alamat['id_alamat']
                               );
                             }
                           },

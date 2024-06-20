@@ -52,7 +52,7 @@ class _NotificationPageState extends State<NotificationPage>{
             )
           ),
           FutureBuilder(
-            future: getNotification(type: 'Informasi'),
+            future: getDataNotifikasi(context: context, type: 'Informasi'),
             builder: (BuildContext context, AsyncSnapshot response){
               if(response.hasData){
                 final notificationList = json.decode(response.data.body)['data'];

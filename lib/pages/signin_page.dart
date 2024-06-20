@@ -34,7 +34,10 @@ class _SignInPageState extends State<SignInPage>{
           ),
         )
       );
-      login(context, _nis);
+      getDataSiswa(
+        context: context,
+        nis: _nis
+      );
     }
   }
 
@@ -110,7 +113,7 @@ class _SignInPageState extends State<SignInPage>{
                     children: [
                       Expanded(
                         child: Text(
-                          "Dapatkan produk yang kamu inginkan, dengan kemudahan berbelanja online hanya di E-SPW!",
+                          "Dapatkan produk yang kamu inginkan, dengan kemudahan berbelanja online hanya di eSPW!",
                         )
                       ),
                     ],

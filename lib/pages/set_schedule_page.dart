@@ -16,10 +16,22 @@ class _SetSchedulePageState extends State<SetSchedulePage>{
   @override
   void initState() {
     super.initState();
-    shopById(widget.idToko).then((res) => setState(() {
-      isOpen = json.decode(res.body)['data'].first['toko']['is_open'];
+    getTokoByIdToko(context: context, shopId: widget.idToko).then((res) => setState(() {
+      isOpen = json.decode(res!.body)['data'].first['toko']['is_open'];
     }));
   }
+
+  void _updateJadwalToko(){
+    setState(() {
+      isOpen = !isOpen;
+    });
+    updateJadwalToko(
+      context: context,
+      idToko: widget.idToko,
+      isOpen: isOpen
+    );
+  }
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -36,16 +48,7 @@ class _SetSchedulePageState extends State<SetSchedulePage>{
         minimum: const EdgeInsets.symmetric(horizontal: 16),
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
-          onTap: () {
-            setState(() {
-              isOpen = !isOpen;
-            });
-            updateJadwal(
-              context: context,
-              idToko: widget.idToko,
-              isOpen: isOpen
-            );
-          },
+          onTap: () => _updateJadwalToko(),
           child: Card(
             color: Colors.transparent,
             elevation: 0,
@@ -55,16 +58,7 @@ class _SetSchedulePageState extends State<SetSchedulePage>{
                 const Text('Buka sekarang'),
                 Switch(
                   value: isOpen,
-                  onChanged: (value){
-                    setState(() {
-                      isOpen = !isOpen;
-                    });
-                    updateJadwal(
-                      context: context,
-                      idToko: widget.idToko,
-                      isOpen: isOpen
-                    );
-                  },
+                  onChanged: (value) => _updateJadwalToko(),
                 )
               ],
             ),

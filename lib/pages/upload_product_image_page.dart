@@ -96,7 +96,7 @@ class _UploadProductImagePageState extends State<UploadProductImagePage>{
             width: double.infinity,
             height: 50,
             child: FilledButton(
-              onPressed: () => addProduct(
+              onPressed: () => addProduk(
                 context: context,
                 namaProduk: widget.namaProduk!,
                 harga: widget.harga!,
@@ -105,7 +105,6 @@ class _UploadProductImagePageState extends State<UploadProductImagePage>{
                 detailProduk: widget.detailProduk!,
                 fotoProduk: filePath!,
                 idToko: widget.idToko!,
-                isCreate: false,
               ),
               child: const Text('Selesai!'),
             ),

@@ -26,7 +26,10 @@ class _ChangePasswordState extends State<ChangePassword>{
         setState(() {
           _buttonClick = true;
         });
-        changePassword(context, _confirmPassword);
+        updatePassword(
+          context: context,
+          password: _confirmPassword
+        );
       }
     }
   }

@@ -22,23 +22,23 @@ class _OrderPageState extends State<OrderPage>{
   @override
   void initState() {
     super.initState();
-    orders(statusPesanan: 'Menunggu Konfirmasi').then((res) => setState(() {
-      for(int i = 0; i < json.decode(res.body)['data'].length; i++){
+    getDataPesanan(context: context, statusPesanan: 'Menunggu Konfirmasi').then((res) => setState(() {
+      for(int i = 0; i < json.decode(res!.body)['data'].length; i++){
         onGoingOrderList.add(json.decode(res.body)['data'][i]);
       }
     }));
-    orders(statusPesanan: 'Diproses').then((res) => setState(() {
-      for(int i = 0; i < json.decode(res.body)['data'].length; i++){
+    getDataPesanan(context: context, statusPesanan: 'Diproses').then((res) => setState(() {
+      for(int i = 0; i < json.decode(res!.body)['data'].length; i++){
         onGoingOrderList.add(json.decode(res.body)['data'][i]);
       }
     }));
-    orders(statusPesanan: 'Selesai').then((res) => setState(() {
-      for(int i = 0; i < json.decode(res.body)['data'].length; i++){
+    getDataPesanan(context: context, statusPesanan: 'Selesai').then((res) => setState(() {
+      for(int i = 0; i < json.decode(res!.body)['data'].length; i++){
         finishedOrderList.add(json.decode(res.body)['data'][i]);
       }
     }));
-    getRate().then((res) => setState(() {
-      List response = json.decode(res.body)['data'];
+    getUlasan(context: context).then((res) => setState(() {
+      List response = json.decode(res!.body)['data'];
       for(int i = 0; i < response.length; i++){
         rating.add(response[i]['ulasan']['id_transaksi']);
       }
@@ -274,7 +274,7 @@ class _OrderItemState extends State<OrderItem>{
 
   void _submit(){
     _ulasanKey.currentState!.save();
-    rateProduct(
+    addUlasan(
       context: context,
       idProduk: widget.idProduk!,
       idTransaksi: widget.idTransaksi!,

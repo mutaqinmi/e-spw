@@ -131,7 +131,7 @@ class ShopSettingsPage extends StatelessWidget{
 
                 if(!context.mounted) return;
                 if(confirm!){
-                  deleteShop(
+                  deleteToko(
                     context: context,
                     idToko: idToko
                   );

@@ -24,7 +24,7 @@ class _DetailShopState extends State<DetailShop>{
     setState(() {
       _buttonClicked = true;
     });
-    updateShop(
+    updateDeskripsiToko(
       context: context,
       deskripsiToko: _deskripsiToko,
       idToko: widget.idToko
@@ -37,7 +37,7 @@ class _DetailShopState extends State<DetailShop>{
     File? file = File(image!.path);
     file = await _cropImage(imageFile: file);
     if(!mounted) return;
-    return updateShopBanner(
+    return updateFotoProfilToko(
       context: context,
       bannerToko: file!,
       idToko: widget.idToko,
@@ -75,7 +75,7 @@ class _DetailShopState extends State<DetailShop>{
         ),
       ),
       body: FutureBuilder(
-        future: shopById(widget.idToko),
+        future: getTokoByIdToko(context: context, shopId: widget.idToko),
         builder: (BuildContext context, AsyncSnapshot response){
           if(response.connectionState == ConnectionState.done){
             final toko = json.decode(response.data.body)['data'].first['toko'];

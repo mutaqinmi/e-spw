@@ -31,7 +31,7 @@ class _QuickModePageState extends State<QuickModePage>{
         ),
       ),
       body: FutureBuilder(
-        future: shopById(widget.idToko),
+        future: getTokoByIdToko(context: context, shopId: widget.idToko),
         builder: (BuildContext context, AsyncSnapshot response){
           if(response.connectionState == ConnectionState.done){
             final productList = json.decode(response.data.body)['data'];
@@ -189,14 +189,16 @@ class _QuickModePageState extends State<QuickModePage>{
                                     width: double.infinity,
                                     height: 50,
                                     child: FilledButton(
-                                      onPressed: () => createOrder(
+                                      onPressed: () => createPesanan(
+                                        context: context,
                                         idProduk: product['id_produk'],
                                         jumlah: qty,
                                         totalHarga: double.parse(product['harga']) * qty,
                                         catatan: 'Ini adalah pesanan dari Quick Mode ${productList.first['toko']['nama_toko']}',
-                                        alamat: 'Quick Mode'
+                                        alamat: 'Quick Mode',
+                                        idToko: widget.idToko
                                       ).then((res) => {
-                                        if(res.statusCode == 200){
+                                        if(res!.statusCode == 200){
                                           context.pop()
                                         }
                                       }),

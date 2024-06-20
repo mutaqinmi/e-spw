@@ -33,7 +33,7 @@ class _MainAddressPageState extends State<MainAddressPage>{
           ),
         )
       );
-      addAddress(
+      addAlamat(
         context: context,
         address: _address
       );

@@ -47,8 +47,8 @@ class _ProductPageState extends State<ProductPage>{
   @override
   void initState() {
     super.initState();
-    shopById(widget.idToko).then((res) => setState(() {
-      shopList = json.decode(res.body)['data'];
+    getTokoByIdToko(context: context, shopId: widget.idToko).then((res) => setState(() {
+      shopList = json.decode(res!.body)['data'];
     }));
   }
 
@@ -56,7 +56,7 @@ class _ProductPageState extends State<ProductPage>{
   Widget build(BuildContext context){
     return Scaffold(
       body: FutureBuilder(
-        future: shopById(widget.idToko),
+        future: getTokoByIdToko(context: context, shopId: widget.idToko),
         builder: (BuildContext context, AsyncSnapshot response){
           if(response.hasData && response.connectionState == ConnectionState.done){
             List product = [];

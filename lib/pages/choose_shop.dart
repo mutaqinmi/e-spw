@@ -16,8 +16,8 @@ class _ChooseShopState extends State<ChooseShop>{
   @override
   void initState() {
     super.initState();
-    kelompok().then((res) => setState(() {
-      shopList = json.decode(res.body)['data'];
+    getSelfKelompok(context: context).then((res) => setState(() {
+      shopList = json.decode(res!.body)['data'];
     }));
   }
 

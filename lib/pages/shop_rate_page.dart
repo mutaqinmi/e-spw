@@ -43,7 +43,7 @@ class _ShopRatePageState extends State<ShopRatePage>{
             )
           ),
           FutureBuilder(
-            future: getRateByShop(idToko: widget.idToko),
+            future: getUlasanByToko(context: context, idToko: widget.idToko),
             builder: (BuildContext context, AsyncSnapshot response){
               if(response.hasData){
                 final rating = json.decode(response.data.body)['data'];

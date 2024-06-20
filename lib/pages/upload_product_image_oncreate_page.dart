@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
-// import 'package:go_router/go_router.dart';
 
 class UploadProductImageOnCreatePage extends StatefulWidget{
   const UploadProductImageOnCreatePage({super.key, required this.namaProduk, required this.harga, required this.stok, this.deskripsiProduk, required this.detailProduk, required this.idToko});
@@ -40,7 +39,7 @@ class _UploadProductImageOnCreatePageState extends State<UploadProductImageOnCre
         ),
       )
     );
-    addProduct(
+    addProduk(
       context: context,
       namaProduk: widget.namaProduk!,
       harga: widget.harga!,
@@ -49,7 +48,6 @@ class _UploadProductImageOnCreatePageState extends State<UploadProductImageOnCre
       detailProduk: widget.detailProduk!,
       fotoProduk: filePath!,
       idToko: widget.idToko!,
-      isCreate: true
     );
   }
 
