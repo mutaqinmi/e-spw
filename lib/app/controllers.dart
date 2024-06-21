@@ -419,6 +419,25 @@ Future<http.Response?> getDataToko({required BuildContext context}) async {
   return null;
 }
 
+Future<http.Response?> getDataTopToko({required BuildContext context}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/toko/top');
+  final response = await http.get(url, headers: {
+    'Authorization': 'Bearer ${prefs.getString('token')}'
+  });
+
+  if(!context.mounted) return null;
+  if(response.statusCode == 401){
+    _sessionExpired(context);
+  }
+  if(response.statusCode == 200){
+    return response;
+  }
+
+
+  return null;
+}
+
 void addToko({required BuildContext context, required String namaToko, required String kelas, required String deskripsiToko, File? bannerToko}) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final url = Uri.https(apiBaseUrl, '/v3/toko/create');
@@ -674,6 +693,24 @@ Future<http.Response?> getDataProduk({required BuildContext context}) async {
   return null;
 }
 
+Future<http.Response?> getDataTopProduk({required BuildContext context}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/produk/top');
+  final response = await http.get(url, headers: {
+    'Authorization': 'Bearer ${prefs.getString('token')}'
+  });
+
+  if(!context.mounted) return null;
+  if(response.statusCode == 401){
+    _sessionExpired(context);
+  }
+  if(response.statusCode == 200){
+    return response;
+  }
+
+  return null;
+}
+
 Future<http.Response?> getProdukByIdProduk({required BuildContext context, required String idProduk}) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final url = Uri.https(apiBaseUrl, '/v3/produk/$idProduk');
@@ -692,7 +729,7 @@ Future<http.Response?> getProdukByIdProduk({required BuildContext context, requi
   return null;
 }
 
-void addProduk({required BuildContext context, required String namaProduk, required String harga, required String stok, String? deskripsiProduk, required String detailProduk, required File? fotoProduk, required String idToko}) async {
+void addProduk({required BuildContext context, required String namaProduk, required String harga, required String stok, String? deskripsiProduk, required File? fotoProduk, required String idToko}) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final url = Uri.https(apiBaseUrl, '/v3/produk/add');
   final request = http.MultipartRequest('POST', url);
@@ -703,7 +740,6 @@ void addProduk({required BuildContext context, required String namaProduk, requi
   request.fields['harga'] = harga;
   request.fields['stok'] = stok;
   request.fields['deskripsi_produk'] = deskripsiProduk!;
-  request.fields['detail_produk'] = detailProduk;
   request.fields['id_toko'] = idToko;
   request.files.add(http.MultipartFile.fromBytes('foto_produk', File(fotoProduk!.path).readAsBytesSync(), filename: fotoProduk.path));
   final response = await request.send();

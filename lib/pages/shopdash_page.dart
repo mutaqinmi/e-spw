@@ -83,7 +83,7 @@ class _ShopDashPageState extends State<ShopDashPage>{
                           CircleAvatar(
                             radius: 30,
                             backgroundImage: NetworkImage(
-                              'https://$apiBaseUrl/public/${shop.first['toko']['banner_toko']}'
+                              'https://$apiBaseUrl/public/${shop.first['toko']['foto_profil']}'
                             ),
                           ),
                           const Gap(10),

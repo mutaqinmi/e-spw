@@ -136,7 +136,7 @@ class _SearchPageState extends State<SearchResult>{
               itemBuilder: (BuildContext context, int index){
                 final shop = shopList[index];
                 return ShopResult(
-                  imageURL: 'http://$apiBaseUrl/public/${shop['toko']['banner_toko']}',
+                  imageURL: 'http://$apiBaseUrl/public/${shop['toko']['foto_profil']}',
                   className: shop['kelas']['kelas'],
                   shopName: shop['toko']['nama_toko'],
                   onTap: () => context.pushNamed('shop', queryParameters: {'shopID': shop['toko']['id_toko']}),

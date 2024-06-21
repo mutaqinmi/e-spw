@@ -189,7 +189,6 @@ final routes = GoRouter(
                             harga: state.uri.queryParameters['harga'],
                             stok: state.uri.queryParameters['stok'],
                             deskripsiProduk: state.uri.queryParameters['deskripsi_produk'],
-                            detailProduk: state.uri.queryParameters['detail_produk'],
                             idToko: state.uri.queryParameters['id_toko'],
                           ),
                         )
@@ -241,7 +240,6 @@ final routes = GoRouter(
                     harga: state.uri.queryParameters['harga'],
                     stok: state.uri.queryParameters['stok'],
                     deskripsiProduk: state.uri.queryParameters['deskripsi_produk'],
-                    detailProduk: state.uri.queryParameters['detail_produk'],
                     idToko: state.uri.queryParameters['id_toko'],
                   )
                 )

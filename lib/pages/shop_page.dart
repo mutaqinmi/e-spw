@@ -161,7 +161,7 @@ class _ShopPageState extends State<ShopPage>{
                       expandedHeight: 200,
                       flexibleSpace: FlexibleSpaceBar(
                         background: CachedNetworkImage(
-                          imageUrl: 'https://$apiBaseUrl/public/${shopList.first['toko']['banner_toko']}',
+                          imageUrl: 'https://$apiBaseUrl/public/${shopList.first['toko']['foto_profil']}',
                           fit: BoxFit.cover,
                         ),
                       ),

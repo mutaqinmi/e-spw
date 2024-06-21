@@ -253,64 +253,83 @@ class _CreateShopPageState extends State<CreateShopPage>{
                         children: [
                           Expanded(
                             flex: 2,
-                            child: TextFormField(
-                              key: _namaTokoKey,
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(10))
-                                ),
-                                contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                                hintText: 'e.g. Kedai Barista',
-                                labelText: 'Nama Toko'
-                              ),
-                              validator: (value){
-                                if(value!.isEmpty){
-                                  return 'Isi nama toko terlebih dahulu!';
-                                }
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Nama Toko'),
+                                const Gap(5),
+                                TextFormField(
+                                  key: _namaTokoKey,
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(Radius.circular(10))
+                                    ),
+                                    contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                                    hintText: 'e.g. Kedai Barista',
+                                  ),
+                                  validator: (value){
+                                    if(value!.isEmpty){
+                                      return 'Isi nama toko terlebih dahulu!';
+                                    }
 
-                                return null;
-                              },
-                              onSaved: (value){_namaToko = value!;},
-                            ),
+                                    return null;
+                                  },
+                                  onSaved: (value){_namaToko = value!;},
+                                ),
+                              ],
+                            )
                           ),
                           const Gap(15),
                           Expanded(
                             flex: 1,
-                            child: DropdownButton(
-                              hint: const Text('Kelas'),
-                              icon: const Icon(Icons.arrow_drop_down),
-                              isExpanded: true,
-                              value: _kelasValue,
-                              onChanged: (selected){
-                                setState(() {
-                                  _kelasValue = selected!;
-                                });
-                              },
-                              items: listKelas.map((item){
-                                return DropdownMenuItem(
-                                  value: item,
-                                  child: Text(item),
-                                );
-                              }).toList()
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Kelas'),
+                                const Gap(5),
+                                DropdownButton(
+                                  hint: const Text('Kelas'),
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  isExpanded: true,
+                                  value: _kelasValue,
+                                  onChanged: (selected){
+                                    setState(() {
+                                      _kelasValue = selected!;
+                                    });
+                                  },
+                                  items: listKelas.map((item){
+                                    return DropdownMenuItem(
+                                      value: item,
+                                      child: Text(item),
+                                    );
+                                  }).toList()
+                                )
+                              ],
                             )
                           ),
                         ],
                       ),
                       const Gap(15),
-                      TextFormField(
-                        key: _deskripsiTokoKey,
-                        maxLines: 5,
-                        maxLength: 255,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10))
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Deskripsi Toko'),
+                          const Gap(5),
+                          TextFormField(
+                            key: _deskripsiTokoKey,
+                            maxLines: 5,
+                            maxLength: 255,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(10))
+                              ),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                              hintText: 'e.g. Kedai kopi paling nikmat kala senja',
+                            ),
+                            onSaved: (value){_deskripsiToko = value!;},
                           ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                          hintText: 'e.g. Kedai kopi paling nikmat kala senja',
-                          labelText: 'Deskripsi Toko'
-                        ),
-                        onSaved: (value){_deskripsiToko = value!;},
-                      ),
+                        ],
+                      )
                     ],
                   ),
                 ),

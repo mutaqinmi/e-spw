@@ -1,7 +1,7 @@
 name: espw
 description: "Aplikasi Jual Beli PKK online."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.4.10-beta
+version: 1.5.5-beta
 
 environment:
   sdk: '>=3.2.4 <4.0.0'

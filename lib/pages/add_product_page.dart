@@ -15,12 +15,10 @@ class _AddProductPageState extends State<AddProductPage>{
   final _hargaKey = GlobalKey<FormFieldState>();
   final _stokKey = GlobalKey<FormFieldState>();
   final _deskripsiProdukKey = GlobalKey<FormFieldState>();
-  final _detailProdukKey = GlobalKey<FormFieldState>();
   String _namaProduk = '';
   String _harga = '';
   String _stok = '';
   String _deskripsiProduk = '';
-  String _detailProduk = '';
 
   void _submit(){
     if(_namaProdukKey.currentState!.validate() && _hargaKey.currentState!.validate() && _stokKey.currentState!.validate() && _deskripsiProdukKey.currentState!.validate()){
@@ -28,14 +26,12 @@ class _AddProductPageState extends State<AddProductPage>{
       _hargaKey.currentState!.save();
       _stokKey.currentState!.save();
       _deskripsiProdukKey.currentState!.save();
-      _detailProdukKey.currentState!.save();
 
       context.pushNamed('upload-product-image', queryParameters: {
         'nama_produk': _namaProduk,
         'harga': _harga,
         'stok': _stok,
         'deskripsi_produk': _deskripsiProduk,
-        'detail_produk': _detailProduk,
         'id_toko': widget.idToko,
         'isRedirect': 'false',
       });
@@ -93,12 +89,6 @@ class _AddProductPageState extends State<AddProductPage>{
                             fontWeight: FontWeight.w500
                           ),
                         ),
-                        const Text(
-                          'Tips: Jenis Produk + Merek + Keterangan.',
-                          style: TextStyle(
-                            fontSize: 12,
-                          ),
-                        ),
                         const Gap(5),
                         TextFormField(
                           key: _namaProdukKey,
@@ -128,12 +118,6 @@ class _AddProductPageState extends State<AddProductPage>{
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500
-                          ),
-                        ),
-                        const Text(
-                          'Isi sesuai dengan harga pasar produk.',
-                          style: TextStyle(
-                            fontSize: 12,
                           ),
                         ),
                         const Gap(5),
@@ -169,12 +153,6 @@ class _AddProductPageState extends State<AddProductPage>{
                             fontWeight: FontWeight.w500
                           ),
                         ),
-                        const Text(
-                          'Isi sesuai dengan jumlah stok yang tersedia.',
-                          style: TextStyle(
-                            fontSize: 12,
-                          ),
-                        ),
                         const Gap(5),
                         TextFormField(
                           key: _stokKey,
@@ -207,12 +185,6 @@ class _AddProductPageState extends State<AddProductPage>{
                             fontWeight: FontWeight.w500
                           ),
                         ),
-                        const Text(
-                          'Tulis deskripsi produk..',
-                          style: TextStyle(
-                            fontSize: 12,
-                          ),
-                        ),
                         const Gap(5),
                         TextFormField(
                           key: _deskripsiProdukKey,
@@ -230,44 +202,6 @@ class _AddProductPageState extends State<AddProductPage>{
                       ],
                     ),
                     const Gap(10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Detail Produk',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500
-                          ),
-                        ),
-                        const Text(
-                          'Contoh: Bahan yang digunakan ...',
-                          style: TextStyle(
-                            fontSize: 12,
-                          ),
-                        ),
-                        const Gap(5),
-                        TextFormField(
-                          key: _detailProdukKey,
-                          maxLines: 5,
-                          maxLength: 255,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(10))
-                            ),
-                            contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                            hintText: 'Detail Produk',
-                          ),
-                          validator: (value){
-                            if(value!.isEmpty){
-                              return 'Masukkan detail produk terlebih dahulu';
-                            }
-                            return null;
-                          },
-                          onSaved: (value) => _detailProduk = value!,
-                        )
-                      ],
-                    )
                   ],
                 ),
               )

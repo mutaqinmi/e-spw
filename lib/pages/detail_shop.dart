@@ -94,12 +94,12 @@ class _DetailShopState extends State<DetailShop>{
                           CircleAvatar(
                             radius: 50,
                             backgroundImage: NetworkImage(
-                              'https://$apiBaseUrl/public/${toko['banner_toko']}'
+                              'https://$apiBaseUrl/public/${toko['foto_profil']}'
                             ),
                           ),
                           const Gap(5),
                           TextButton(
-                            onPressed: () => _getImage(toko['banner_toko']),
+                            onPressed: () => _getImage(toko['foto_profil']),
                             child: const Text('Ubah Foto Profil'),
                           )
                         ],

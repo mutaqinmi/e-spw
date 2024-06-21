@@ -6,12 +6,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 class UploadProductImageOnCreatePage extends StatefulWidget{
-  const UploadProductImageOnCreatePage({super.key, required this.namaProduk, required this.harga, required this.stok, this.deskripsiProduk, required this.detailProduk, required this.idToko});
+  const UploadProductImageOnCreatePage({super.key, required this.namaProduk, required this.harga, required this.stok, this.deskripsiProduk, required this.idToko});
   final String? namaProduk;
   final String? harga;
   final String? stok;
   final String? deskripsiProduk;
-  final String? detailProduk;
   final String? idToko;
 
   @override
@@ -45,7 +44,6 @@ class _UploadProductImageOnCreatePageState extends State<UploadProductImageOnCre
       harga: widget.harga!,
       stok: widget.stok!,
       deskripsiProduk: widget.deskripsiProduk!,
-      detailProduk: widget.detailProduk!,
       fotoProduk: filePath!,
       idToko: widget.idToko!,
     );
