@@ -44,131 +44,132 @@ class _SignInPageState extends State<SignInPage>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: SingleChildScrollView(
-        padding: MediaQuery.of(context).viewInsets,
-        reverse: true,
-        child: SafeArea(
-          minimum: const EdgeInsets.all(18),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height / 10),
-                      child: Image.asset(
-                        "assets/image/login-page.png",
-                        width: 300,
+      body: SafeArea(
+        minimum: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Expanded(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(50),
+                  child: Image.asset(
+                    "assets/image/login-page.png",
+                    width: 300,
+                  ),
+                )
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Image.asset(
+                  "assets/icon/espw-colored.png",
+                  width: 25,
+                ),
+                const Gap(10),
+                const Row(
+                  children: [
+                    Text(
+                      'Beli ',
+                      style: TextStyle(
+                        fontSize: 35,
+                        fontWeight: FontWeight.w700
                       ),
+                    ),
+                    AnimatedTypeWriterText(
+                      texts: ['apa aja', 'makanan', 'minuman'],
                     )
-                  ),
-                  Image.asset(
-                    "assets/icon/espw-colored.png",
-                    width: 25,
-                  ),
-                  const Gap(10),
-                  const Row(
-                    children: [
-                      Text(
-                        'Beli ',
-                        style: TextStyle(
-                          fontSize: 35,
-                          fontWeight: FontWeight.w700
-                        ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Text(
+                      'bisa ',
+                      style: TextStyle(
+                        fontSize: 35,
+                        fontWeight: FontWeight.w700
                       ),
-                      AnimatedTypeWriterText(
-                        texts: ['apa aja', 'makanan', 'minuman'],
+                    ),
+                    Text(
+                      "dimana aja",
+                      style: TextStyle(
+                        fontSize: 35,
+                        fontWeight: FontWeight.w700,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                    const Text(
+                      '!',
+                      style: TextStyle(
+                        fontSize: 35,
+                        fontWeight: FontWeight.w700
+                      ),
+                    ),
+                  ],
+                ),
+                const Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "Dapatkan produk yang kamu inginkan, dengan kemudahan berbelanja online hanya di eSPW!",
                       )
-                    ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const Gap(50),
+            Column(
+              children: [
+                Form(
+                  child: TextFormField(
+                    key: _signInKey,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))
+                      ),
+                      hintText: 'Nomor Induk Siswa (NIS)',
+                      contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 15),
+                    ),
+                    validator: (value){
+                      if(value!.isEmpty){
+                        return 'Isi NIS terlebih dahulu!';
+                      }
+
+                      return null;
+                    },
+                    onSaved: (value){_nis = value!;}
                   ),
-                  Row(
-                    children: [
-                      const Text(
-                        'bisa ',
-                        style: TextStyle(
-                          fontSize: 35,
-                          fontWeight: FontWeight.w700
-                        ),
-                      ),
-                      Text(
-                        "dimana aja",
-                        style: TextStyle(
-                          fontSize: 35,
-                          fontWeight: FontWeight.w700,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      ),
-                      const Text(
-                        '!',
-                        style: TextStyle(
-                          fontSize: 35,
-                          fontWeight: FontWeight.w700
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "Dapatkan produk yang kamu inginkan, dengan kemudahan berbelanja online hanya di eSPW!",
+                ),
+                const Gap(10),
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: FilledButton(
+                    style: ButtonStyle(
+                      shape: WidgetStatePropertyAll(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
                         )
                       ),
-                    ],
-                  ),
-                ],
-              ),
-              const Gap(50),
-              Form(
-                child: TextFormField(
-                  key: _signInKey,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10))
                     ),
-                    hintText: 'Nomor Induk Siswa (NIS)',
-                    contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 15),
-                  ),
-                  validator: (value){
-                    if(value!.isEmpty){
-                      return 'Isi NIS terlebih dahulu!';
-                    }
-
-                    return null;
-                  },
-                  onSaved: (value){_nis = value!;}
-                ),
-              ),
-              const Gap(10),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: FilledButton(
-                  style: ButtonStyle(
-                    shape: WidgetStatePropertyAll(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
-                      )
+                    child: const Text(
+                      "AYO MULAI!",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 2,
+                      ),
                     ),
-                  ),
-                  child: const Text(
-                    "AYO MULAI!",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 2,
-                    ),
-                  ),
-                  onPressed: () => _submit(),
+                    onPressed: () => _submit(),
+                  )
                 )
-              )
-            ],
-          )
+              ],
+            )
+          ],
         ),
-      )
+      ),
     );
   }
 }
