@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchPage extends StatefulWidget{
@@ -11,8 +12,13 @@ class SearchPage extends StatefulWidget{
 
 class _SearchPageState extends State<SearchPage> {
   final _formKeyField = GlobalKey<FormFieldState>();
-  String _search = '';
   List<Widget> actionChip = [];
+
+  @override
+  void dispose() {
+    super.dispose();
+    _formKeyField.currentState!.dispose();
+  }
 
   @override
   void initState(){
@@ -55,23 +61,6 @@ class _SearchPageState extends State<SearchPage> {
     prefs.setStringList('searchingHistory', searchingHistory);
   }
 
-  void _submit(BuildContext context) async {
-    _formKeyField.currentState!.save();
-    List<String>? getSearchHistory = await _getSearchHistory();
-    if(_search.isNotEmpty){
-      if(!getSearchHistory!.contains(_search)){
-        _setSearchHistory(_search);
-        if(getSearchHistory.length > 10){
-          _deleteLastIndexSearchingHistory();
-        }
-      } else {
-        _reorderSearch(_search);
-      }
-      if(!context.mounted) return;
-      context.goNamed('searchResult', queryParameters: {'search': _search});
-    }
-  }
-
   Future<List<Widget>> _searchingHistory() async {
     List<String>? getSearchHistory = await _getSearchHistory();
     List<String> searchHistory = getSearchHistory!.reversed.toList();
@@ -86,7 +75,7 @@ class _SearchPageState extends State<SearchPage> {
           searchHistory[i]
         ),
         labelStyle: const TextStyle(
-            color: Colors.white
+          color: Colors.white
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
@@ -114,16 +103,35 @@ class _SearchPageState extends State<SearchPage> {
             child: const Text('Batal'),
           ),
           FilledButton(
-            onPressed: (){
+            onPressed: () => setState(() {
               prefs.remove('searchingHistory');
+              actionChip = [];
               context.pop();
-              initState();
-            },
+            }),
             child: const Text('Hapus'),
           ),
         ],
       )
     );
+  }
+
+  void _submit(String keywords) async {
+    List<String>? getSearchHistory = await _getSearchHistory();
+    if(keywords.isNotEmpty){
+      if(!getSearchHistory!.contains(keywords)){
+        _setSearchHistory(keywords);
+        _searchingHistory().then((value) => setState(() {
+          actionChip = value;
+        }));
+        if(getSearchHistory.length > 10){
+          _deleteLastIndexSearchingHistory();
+        }
+      } else {
+        _reorderSearch(keywords);
+      }
+      if(!mounted) return;
+      context.goNamed('searchResult', queryParameters: {'search': keywords});
+    }
   }
 
   @override
@@ -135,6 +143,7 @@ class _SearchPageState extends State<SearchPage> {
           child: Form(
             child: TextFormField(
               key: _formKeyField,
+              textInputAction: TextInputAction.search,
               autofocus: true,
               style: const TextStyle(
                 fontSize: 14
@@ -147,8 +156,7 @@ class _SearchPageState extends State<SearchPage> {
                 contentPadding: const EdgeInsets.symmetric(horizontal: 15),
                 suffixIcon: const Icon(Icons.search)
               ),
-              onSaved: (value){_search = value!;},
-              onEditingComplete: () => _submit(context),
+              onFieldSubmitted: (value) => _submit(value),
             ),
           )
         ),
@@ -179,6 +187,27 @@ class _SearchPageState extends State<SearchPage> {
             Wrap(
               spacing: 5,
               children: actionChip,
+            ),
+            Visibility(
+              visible: actionChip.isEmpty ? true : false,
+              child: Center(
+                child: Column(
+                  children: [
+                    const Gap(20),
+                    Image.asset(
+                      'assets/image/searching-history.png',
+                      width: 250,
+                    ),
+                    const Text(
+                      'Anda belum menelusuri apapun.',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontStyle: FontStyle.italic
+                      ),
+                    )
+                  ],
+                )
+              ),
             )
           ],
         ),

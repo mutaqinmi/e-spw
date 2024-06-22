@@ -711,6 +711,24 @@ Future<http.Response?> getDataTopProduk({required BuildContext context}) async {
   return null;
 }
 
+Future<http.Response?> getDataTopProdukByToko({required BuildContext context, required String idToko}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/produk/top/$idToko');
+  final response = await http.get(url, headers: {
+    'Authorization': 'Bearer ${prefs.getString('token')}'
+  });
+
+  if(!context.mounted) return null;
+  if(response.statusCode == 401){
+    _sessionExpired(context);
+  }
+  if(response.statusCode == 200){
+    return response;
+  }
+
+  return null;
+}
+
 Future<http.Response?> getProdukByIdProduk({required BuildContext context, required String idProduk}) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final url = Uri.https(apiBaseUrl, '/v3/produk/$idProduk');

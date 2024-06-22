@@ -62,112 +62,136 @@ class _HomePageState extends State<HomePage> {
         onTap: () => context.pushNamed('shop', queryParameters: {'shopID': topProductList[i]['toko']['id_toko']}),
         child: Card(
           elevation: 0,
-          child: Column(
+          child: Stack(
             children: [
-              Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: CachedNetworkImage(
-                      imageUrl: 'https://$apiBaseUrl/public/${topProductList[i]['produk']['foto_produk']}',
-                      width: double.infinity,
-                      height: 200,
-                      fit: BoxFit.cover,
+              ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: CachedNetworkImage(
+                  imageUrl: 'https://$apiBaseUrl/public/${topProductList[i]['produk']['foto_produk']}',
+                  width: double.infinity,
+                  height: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Visibility(
+                visible: i == 0 ? true : false,
+                child: Positioned(
+                  top: 0,
+                  left: 0,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(bottomRight: Radius.circular(10), topLeft: Radius.circular(15)),
+                      color: Theme.of(context).primaryColor
                     ),
-                  ),
-                  Positioned(
-                    top: 10,
-                    right: 10,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
-                        color: Colors.white
+                    child: const Text(
+                      'Terlaris!',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600
                       ),
-                      child: Row(
-                        children: [
-                          Text(topProductList[i]['toko']['rating_toko'].toString()),
-                          Icon(Icons.star_rate_rounded, color: Theme.of(context).primaryColor,),
-                        ],
-                      )
+                    )
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 10,
+                right: 10,
+                child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      color: Colors.white
                     ),
+                    child: Wrap(
+                      spacing: 2,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Text(topProductList[i]['toko']['rating_toko'].toString()),
+                        Icon(
+                          Icons.star_rate_rounded,
+                          color: Theme.of(context).primaryColor,
+                          size: 16,
+                        ),
+                      ],
+                    )
+                ),
+              ),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black
+                      ]
+                    )
                   ),
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            Colors.black
-                          ]
-                        )
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                topProductList[i]['produk']['nama_produk'],
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white
+                                ),
+                              ),
+                              Text(
+                                topProductList[i]['produk']['deskripsi_produk'],
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.white
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Gap(20),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    topProductList[i]['produk']['nama_produk'],
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white
-                                    ),
-                                  ),
-                                  Text(
-                                    topProductList[i]['produk']['deskripsi_produk'],
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.white
-                                    ),
-                                  ),
-                                ],
+                            Text(
+                              'Rp. ${formatter.format(int.parse(topProductList[i]['produk']['harga']))}',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white
                               ),
                             ),
-                            const Gap(20),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  'Rp. ${formatter.format(int.parse(topProductList[i]['produk']['harga']))}',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white
-                                  ),
-                                ),
-                                Text(
-                                  'Terjual ${topProductList[i]['produk']['jumlah_terjual']}',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.white
-                                  ),
-                                ),
-                              ],
-                            )
+                            Text(
+                              'Terjual ${topProductList[i]['produk']['jumlah_terjual']}',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.white
+                              ),
+                            ),
                           ],
-                        ),
-                      ),
+                        )
+                      ],
                     ),
-                  )
-                ],
-              ),
+                  ),
+                ),
+              )
             ],
-          )
+          ),
         ),
       ));
     }
@@ -336,7 +360,7 @@ class _HomePageState extends State<HomePage> {
             ),
             SliverToBoxAdapter(
               child: Container(
-                height: 250,
+                height: 210,
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: FutureBuilder(
                   future: getDataToko(context: context),
@@ -422,7 +446,7 @@ class _HomePageState extends State<HomePage> {
                                       children: [
                                         Container(
                                           width: 60,
-                                          height: 14,
+                                          height: 12,
                                           decoration: BoxDecoration(
                                             color: Colors.grey.withAlpha(100),
                                             borderRadius: BorderRadius.circular(10)
@@ -431,16 +455,7 @@ class _HomePageState extends State<HomePage> {
                                         const Gap(10),
                                         Container(
                                           width: 100,
-                                          height: 24,
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey.withAlpha(100),
-                                            borderRadius: BorderRadius.circular(10)
-                                          ),
-                                        ),
-                                        const Gap(15),
-                                        Container(
-                                          width: 40,
-                                          height: 14,
+                                          height: 20,
                                           decoration: BoxDecoration(
                                             color: Colors.grey.withAlpha(100),
                                             borderRadius: BorderRadius.circular(10)
@@ -490,6 +505,7 @@ class _HomePageState extends State<HomePage> {
               child: Visibility(
                 visible: topShopList.isNotEmpty ? true : false,
                 child: SafeArea(
+                  top: false,
                   bottom: false,
                   minimum: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   child: Row(
@@ -628,6 +644,7 @@ class _HomePageState extends State<HomePage> {
               child: Visibility(
                 visible: topProductList.isNotEmpty ? true : false,
                 child: SafeArea(
+                  top: false,
                   bottom: false,
                   minimum: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   child: Row(
@@ -674,6 +691,7 @@ class _HomePageState extends State<HomePage> {
                             enableInfiniteScroll: false,
                             disableCenter: true,
                             viewportFraction: .95,
+                            height: 200
                           ),
                         );
                       }
@@ -754,7 +772,7 @@ class _HomePageState extends State<HomePage> {
                     itemCount: 3,
                     itemBuilder: (BuildContext context, int index){
                       return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 16),
+                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                         width: double.infinity,
                         height: 200,
                         decoration: BoxDecoration(
@@ -851,15 +869,48 @@ class ShopCard extends StatelessWidget{
         child: SizedBox(
           width: 150,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(15)),
-                child: CachedNetworkImage(
-                  imageUrl: imageURL,
-                  width: double.infinity,
-                  height: 120,
-                  fit: BoxFit.cover,
-                ),
+              Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(15)),
+                    child: CachedNetworkImage(
+                      imageUrl: imageURL,
+                      width: double.infinity,
+                      height: 120,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        color: Theme.of(context).primaryColor
+                      ),
+                      child: Wrap(
+                        spacing: 5,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Text(
+                            rating.toString(),
+                            style: const TextStyle(
+                                color: Colors.white
+                            ),
+                          ),
+                          const Icon(
+                            Icons.star_rate_rounded,
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
@@ -881,14 +932,6 @@ class ShopCard extends StatelessWidget{
                         fontSize: 16,
                         fontWeight: FontWeight.w600
                       ),
-                    ),
-                    const Gap(15),
-                    Row(
-                      children: [
-                        Icon(Icons.star_rate_rounded, color: Theme.of(context).primaryColor,),
-                        const Gap(5),
-                        Text(rating.toString())
-                      ],
                     ),
                   ],
                 )
@@ -917,7 +960,7 @@ class ProductCard extends StatelessWidget{
 
     return SafeArea(
       top: false,
-      minimum: const EdgeInsets.only(left: 16, right: 16, bottom: 20),
+      minimum: const EdgeInsets.only(left: 16, right: 16, bottom: 5),
       child: GestureDetector(
         onTap: onTap,
         child: Card(
@@ -944,10 +987,16 @@ class ProductCard extends StatelessWidget{
                         borderRadius: BorderRadius.all(Radius.circular(20)),
                         color: Colors.white
                       ),
-                      child: Row(
+                      child: Wrap(
+                        spacing: 2,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           Text(rating.toString()),
-                          Icon(Icons.star_rate_rounded, color: Theme.of(context).primaryColor,),
+                          Icon(
+                            Icons.star_rate_rounded,
+                            color: Theme.of(context).primaryColor,
+                            size: 16,
+                          ),
                         ],
                       )
                     ),
@@ -969,7 +1018,7 @@ class ProductCard extends StatelessWidget{
                         )
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,

@@ -17,7 +17,6 @@ class SearchResult extends StatefulWidget {
 class _SearchPageState extends State<SearchResult>{
   List productList = [];
   List shopList = [];
-  final int cartBadge = 0;
   @override
   void initState() {
     super.initState();
@@ -34,7 +33,6 @@ class _SearchPageState extends State<SearchResult>{
       child: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) => [
           SliverAppBar(
-            forceElevated: innerBoxIsScrolled,
             floating: true,
             snap: true,
             pinned: true,
@@ -61,14 +59,27 @@ class _SearchPageState extends State<SearchResult>{
               ),
             ),
             actions: [
-              Badge(
-                isLabelVisible: cartBadge == 0 ? false : true,
-                offset: const Offset(-8, 8),
-                label: Text(cartBadge.toString()),
-                child: IconButton(
-                  onPressed: () => context.pushNamed('cart'),
-                  icon: const Icon(Icons.shopping_cart_outlined),
-                ),
+              FutureBuilder(
+                future: getDataKeranjang(context: context),
+                builder: (BuildContext context, AsyncSnapshot response){
+                  if(response.hasData){
+                    final cartCount = json.decode(response.data.body)['data'].length;
+                    return Badge(
+                      isLabelVisible: cartCount == 0 ? false : true,
+                      offset: const Offset(-8, 8),
+                      label: Text(cartCount.toString()),
+                      child: IconButton(
+                        onPressed: () => context.pushNamed('cart'),
+                        icon: const Icon(Icons.shopping_cart_outlined),
+                      ),
+                    );
+                  }
+
+                  return IconButton(
+                    onPressed: () => context.pushNamed('cart'),
+                    icon: const Icon(Icons.shopping_cart_outlined),
+                  );
+                },
               ),
             ],
             bottom: const TabBar(
@@ -117,8 +128,23 @@ class _SearchPageState extends State<SearchResult>{
             );
           }
 
-          return const Center(
-            child: Text('Produk tidak ditemukan!'),
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/image/empty.png',
+                  width: 250,
+                ),
+                const Gap(10),
+                const Text(
+                  'Produk tidak ditemukan!',
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic
+                  ),
+                )
+              ],
+            ),
           );
         },
       )
@@ -155,8 +181,23 @@ class _SearchPageState extends State<SearchResult>{
             );
           }
 
-          return const Center(
-            child: Text('Toko tidak ditemukan!'),
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/image/store-closed.png',
+                  width: 250,
+                ),
+                const Gap(10),
+                const Text(
+                  'Toko tidak ditemukan!',
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic
+                  ),
+                )
+              ],
+            ),
           );
         },
       )
@@ -180,7 +221,6 @@ class ProductResult extends StatelessWidget{
 
     return SafeArea(
       top: false,
-      bottom: false,
       minimum: const EdgeInsets.only(left: 16, right: 16, top: 10),
       child: Column(
         children: [
@@ -246,11 +286,29 @@ class ProductResult extends StatelessWidget{
                             ),
                           ),
                           const Gap(10),
-                          Row(
-                            children: [
-                              Icon(Icons.star_rate_rounded, color: Theme.of(context).primaryColor),
-                              Text(rating.toString())
-                            ],
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              color: Theme.of(context).primaryColor
+                            ),
+                            child: Wrap(
+                              spacing: 5,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                Text(
+                                  rating.toString(),
+                                  style: const TextStyle(
+                                    color: Colors.white
+                                  ),
+                                ),
+                                const Icon(
+                                  Icons.star_rate_rounded,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                              ],
+                            ),
                           )
                         ],
                       )
