@@ -159,9 +159,6 @@ class _ShopPageState extends State<ShopPage>{
           getDataTopProdukByToko(context: context, idToko: widget.shopID).then((res) => setState(() {
             topProductList = json.decode(res!.body)['data'];
           }));
-          // getDataKeranjang(context: context).then((res) => setState(() {
-          //   cartCount = json.decode(res!.body)['data'].length.toString();
-          // }));
           getFavorit(context: context).then((res){
             List data = json.decode(res!.body)['data'];
             for(int i = 0; i < data.length; i++){
@@ -378,7 +375,7 @@ class _ShopPageState extends State<ShopPage>{
                                                 )
                                               ),
                                               child: Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                                                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                                                 child: Row(
                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -816,8 +813,217 @@ class _ShopPageState extends State<ShopPage>{
               }
             }
 
-            return const Center(
-              child: CircularProgressIndicator(),
+            return CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  automaticallyImplyLeading: false,
+                  expandedHeight: 200,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withAlpha(100),
+                      ),
+                    ),
+                  ),
+                  bottom: PreferredSize(
+                    preferredSize: const Size.fromHeight(20),
+                    child: Container(
+                      width: double.infinity,
+                      height: 20,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(20))
+                      ),
+                    )
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: SafeArea(
+                    top: false,
+                    minimum: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Wrap(
+                                    crossAxisAlignment: WrapCrossAlignment.center,
+                                    spacing: 5,
+                                    children: [
+                                      Container(
+                                        width: 200,
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.withAlpha(100),
+                                          borderRadius: BorderRadius.circular(15),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const Gap(5),
+                                  Container(
+                                    width: 100,
+                                    height: 18,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.withAlpha(100),
+                                      borderRadius: BorderRadius.circular(9),
+                                    ),
+                                  ),
+                                  const Gap(5),
+                                  Container(
+                                    width: 80,
+                                    height: 18,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.withAlpha(100),
+                                      borderRadius: BorderRadius.circular(9),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.withAlpha(100),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Gap(10),
+                        Container(
+                          width: double.infinity,
+                          height: 200,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.withAlpha(100),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                        const Gap(20),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 80,
+                              height: 25,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.withAlpha(100),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            const Gap(5),
+                            Container(
+                              width: 150,
+                              height: 18,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.withAlpha(100),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                SliverList.builder(
+                  itemCount: 5,
+                  itemBuilder: (BuildContext context, int index){
+                    return SafeArea(
+                      top: false,
+                      bottom: false,
+                      minimum: const EdgeInsets.only(left: 16, right: 16, top: 10),
+                      child: Column(
+                        children: [
+                          Card(
+                            elevation: 0,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.withAlpha(100),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 15),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              width: 80,
+                                              height: 25,
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey.withAlpha(100),
+                                                borderRadius: BorderRadius.circular(15),
+                                              ),
+                                            ),
+                                            const Gap(5),
+                                            Container(
+                                              width: 150,
+                                              height: 18,
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey.withAlpha(100),
+                                                borderRadius: BorderRadius.circular(9),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const Gap(20),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Container(
+                                              width: 80,
+                                              height: 25,
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey.withAlpha(100),
+                                                borderRadius: BorderRadius.circular(15),
+                                              ),
+                                            ),
+                                            Container(
+                                              width: 100,
+                                              height: 30,
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey.withAlpha(100),
+                                                borderRadius: BorderRadius.circular(15),
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          const Gap(5),
+                          const Divider(
+                            thickness: 0.2,
+                          )
+                        ],
+                      )
+                    );
+                  },
+                ),
+              ],
             );
           },
         )
@@ -1062,9 +1268,6 @@ class _ShopPageState extends State<ShopPage>{
       }
     ).whenComplete(() => setState(() {
       qty = 0;
-      // getDataKeranjang(context: context).then((res) => setState(() {
-      //   cartCount = json.decode(res!.body)['data'].length.toString();
-      // }));
     }));
   }
 }

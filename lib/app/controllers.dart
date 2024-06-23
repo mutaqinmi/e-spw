@@ -151,9 +151,6 @@ Future<http.Response?> getDataSiswa({required BuildContext context}) async {
   });
 
   if(!context.mounted) return null;
-  if(response.statusCode == 401){
-    _sessionExpired(context);
-  }
   if(response.statusCode == 200){
     return response;
   }

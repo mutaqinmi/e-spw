@@ -15,10 +15,6 @@ class NavBar extends StatefulWidget{
 
 class _NavBarState extends State<NavBar>{
   int currentPage = 0;
-  final int cartBadge = 0;
-  final int notificationBadge = 0;
-  final int chatBadge = 0;
-
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -42,29 +38,51 @@ class _NavBarState extends State<NavBar>{
             icon: Icon(Icons.home_outlined),
             label: 'Beranda',
           ),
-          NavigationDestination(
-            selectedIcon: Badge(
-              isLabelVisible: cartBadge == 0 ? false : true,
-              label: Text(cartBadge.toString()),
-              child: const Icon(Icons.shopping_cart),
-            ),
-            icon: Badge(
-              isLabelVisible: cartBadge == 0 ? false : true,
-              label: Text(cartBadge.toString()),
-              child: const Icon(Icons.shopping_cart_outlined),
-            ),
-            label: 'Keranjang',
+          StreamBuilder(
+            stream: Stream.periodic(const Duration(seconds: 1)).asyncMap((t) => getDataKeranjang(context: context)),
+            builder: (BuildContext context, AsyncSnapshot response){
+              if(response.hasData){
+                final cartCount = json.decode(response.data.body)['data'].length;
+                return NavigationDestination(
+                  selectedIcon: Badge(
+                    isLabelVisible: cartCount == 0 ? false : true,
+                    label: Text(cartCount.toString()),
+                    child: const Icon(Icons.shopping_cart),
+                  ),
+                  icon: Badge(
+                    isLabelVisible: cartCount == 0 ? false : true,
+                    label: Text(cartCount.toString()),
+                    child: const Icon(Icons.shopping_cart_outlined),
+                  ),
+                  label: 'Keranjang',
+                );
+              }
+
+              return const NavigationDestination(
+                selectedIcon: Badge(
+                  isLabelVisible: false,
+                  label: Text('0'),
+                  child: Icon(Icons.shopping_cart),
+                ),
+                icon: Badge(
+                  isLabelVisible: false,
+                  label: Text('0'),
+                  child: Icon(Icons.shopping_cart_outlined),
+                ),
+                label: 'Keranjang',
+              );
+            },
           ),
-          NavigationDestination(
+          const NavigationDestination(
             selectedIcon: Badge(
-              isLabelVisible: notificationBadge == 0 ? false : true,
-              label: Text(notificationBadge.toString()),
-              child: const Icon(Icons.notifications),
+              isLabelVisible: false,
+              label: Text('0'),
+              child: Icon(Icons.notifications),
             ),
             icon: Badge(
-              isLabelVisible: notificationBadge == 0 ? false : true,
-              label: Text(notificationBadge.toString()),
-              child: const Icon(Icons.notifications_outlined),
+              isLabelVisible: false,
+              label: Text('0'),
+              child: Icon(Icons.notifications_outlined),
             ),
             label: 'Notifikasi',
           ),

@@ -207,34 +207,31 @@ class _CartPageState extends State<CartPage>{
             )
           ),
           cartList.isEmpty ?
-          const SliverToBoxAdapter(
+          SliverToBoxAdapter(
             child: SafeArea(
-              minimum: EdgeInsets.symmetric(horizontal: 16),
+              minimum: const EdgeInsets.symmetric(horizontal: 16),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.remove_shopping_cart_outlined,
-                      size: 150,
-                      color: Colors.grey,
+                    Image.asset(
+                      'assets/image/cart.png',
+                      width: 200,
                     ),
-                    Gap(10),
-                    Text(
+                    const Gap(10),
+                    const Text(
                       'Keranjang kamu masih kosong!',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Colors.grey,
                       ),
                     ),
-                    Gap(5),
-                    Text(
-                      'Explore berbagai macam produk dan tambahkan ke keranjang!',
+                    const Gap(5),
+                    const Text(
+                      'Jelajahi berbagai macam produk dan tambahkan ke keranjang!',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Colors.grey,
                         fontSize: 12
                       ),
                     )
@@ -474,7 +471,16 @@ class _CartPageState extends State<CartPage>{
                 )),
                 backgroundColor: _buttonColor()
               ),
-              child: Text('Checkout ($cartCount)'),
+              child: StreamBuilder(
+                stream: Stream.periodic(const Duration(seconds: 1)).asyncMap((t) => getDataKeranjang(context: context)),
+                builder: (BuildContext context, AsyncSnapshot response){
+                  if(response.hasData){
+                    return Text('Checkout (${json.decode(response.data.body)['data'].length})');
+                  }
+
+                  return const Text('Checkout (0)');
+                },
+              ),
             ),
           )
         ],

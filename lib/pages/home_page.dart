@@ -501,43 +501,54 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            SliverToBoxAdapter(
-              child: Visibility(
-                visible: topShopList.isNotEmpty ? true : false,
-                child: SafeArea(
-                  top: false,
-                  bottom: false,
-                  minimum: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Ter - Favorit',
-                              style: TextStyle(
-                                fontSize: 24,
-                                color: Theme.of(context).primaryColor,
-                                fontWeight: FontWeight.w600
-                              ),
-                            ),
-                            const Text(
-                              'Top 3 toko paling disukai sama pelanggan eSPW!',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w300
-                              ),
-                            ),
-                          ],
+            FutureBuilder(
+              future: getDataTopToko(context: context),
+              builder: (BuildContext context, AsyncSnapshot response){
+                if(response.connectionState == ConnectionState.done){
+                  if(response.hasData){
+                    return SliverToBoxAdapter(
+                      child: Visibility(
+                        visible: topShopList.isNotEmpty ? true : false,
+                        child: SafeArea(
+                          top: false,
+                          bottom: false,
+                          minimum: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Terfavorit',
+                                      style: TextStyle(
+                                        fontSize: 24,
+                                        color: Theme.of(context).primaryColor,
+                                        fontWeight: FontWeight.w600
+                                      ),
+                                    ),
+                                    const Text(
+                                      'Top 3 toko paling disukai sama pelanggan eSPW!',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w300
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          )
                         ),
                       )
-                    ],
-                  )
-                ),
-              )
+                    );
+                  }
+                }
+
+                return const SliverToBoxAdapter();
+              },
             ),
             FutureBuilder(
               future: getDataTopToko(context: context),
@@ -640,43 +651,54 @@ class _HomePageState extends State<HomePage> {
                 return const SliverToBoxAdapter();
               },
             ),
-            SliverToBoxAdapter(
-              child: Visibility(
-                visible: topProductList.isNotEmpty ? true : false,
-                child: SafeArea(
-                  top: false,
-                  bottom: false,
-                  minimum: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Laris Manisss ...',
-                              style: TextStyle(
-                                fontSize: 24,
-                                color: Theme.of(context).primaryColor,
-                                fontWeight: FontWeight.w600
-                              ),
-                            ),
-                            const Text(
-                              'Produk teratas yang paling banyak dibeli sama pelanggan eSPW!',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w300
-                              ),
-                            ),
-                          ],
+            FutureBuilder(
+              future: getDataTopToko(context: context),
+              builder: (BuildContext context, AsyncSnapshot response){
+                if(response.connectionState == ConnectionState.done){
+                  if(response.hasData){
+                    return SliverToBoxAdapter(
+                      child: Visibility(
+                        visible: topProductList.isNotEmpty ? true : false,
+                        child: SafeArea(
+                          top: false,
+                          bottom: false,
+                          minimum: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Laris Manisss ...',
+                                      style: TextStyle(
+                                        fontSize: 24,
+                                        color: Theme.of(context).primaryColor,
+                                        fontWeight: FontWeight.w600
+                                      ),
+                                    ),
+                                    const Text(
+                                      'Produk teratas yang paling banyak dibeli sama pelanggan eSPW!',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w300
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          )
                         ),
                       )
-                    ],
-                  )
-                ),
-              )
+                    );
+                  }
+                }
+
+                return const SliverToBoxAdapter();
+              },
             ),
             SliverToBoxAdapter(
               child: FutureBuilder(
@@ -889,21 +911,16 @@ class ShopCard extends StatelessWidget{
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(30),
-                        color: Theme.of(context).primaryColor
+                        color: Colors.white
                       ),
                       child: Wrap(
                         spacing: 5,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          Text(
-                            rating.toString(),
-                            style: const TextStyle(
-                                color: Colors.white
-                            ),
-                          ),
-                          const Icon(
+                          Text(rating.toString(),),
+                          Icon(
                             Icons.star_rate_rounded,
-                            color: Colors.white,
+                            color: Theme.of(context).primaryColor,
                             size: 16,
                           ),
                         ],

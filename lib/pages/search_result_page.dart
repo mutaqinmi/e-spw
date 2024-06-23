@@ -123,8 +123,104 @@ class _SearchPageState extends State<SearchResult>{
               },
             );
           } else if (response.connectionState == ConnectionState.waiting){
-            return const Center(
-              child: CircularProgressIndicator(),
+            return ListView.builder(
+              itemCount: 10,
+              itemBuilder: (BuildContext context, int index){
+                return SafeArea(
+                  top: false,
+                  minimum: const EdgeInsets.only(left: 16, right: 16, top: 10),
+                  child: Column(
+                    children: [
+                      Card(
+                        elevation: 0,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.withAlpha(100),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 15),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                width: 60,
+                                                height: 12,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.grey.withAlpha(100),
+                                                  borderRadius: BorderRadius.circular(10),
+                                                ),
+                                              ),
+                                              const Gap(5),
+                                              Container(
+                                                width: 100,
+                                                height: 22,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.grey.withAlpha(100),
+                                                  borderRadius: BorderRadius.circular(10),
+                                                ),
+                                              ),
+                                              const Gap(5),
+                                              Container(
+                                                width: 50,
+                                                height: 12,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.grey.withAlpha(100),
+                                                  borderRadius: BorderRadius.circular(10),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const Gap(20),
+                                          Container(
+                                            width: 80,
+                                            height: 20,
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey.withAlpha(100),
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const Gap(10),
+                                    Container(
+                                      width: 60,
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.withAlpha(100),
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      const Gap(5),
+                      const Divider(
+                        thickness: 0.2,
+                      )
+                    ],
+                  )
+                );
+              },
             );
           }
 
@@ -176,8 +272,77 @@ class _SearchPageState extends State<SearchResult>{
               },
             );
           } else if (response.connectionState == ConnectionState.waiting){
-            return const Center(
-              child: CircularProgressIndicator(),
+            return ListView.builder(
+              itemCount: 5,
+              itemBuilder: (BuildContext context, int index){
+                return SafeArea(
+                  top: false,
+                  bottom: false,
+                  minimum: const EdgeInsets.only(left: 16, right: 16, top: 10),
+                  child: Column(
+                    children: [
+                      Card(
+                        elevation: 0,
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.withAlpha(100),
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 15),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: 80,
+                                        height: 25,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.withAlpha(100),
+                                          borderRadius: BorderRadius.circular(15),
+                                        ),
+                                      ),
+                                      const Gap(5),
+                                      Container(
+                                        width: 40,
+                                        height: 18,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.withAlpha(100),
+                                          borderRadius: BorderRadius.circular(15),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              )
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Gap(10),
+                      Container(
+                        width: double.infinity,
+                        height: 200,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withAlpha(100),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      const Gap(10),
+                      const Divider(
+                        thickness: 0.2,
+                      )
+                    ],
+                  )
+                );
+              },
             );
           }
 

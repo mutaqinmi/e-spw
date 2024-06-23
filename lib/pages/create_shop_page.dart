@@ -260,7 +260,9 @@ class _CreateShopPageState extends State<CreateShopPage>{
                                 const Gap(5),
                                 TextFormField(
                                   key: _namaTokoKey,
+                                  maxLength: 20,
                                   decoration: const InputDecoration(
+                                    counterText: '',
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.all(Radius.circular(10))
                                     ),
