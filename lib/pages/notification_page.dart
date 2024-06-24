@@ -40,13 +40,6 @@ class _NotificationPageState extends State<NotificationPage>{
                     selected: true,
                     onSelected: (bool selected){},
                   ),
-                  // ChoiceChip(
-                  //   label: const Text('Transaksi'),
-                  //   selected: _isTransaction,
-                  //   onSelected: (bool selected) => setState(() {
-                  //     _isTransaction = !_isTransaction;
-                  //   }),
-                  // ),
                 ],
               ),
             )

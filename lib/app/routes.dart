@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:espw/app/controllers.dart';
+import 'package:espw/pages/edit_address_page.dart';
 import 'package:espw/pages/order_created_page.dart';
 import 'package:espw/pages/add_product_oncreate_page.dart';
 import 'package:espw/pages/add_product_page.dart';
@@ -16,7 +17,7 @@ import 'package:espw/pages/information_page.dart';
 import 'package:espw/pages/join_shop_page.dart';
 import 'package:espw/pages/list_address_page.dart';
 import 'package:espw/pages/login_shop_page.dart';
-import 'package:espw/pages/main_address_page.dart';
+import 'package:espw/pages/add_address_page.dart';
 import 'package:espw/pages/member_page.dart';
 import 'package:espw/pages/order_page.dart';
 import 'package:espw/pages/order_status_page.dart';
@@ -302,6 +303,13 @@ final routes = GoRouter(
               name: 'add-address',
               path: 'add-address',
               builder: (BuildContext context, GoRouterState state) => const MainAddressPage(),
+            ),
+            GoRoute(
+              name: 'edit-address',
+              path: 'edit-address',
+              builder: (BuildContext context, GoRouterState state) => EditAddressPage(
+                idAlamat: state.uri.queryParameters['id_alamat']!,
+              ),
             ),
           ]
         ),

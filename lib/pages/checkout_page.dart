@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:espw/app/controllers.dart';
+import 'package:espw/widgets/authenticator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -17,15 +19,19 @@ class _CheckoutPageState extends State<CheckoutPage>{
   final formatter = NumberFormat('###,###.###', 'id_ID');
 
   List cartList = [];
-  List address = [];
+  List addressList = [];
+  List defaultAddress = [];
   @override
   void initState() {
     super.initState();
     getDataKeranjang(context: context).then((res) => setState((){
       cartList = json.decode(res!.body)['data'];
     }));
+    getAlamatDefault(context: context).then((res) => setState(() {
+      defaultAddress = json.decode(res!.body)['data'];
+    }));
     getAlamat(context: context).then((res) => setState(() {
-      address = json.decode(res!.body)['data'];
+      addressList = json.decode(res!.body)['data'];
     }));
   }
 
@@ -49,8 +55,8 @@ class _CheckoutPageState extends State<CheckoutPage>{
             Text(
               'Buka',
               style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12
+                color: Colors.white,
+                fontSize: 12
               ),
             )
           ],
@@ -94,21 +100,32 @@ class _CheckoutPageState extends State<CheckoutPage>{
   }
 
   void _submit(){
-    if(address.isNotEmpty){
-      context.goNamed('order-created');
-      for(int i = 0; i < cartList.length; i++){
-        double totalHarga = 0.0;
-        totalHarga += int.parse(cartList[i]['produk']['harga']) * cartList[i]['keranjang']['jumlah'];
-        createPesanan(
-          context: context,
-          idProduk: cartList[i]['produk']['id_produk'],
-          jumlah: cartList[i]['keranjang']['jumlah'],
-          totalHarga: totalHarga,
-          catatan: cartList[i]['keranjang']['catatan'],
-          alamat: address.first['alamat'],
-          idToko: cartList[i]['toko']['id_toko']
-        );
-      }
+    if(defaultAddress.isNotEmpty){
+      authenticator(context: context).then((res) {
+        if(res!){
+          for(int i = 0; i < cartList.length; i++){
+            double totalHarga = 0.0;
+            totalHarga += int.parse(cartList[i]['produk']['harga']) * cartList[i]['keranjang']['jumlah'];
+            createPesanan(
+              context: context,
+              idProduk: cartList[i]['produk']['id_produk'],
+              jumlah: cartList[i]['keranjang']['jumlah'],
+              totalHarga: totalHarga,
+              catatan: cartList[i]['keranjang']['catatan'],
+              alamat: defaultAddress.first['alamat'],
+              idToko: cartList[i]['toko']['id_toko']
+            );
+            context.goNamed('order-created');
+          }
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => const AlertDialog(
+              content: Text('Password salah!'),
+            )
+          );
+        }
+      });
     } else {
       showDialog(
         context: context,
@@ -123,6 +140,13 @@ class _CheckoutPageState extends State<CheckoutPage>{
         )
       );
     }
+  }
+
+  void _setDefault(int idAlamat){
+    setAlamatDefault(context: context, idAlamat: idAlamat).then((res) => setState(() {
+      defaultAddress = json.decode(res!.body)['data'];
+      context.pop();
+    }));
   }
 
   @override
@@ -159,8 +183,8 @@ class _CheckoutPageState extends State<CheckoutPage>{
                       const Icon(Icons.location_on_outlined),
                       const Gap(10),
                       Expanded(
-                        child: address.isNotEmpty ? Text(
-                          address.first['alamat'],
+                        child: defaultAddress.isNotEmpty ? Text(
+                          defaultAddress.first['alamat'],
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ) : const Text(
@@ -170,7 +194,71 @@ class _CheckoutPageState extends State<CheckoutPage>{
                         )
                       ),
                       IconButton(
-                        onPressed: () => context.pushNamed('address'),
+                        onPressed: () => showModalBottomSheet(
+                          isScrollControlled: true,
+                          showDragHandle: true,
+                          context: context,
+                          builder: (BuildContext context) => Container(
+                            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                            height: MediaQuery.of(context).size.height / 2,
+                            child: ListView.builder(
+                              itemCount: addressList.length + 1,
+                              itemBuilder: (BuildContext context, int index){
+                                if(index != addressList.length){
+                                  final address = addressList[index];
+                                  return GestureDetector(
+                                    onLongPress: () => Clipboard.setData(ClipboardData(text: address['alamat'])),
+                                    onTap: () => _setDefault(address['id_alamat']),
+                                    child: Card(
+                                      margin: const EdgeInsets.symmetric(vertical: 5),
+                                      shape: RoundedRectangleBorder(
+                                        side: BorderSide(
+                                          width: 1,
+                                          color: address['id_alamat'] == defaultAddress.first['id_alamat'] ? Theme.of(context).primaryColor : Colors.grey
+                                        ),
+                                        borderRadius: const BorderRadius.all(Radius.circular(10))
+                                      ),
+                                      color: address['id_alamat'] == defaultAddress.first['id_alamat'] ? Theme.of(context).primaryColor.withAlpha(25) : Colors.white,
+                                      elevation: 0,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                        child: Text(
+                                          address['alamat'],
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }
+
+                                return GestureDetector(
+                                  onTap: () => context.pushNamed('add-address'),
+                                  child: Card(
+                                    elevation: 0,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                      child: Wrap(
+                                        crossAxisAlignment: WrapCrossAlignment.center,
+                                        alignment: WrapAlignment.center,
+                                        spacing: 5,
+                                        children: [
+                                          Icon(Icons.add, color: Theme.of(context).primaryColor),
+                                          Text(
+                                            'Tambahkan Alamat',
+                                            style: TextStyle(
+                                              color: Theme.of(context).primaryColor
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
                         icon: const Icon(Icons.edit_outlined),
                       )
                     ],
@@ -303,7 +391,7 @@ class _CheckoutPageState extends State<CheckoutPage>{
                 shape: const WidgetStatePropertyAll(RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(20))
                 )),
-                backgroundColor: address.isNotEmpty ? WidgetStatePropertyAll(Theme.of(context).primaryColor) : const WidgetStatePropertyAll(Colors.grey)
+                backgroundColor: defaultAddress.isNotEmpty ? WidgetStatePropertyAll(Theme.of(context).primaryColor) : const WidgetStatePropertyAll(Colors.grey)
               ),
               child: const Text('Pesan Sekarang'),
             ),

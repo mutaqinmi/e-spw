@@ -234,6 +234,19 @@ void verifyPassword({required BuildContext context, required String password}) a
   }
 }
 
+Future<http.Response> authenticate({required String password}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/auth/verify');
+  final response = await http.post(url, body: json.encode({
+    'password': password
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.getString('token')}'
+  });
+
+  return response;
+}
+
 void updateTelepon({required BuildContext context, required String telepon}) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final url = Uri.https(apiBaseUrl, '/v3/user/update/telepon');
@@ -310,6 +323,63 @@ Future<http.Response?> getAlamat({required BuildContext context}) async {
   return null;
 }
 
+Future<http.Response?> getAlamatById({required BuildContext context, required int idAlamat}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/alamat/$idAlamat');
+  final response = await http.get(url, headers: {
+    'Authorization': 'Bearer ${prefs.getString('token')}'
+  });
+
+  if(!context.mounted) return null;
+  if(response.statusCode == 401){
+    _sessionExpired(context);
+  }
+  if(response.statusCode == 200){
+    return response;
+  }
+
+  return null;
+}
+
+Future<http.Response?> getAlamatDefault({required BuildContext context}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/alamat/default');
+  final response = await http.get(url, headers: {
+    'Authorization': 'Bearer ${prefs.getString('token')}'
+  });
+
+  if(!context.mounted) return null;
+  if(response.statusCode == 401){
+    _sessionExpired(context);
+  }
+  if(response.statusCode == 200){
+    return response;
+  }
+
+  return null;
+}
+
+Future<http.Response?> setAlamatDefault({required BuildContext context, required int idAlamat}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/alamat/default/update');
+  final response = await http.post(url, body: json.encode({
+    'id_alamat': idAlamat
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.getString('token')}'
+  });
+
+  if(!context.mounted) return null;
+  if(response.statusCode == 401){
+    _sessionExpired(context);
+  }
+  if(response.statusCode == 200){
+    return response;
+  }
+
+  return null;
+}
+
 void addAlamat({required BuildContext context, required String address}) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final url = Uri.https(apiBaseUrl, '/v3/user/alamat/add');
@@ -334,6 +404,31 @@ void addAlamat({required BuildContext context, required String address}) async {
     successSnackBar(
       context: context,
       content: 'Alamat berhasil disimpan!'
+    );
+    return context.goNamed('address');
+  }
+}
+
+void editAlamat({required BuildContext context, required int idAlamat, required String alamat}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/alamat/update');
+  final response = await http.patch(url, body: json.encode({
+    'id_alamat': idAlamat,
+    'alamat': alamat
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.getString('token')}'
+  });
+
+  if(!context.mounted) return;
+  if(response.statusCode == 401){
+    _sessionExpired(context);
+  }
+  if(response.statusCode == 200){
+    context.pop();
+    successSnackBar(
+      context: context,
+      content: 'Alamat berhasil diubah!'
     );
     return context.goNamed('address');
   }

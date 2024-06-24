@@ -1,17 +1,28 @@
+import 'dart:convert';
 import 'package:espw/app/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
-class MainAddressPage extends StatefulWidget{
-  const MainAddressPage({super.key});
+class EditAddressPage extends StatefulWidget{
+  const EditAddressPage({super.key, required this.idAlamat});
+  final String idAlamat;
 
   @override
-  State<MainAddressPage> createState() => _MainAddressPageState();
+  State<EditAddressPage> createState() => _EditAddressPageState();
 }
 
-class _MainAddressPageState extends State<MainAddressPage>{
+class _EditAddressPageState extends State<EditAddressPage>{
   final _addressKey = GlobalKey<FormFieldState>();
   String _address = '';
+
+  List address = [];
+  @override
+  void initState() {
+    super.initState();
+    getAlamatById(context: context, idAlamat: int.parse(widget.idAlamat)).then((res) => setState(() {
+      address = json.decode(res!.body)['data'];
+    }));
+  }
 
   void _submit(){
     if(_addressKey.currentState!.validate()){
@@ -33,9 +44,10 @@ class _MainAddressPageState extends State<MainAddressPage>{
           ),
         )
       );
-      addAlamat(
+      editAlamat(
         context: context,
-        address: _address
+        idAlamat: int.parse(widget.idAlamat),
+        alamat: _address
       );
     }
   }
@@ -68,13 +80,13 @@ class _MainAddressPageState extends State<MainAddressPage>{
               key: _addressKey,
               maxLength: 255,
               maxLines: 5,
+              initialValue: address.first['alamat'],
               decoration: const InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10))
                 ),
                 contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                hintText: 'e.g. Lab. RPL, Lt. 2, Gedung Teknologi Informasi (TKJ), SMK Negeri 2 Tasikmalaya',
-                label: Text('Masukkan Alamat Utama'),
+                hintText: 'contoh : Lab. RPL, Lt. 2, Gedung Teknologi Informasi (TKJ), SMK Negeri 2 Tasikmalaya',
               ),
               validator: (value){
                 if(value!.isEmpty){

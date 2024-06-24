@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:espw/app/controllers.dart';
+import 'package:espw/widgets/authenticator.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
@@ -282,7 +283,18 @@ class _ProfilePageState extends State<ProfilePage>{
                           width: double.infinity,
                           child: InkWell(
                             borderRadius: BorderRadius.circular(10),
-                            onTap: () => context.pushNamed('verify-password'),
+                            onTap: () => authenticator(context: context).then((res) {
+                              if(res!){
+                                context.goNamed('change-password');
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) => const AlertDialog(
+                                    content: Text('Password salah!'),
+                                  )
+                                );
+                              }
+                            }),
                             child: Card(
                               color: Colors.transparent,
                               elevation: 0,
