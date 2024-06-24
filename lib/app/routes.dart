@@ -150,7 +150,7 @@ final routes = GoRouter(
           redirect: (BuildContext context, GoRouterState state) async {
             final String? isRedirect = state.uri.queryParameters['isRedirect'];
             if(isRedirect == 'false') return null;
-            final redirectTo = getSelfKelompok(context: context).then((res){
+            final redirectTo = getSelfKelompok(context: context).then((res) async {
               if(json.decode(res!.body)['data'].isNotEmpty){
                 return '/choose-shop';
               } else {

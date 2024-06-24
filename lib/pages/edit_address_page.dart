@@ -55,47 +55,51 @@ class _EditAddressPageState extends State<EditAddressPage>{
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: const Text(
+          'Edit Alamat',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600
+          ),
+        ),
+      ),
       body: SafeArea(
         top: false,
         minimum: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Alamat Utama',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w600
-                  ),
-                ),
-                Text('Isi alamat utama untuk memudahkan penjual menemukan anda.')
-              ],
-            ),
             const Gap(20),
-            TextFormField(
-              key: _addressKey,
-              maxLength: 255,
-              maxLines: 5,
-              initialValue: address.first['alamat'],
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10))
-                ),
-                contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                hintText: 'contoh : Lab. RPL, Lt. 2, Gedung Teknologi Informasi (TKJ), SMK Negeri 2 Tasikmalaya',
-              ),
-              validator: (value){
-                if(value!.isEmpty){
-                  return 'Masukkan alamat terlebih dahulu!';
+            FutureBuilder(
+              future: getAlamatById(context: context, idAlamat: int.parse(widget.idAlamat)),
+              builder: (BuildContext context, AsyncSnapshot response){
+                if(response.hasData){
+                  return TextFormField(
+                    key: _addressKey,
+                    maxLength: 255,
+                    maxLines: 5,
+                    initialValue: json.decode(response.data.body)['data'].first['alamat'],
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))
+                      ),
+                      contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      hintText: 'contoh : Lab. RPL, Lt. 2, Gedung Teknologi Informasi (TKJ), SMK Negeri 2 Tasikmalaya',
+                    ),
+                    validator: (value){
+                      if(value!.isEmpty){
+                        return 'Masukkan alamat terlebih dahulu!';
+                      }
+
+                      return null;
+                    },
+                    onSaved: (value) => _address = value!,
+                  );
                 }
 
-                return null;
-              },
-              onSaved: (value) => _address = value!,
+                return const SizedBox();
+              }
             ),
           ],
         ),

@@ -344,18 +344,7 @@ class _ShopPageState extends State<ShopPage>{
                                                 borderRadius: BorderRadius.all(Radius.circular(20)),
                                                 color: Colors.white
                                               ),
-                                              child: Wrap(
-                                                spacing: 2,
-                                                crossAxisAlignment: WrapCrossAlignment.center,
-                                                children: [
-                                                  Text(topProductList.first['produk']['rating_produk'].toString()),
-                                                  Icon(
-                                                    Icons.star_rate_rounded,
-                                                    color: Theme.of(context).primaryColor,
-                                                    size: 16,
-                                                  ),
-                                                ],
-                                              )
+                                              child: Text('Terjual ${topProductList.first['produk']['jumlah_terjual']}'),
                                             ),
                                           ),
                                           Positioned(
@@ -375,10 +364,10 @@ class _ShopPageState extends State<ShopPage>{
                                                 )
                                               ),
                                               child: Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                                                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                                                 child: Row(
                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.end,
                                                   children: [
                                                     Expanded(
                                                       child: Column(
@@ -407,19 +396,13 @@ class _ShopPageState extends State<ShopPage>{
                                                     const Gap(20),
                                                     Column(
                                                       crossAxisAlignment: CrossAxisAlignment.end,
+                                                      mainAxisAlignment: MainAxisAlignment.end,
                                                       children: [
                                                         Text(
                                                           'Rp. ${formatter.format(int.parse(topProductList.first['produk']['harga']))}',
                                                           style: const TextStyle(
-                                                            fontSize: 14,
+                                                            fontSize: 18,
                                                             fontWeight: FontWeight.w600,
-                                                            color: Colors.white
-                                                          ),
-                                                        ),
-                                                        Text(
-                                                          'Terjual ${topProductList.first['produk']['jumlah_terjual']}',
-                                                          style: const TextStyle(
-                                                            fontSize: 12,
                                                             color: Colors.white
                                                           ),
                                                         ),
@@ -796,6 +779,9 @@ class _ShopPageState extends State<ShopPage>{
                           ),
                         );
                       },
+                    ),
+                    const SliverToBoxAdapter(
+                      child: Gap(100),
                     )
                   ],
                 );

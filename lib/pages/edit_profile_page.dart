@@ -1,4 +1,5 @@
 // import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:convert';
 import 'dart:io';
 import 'package:espw/app/controllers.dart';
 import 'package:flutter/material.dart';
@@ -87,241 +88,177 @@ class _EditProfilePageState extends State<EditProfilePage>{
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: SafeArea(
-          minimum: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            children: [
-              Column(
-                children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundImage: NetworkImage(
-                      profilePicture.isEmpty ? 'https://$baseUrl/images/profile.png' : 'https://$apiBaseUrl/public/$profilePicture'
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () => _getImage(),
-                    child: const Text('Ubah Foto Profil'),
-                  )
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Wrap(
-                    spacing: 5,
-                    crossAxisAlignment: WrapCrossAlignment.center,
+      body: FutureBuilder(
+        future: getDataSiswa(context: context),
+        builder: (BuildContext context, AsyncSnapshot response){
+          if(response.connectionState == ConnectionState.done){
+            if(json.decode(response.data.body).isNotEmpty){
+              final data = json.decode(response.data.body);
+              return SingleChildScrollView(
+                child: SafeArea(
+                  minimum: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
                     children: [
-                      Text('Info Profil'),
-                      Icon(Icons.info_outline)
-                    ],
-                  ),
-                  const Gap(10),
-                  Row(
-                    children: [
-                      const Expanded(
-                        flex: 1,
-                        child: Text(
-                          'Nama',
-                          style: TextStyle(
-                            color: Colors.grey
-                          ),
-                        ),
-                      ),
-                      FutureBuilder(
-                        future: _getUserData(),
-                        builder: (BuildContext context, AsyncSnapshot response){
-                          if(response.hasData){
-                            return Expanded(
-                              flex: 2,
-                              child: Text(
-                                response.data.first['nama'],
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600
-                                ),
-                              ),
-                            );
-                          }
-
-                          return const Expanded(
-                            flex: 2,
-                            child: Text(
-                              'Nama siswa',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600
-                              ),
+                      Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 50,
+                            backgroundImage: NetworkImage(
+                              data['siswa']['foto_profil'].isEmpty ? 'https://$baseUrl/images/profile.png' : 'https://$apiBaseUrl/public/${data['siswa']['foto_profil']}'
                             ),
-                          );
-                        },
-                      )
-                    ],
-                  ),
-                  const Gap(5),
-                  Row(
-                    children: [
-                      const Expanded(
-                        flex: 1,
-                        child: Text(
-                          'Kelas',
-                          style: TextStyle(
-                            color: Colors.grey
                           ),
-                        ),
+                          TextButton(
+                            onPressed: () => _getImage(),
+                            child: const Text('Ubah Foto Profil'),
+                          )
+                        ],
                       ),
-                      FutureBuilder(
-                        future: _getUserData(),
-                        builder: (BuildContext context, AsyncSnapshot response){
-                          if(response.hasData){
-                            return Expanded(
-                              flex: 2,
-                              child: Text(
-                                response.data.first['kelas'],
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600
-                                ),
-                              ),
-                            );
-                          }
-
-                          return const Expanded(
-                            flex: 2,
-                            child: Text(
-                              'Kelas',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600
-                              ),
-                            ),
-                          );
-                        }
-                      )
-                    ],
-                  ),
-                ],
-              ),
-              const Gap(10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Wrap(
-                    spacing: 5,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      Text('Info Pribadi'),
-                      Icon(Icons.info_outline)
-                    ],
-                  ),
-                  const Gap(10),
-                  Row(
-                    children: [
-                      const Expanded(
-                        flex: 1,
-                        child: Text(
-                          'NIS',
-                          style: TextStyle(
-                            color: Colors.grey
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Wrap(
+                            spacing: 5,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              Text('Info Profil'),
+                              Icon(Icons.info_outline)
+                            ],
                           ),
-                        ),
-                      ),
-                      FutureBuilder(
-                        future: _getUserData(),
-                        builder: (BuildContext context, AsyncSnapshot response){
-                          if(response.hasData){
-                            return Expanded(
-                              flex: 2,
-                              child: Text(
-                                response.data.first['nis'].toString(),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600
-                                ),
-                              ),
-                            );
-                          }
-
-                          return const Expanded(
-                            flex: 2,
-                            child: Text(
-                              'NIS',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600
-                              ),
-                            ),
-                          );
-                        },
-                      )
-                    ],
-                  ),
-                  const Gap(5),
-                  Row(
-                    children: [
-                      const Expanded(
-                        flex: 1,
-                        child: Text(
-                          'No Telepon',
-                          style: TextStyle(
-                            color: Colors.grey
-                          ),
-                        ),
-                      ),
-                      FutureBuilder(
-                        future: _getUserData(),
-                        builder: (BuildContext context, AsyncSnapshot response){
-                          if(response.hasData){
-                            return Expanded(
-                              flex: 2,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    response.data.first['telepon'],
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600
-                                    ),
+                          const Gap(10),
+                          Row(
+                            children: [
+                              const Expanded(
+                                flex: 1,
+                                child: Text(
+                                  'Nama',
+                                  style: TextStyle(
+                                    color: Colors.grey
                                   ),
-                                  GestureDetector(
-                                    onTap: () => context.pushNamed('change-phone'),
-                                    child: Text(
-                                      'Ubah',
-                                      style: TextStyle(
-                                        color: Theme.of(context).primaryColor,
-                                        fontWeight: FontWeight.w500
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  data['siswa']['nama'],
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          const Gap(5),
+                          Row(
+                            children: [
+                              const Expanded(
+                                flex: 1,
+                                child: Text(
+                                  'Kelas',
+                                  style: TextStyle(
+                                    color: Colors.grey
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  data['kelas']['kelas'],
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                      const Gap(10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Wrap(
+                            spacing: 5,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              Text('Info Pribadi'),
+                              Icon(Icons.info_outline)
+                            ],
+                          ),
+                          const Gap(10),
+                          Row(
+                            children: [
+                              const Expanded(
+                                flex: 1,
+                                child: Text(
+                                  'NIS',
+                                  style: TextStyle(
+                                    color: Colors.grey
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  data['siswa']['nis'],
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          const Gap(5),
+                          Row(
+                            children: [
+                              const Expanded(
+                                flex: 1,
+                                child: Text(
+                                  'No Telepon',
+                                  style: TextStyle(
+                                    color: Colors.grey
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      data['siswa']['telepon'],
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-
-                          return Expanded(
-                            flex: 2,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text('Telepon'),
-                                GestureDetector(
-                                  onTap: () => context.pushNamed('change-phone'),
-                                  child: Text(
-                                    'Ubah',
-                                    style: TextStyle(
-                                      color: Theme.of(context).primaryColor,
-                                      fontWeight: FontWeight.w500
+                                    GestureDetector(
+                                      onTap: () => context.pushNamed('change-phone'),
+                                      child: Text(
+                                        'Ubah',
+                                        style: TextStyle(
+                                          color: Theme.of(context).primaryColor,
+                                          fontWeight: FontWeight.w500
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          );
-                        }
+                              )
+                            ],
+                          ),
+                        ],
                       )
                     ],
                   ),
-                ],
-              )
-            ],
-          ),
-        ),
-      ),
+                ),
+              );
+            }
+          }
+
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      )
     );
   }
 }

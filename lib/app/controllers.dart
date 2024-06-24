@@ -1167,12 +1167,51 @@ Future<http.Response?> getDataPesanan({required BuildContext context, required S
   return null;
 }
 
+Future<http.Response?> getAllDataPesanan({required BuildContext context}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/order/all');
+  final response = await http.get(url, headers: {
+    'Authorization': 'Bearer ${prefs.getString('token')}'
+  });
+
+  if(!context.mounted) return null;
+  if(response.statusCode == 401){
+    _sessionExpired(context);
+  }
+  if(response.statusCode == 200){
+    return response;
+  }
+
+  return null;
+}
+
 Future<http.Response?> getPesananByToko({required BuildContext context, required String idToko, required String statusPesanan}) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final url = Uri.https(apiBaseUrl, '/v3/toko/orders');
   final response = await http.post(url, body: json.encode({
     'id_toko': idToko,
     'status': statusPesanan
+  }), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ${prefs.getString('token')}'
+  });
+
+  if(!context.mounted) return null;
+  if(response.statusCode == 401){
+    _sessionExpired(context);
+  }
+  if(response.statusCode == 200){
+    return response;
+  }
+
+  return null;
+}
+
+Future<http.Response?> getAllPesananByToko({required BuildContext context, required String idToko}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/toko/orders/all');
+  final response = await http.post(url, body: json.encode({
+    'id_toko': idToko,
   }), headers: {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer ${prefs.getString('token')}'

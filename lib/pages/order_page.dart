@@ -85,7 +85,7 @@ class _OrderPageState extends State<OrderPage>{
 
   Widget _ongoingOrder(){
     return Scaffold(
-      body: ListView.builder(
+      body: onGoingOrderList.isNotEmpty ? ListView.builder(
         itemCount: onGoingOrderList.length,
         itemBuilder: (BuildContext context, int index){
           final order = onGoingOrderList[index];
@@ -102,13 +102,31 @@ class _OrderPageState extends State<OrderPage>{
             idToko: order['toko']['id_toko'],
           );
         },
+      ) : Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/image/order.png',
+              width: 200,
+            ),
+            const Gap(10),
+            const Text(
+              'Anda belum memesan apapun.',
+              style: TextStyle(
+                fontStyle: FontStyle.italic
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
 
   Widget _finishedOrder(){
     return Scaffold(
-      body: ListView.builder(
+      body: finishedOrderList.isNotEmpty ? ListView.builder(
         itemCount: finishedOrderList.length,
         itemBuilder: (BuildContext context, int index){
           final order = finishedOrderList[index];
@@ -127,6 +145,24 @@ class _OrderPageState extends State<OrderPage>{
             rating: rating,
           );
         },
+      ) : Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/image/order.png',
+              width: 200,
+            ),
+            const Gap(10),
+            const Text(
+              'Anda belum memesan apapun.',
+              style: TextStyle(
+                fontStyle: FontStyle.italic
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -250,7 +286,12 @@ class _OrderItemState extends State<OrderItem>{
           Visibility(
             visible: widget.rating!.contains(widget.idTransaksi) ? false : true,
             child: FilledButton(
-              onPressed: () => _rateOrder(context),
+              onPressed: () => _rateOrder(
+                context: context,
+                fotoProduk: widget.productImage,
+                namaToko: widget.shopName,
+                namaProduk: widget.productName
+              ),
               child: const Text('Beri penilaian'),
             ),
           )
@@ -274,14 +315,23 @@ class _OrderItemState extends State<OrderItem>{
 
   void _submit(){
     _ulasanKey.currentState!.save();
-    addUlasan(
-      context: context,
-      idProduk: widget.idProduk!,
-      idTransaksi: widget.idTransaksi!,
-      ulasan: _ulasan,
-      rate: initialRate.toString(),
-      idToko: widget.idToko!
-    );
+    if(initialRate > 0.0){
+      addUlasan(
+        context: context,
+        idProduk: widget.idProduk!,
+        idTransaksi: widget.idTransaksi!,
+        ulasan: _ulasan,
+        rate: initialRate.toString(),
+        idToko: widget.idToko!
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => const AlertDialog(
+          content: Text('Rating masih kosong'),
+        )
+      );
+    }
   }
 
   @override
@@ -392,9 +442,10 @@ class _OrderItemState extends State<OrderItem>{
     );
   }
 
-  _rateOrder(BuildContext context){
+  _rateOrder({required BuildContext context, required String fotoProduk, required String namaToko, required String namaProduk}){
     showModalBottomSheet(
       isScrollControlled: true,
+      showDragHandle: true,
       context: context,
       builder: (context){
         return SingleChildScrollView(
@@ -405,6 +456,68 @@ class _OrderItemState extends State<OrderItem>{
               width: double.infinity,
               child: Column(
                 children: [
+                  Card(
+                    elevation: 0,
+                    margin: const EdgeInsets.only(bottom: 20),
+                    color: Colors.grey.withAlpha(80),
+                    shape: RoundedRectangleBorder(
+                      side: const BorderSide(
+                        color: Colors.grey,
+                        width: .5
+                      ),
+                      borderRadius: BorderRadius.circular(10)
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: CachedNetworkImage(
+                              imageUrl: fotoProduk,
+                              width: 45,
+                              height: 45,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 15),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    namaToko,
+                                    style: TextStyle(
+                                      color: Colors.black.withAlpha(150)
+                                    ),
+                                  ),
+                                  Text(
+                                    namaProduk,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black.withAlpha(150)
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          )
+                        ],
+                      ),
+                    )
+                  ),
+                  const Text(
+                    'Bagaimana pendapatmu?',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: StatefulBuilder(
@@ -432,7 +545,7 @@ class _OrderItemState extends State<OrderItem>{
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Apa yang buat anda puas?',
+                        'Tulis pendapat kamu disini',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500
@@ -446,7 +559,7 @@ class _OrderItemState extends State<OrderItem>{
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(15))
                           ),
-                          hintText: 'Contoh: Rasanya pas tidak terlalu pedas dan tidak terlalu hambar, pengantarannya cepat'
+                          hintText: 'contoh: Rasanya pas tidak terlalu pedas dan tidak terlalu hambar, pengantarannya cepat'
                         ),
                         onSaved: (value) => _ulasan = value!,
                       ),
