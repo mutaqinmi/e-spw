@@ -786,12 +786,26 @@ class _ShopPageState extends State<ShopPage>{
                   ],
                 );
               } else if (shopList.isEmpty){
-                return const CustomScrollView(
+                return CustomScrollView(
                   slivers: [
-                    SliverAppBar(),
+                    const SliverAppBar(),
                     SliverFillRemaining(
                       child: Center(
-                        child: Text('Toko ini belum memiliki produk.'),
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              'assets/image/empty.png',
+                              width: 200,
+                            ),
+                            const Gap(10),
+                            const Text(
+                              'Toko ini belum memiliki produk.',
+                              style: TextStyle(
+                                fontStyle: FontStyle.italic
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     )
                   ],

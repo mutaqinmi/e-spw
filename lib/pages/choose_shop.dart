@@ -26,26 +26,12 @@ class _ChooseShopState extends State<ChooseShop>{
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          const SliverAppBar(),
-          const SliverToBoxAdapter(
-            child: SafeArea(
-              top: false,
-              minimum: EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Pilih Toko',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 22
-                    ),
-                  ),
-                  Text(
-                    'Masuk ke toko yang anda ikuti.'
-                  ),
-                  Gap(20)
-                ],
+          const SliverAppBar(
+            title: Text(
+              'Pilih Toko',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 18
               ),
             ),
           ),
@@ -100,33 +86,12 @@ class _ChooseShopState extends State<ChooseShop>{
               );
             },
           ),
-          SliverToBoxAdapter(
-            child: GestureDetector(
-              onTap: () => context.pushNamed('login-shop', queryParameters: {'isRedirect': 'false'}),
-              child: Card(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                elevation: 0,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    alignment: WrapAlignment.center,
-                    spacing: 5,
-                    children: [
-                      Icon(Icons.add, color: Theme.of(context).primaryColor),
-                      Text(
-                        'Tambahkan toko',
-                        style: TextStyle(
-                          color: Theme.of(context).primaryColor
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          )
         ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.pushNamed('login-shop', queryParameters: {'isRedirect': 'false'}),
+        icon: const Icon(Icons.add),
+        label: const Text('Tambah Toko'),
       ),
     );
   }

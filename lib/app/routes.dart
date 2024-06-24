@@ -9,11 +9,9 @@ import 'package:espw/pages/change_phone.dart';
 import 'package:espw/pages/checkout_page.dart';
 import 'package:espw/pages/choose_shop.dart';
 import 'package:espw/pages/create_shop_page.dart';
-import 'package:espw/pages/detail_shop.dart';
 import 'package:espw/pages/edit_product_page.dart';
 import 'package:espw/pages/edit_profile_page.dart';
 import 'package:espw/pages/favorite_page.dart';
-import 'package:espw/pages/information_page.dart';
 import 'package:espw/pages/join_shop_page.dart';
 import 'package:espw/pages/list_address_page.dart';
 import 'package:espw/pages/login_shop_page.dart';
@@ -26,15 +24,12 @@ import 'package:espw/pages/profile_page.dart';
 import 'package:espw/pages/quick_mode_page.dart';
 import 'package:espw/pages/rate_page.dart';
 import 'package:espw/pages/review_area_page.dart';
-import 'package:espw/pages/set_schedule_page.dart';
 import 'package:espw/pages/shop_rate_page.dart';
-import 'package:espw/pages/shop_settings_page.dart';
 import 'package:espw/pages/shopdash_page.dart';
 import 'package:espw/pages/unique_code.dart';
 import 'package:espw/pages/upload_product_image_oncreate_page.dart';
 import 'package:espw/pages/upload_product_image_page.dart';
 import 'package:espw/pages/upload_profile_image_page.dart';
-import 'package:espw/pages/verify_password_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -276,13 +271,22 @@ final routes = GoRouter(
               builder: (BuildContext context, GoRouterState state) => QuickModePage(
                 idToko: state.uri.queryParameters['id_toko']!,
               )
+            ),
+            GoRoute(
+              name: 'unique-code',
+              path: 'unique-code',
+              builder: (BuildContext context, GoRouterState state) => UniqueCode(
+                idToko: state.uri.queryParameters['id_toko']!,
+              )
+            ),
+            GoRoute(
+              name: 'member',
+              path: 'member',
+              builder: (BuildContext context, GoRouterState state) => MemberPage(
+                idToko: state.uri.queryParameters['id_toko']!,
+              )
             )
           ]
-        ),
-        GoRoute(
-          name: 'verify-password',
-          path: 'verify-password',
-          builder: (BuildContext context, GoRouterState state) => const VerifyPassword(),
         ),
         GoRoute(
           name: 'change-password',
@@ -311,52 +315,6 @@ final routes = GoRouter(
                 idAlamat: state.uri.queryParameters['id_alamat']!,
               ),
             ),
-          ]
-        ),
-        GoRoute(
-          name: 'shop-settings',
-          path: 'shop-settings',
-          builder: (BuildContext context, GoRouterState state) => ShopSettingsPage(
-            idToko: state.uri.queryParameters['id_toko']!,
-          ),
-          routes: [
-            GoRoute(
-              name: 'shop-info',
-              path: 'shop-info',
-              builder: (BuildContext context, GoRouterState state) => InformationPage(
-                idToko: state.uri.queryParameters['id_toko']!,
-              ),
-              routes: [
-                GoRoute(
-                  name: 'detail-shop',
-                  path: 'detail-shop',
-                  builder: (BuildContext context, GoRouterState state) => DetailShop(
-                    idToko: state.uri.queryParameters['id_toko']!,
-                  ),
-                ),
-                GoRoute(
-                  name: 'unique-code',
-                  path: 'unique-code',
-                  builder: (BuildContext context, GoRouterState state) => UniqueCode(
-                    idToko: state.uri.queryParameters['id_toko']!,
-                  )
-                ),
-                GoRoute(
-                  name: 'member',
-                  path: 'member',
-                  builder: (BuildContext context, GoRouterState state) => MemberPage(
-                    idToko: state.uri.queryParameters['id_toko']!,
-                  )
-                )
-              ]
-            ),
-            GoRoute(
-              name: 'set-schedule',
-              path: 'set-schedule',
-              builder: (BuildContext context, GoRouterState state) => SetSchedulePage(
-                idToko: state.uri.queryParameters['id_toko']!,
-              )
-            )
           ]
         ),
         GoRoute(
