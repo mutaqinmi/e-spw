@@ -179,33 +179,6 @@ class _CartPageState extends State<CartPage>{
               ),
             ),
           ),
-          SliverToBoxAdapter(
-            child: Visibility(
-              visible: cartList.isEmpty ? false : true,
-              child: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Swipe untuk menghapus item dari keranjang',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontStyle: FontStyle.italic
-                      ),
-                    ),
-                    Gap(10),
-                    Divider(
-                      color: Colors.grey,
-                      thickness: 0.5,
-                      indent: 16,
-                      endIndent: 16,
-                    ),
-                  ],
-                ),
-              ),
-            )
-          ),
           cartList.isEmpty ?
           SliverToBoxAdapter(
             child: SafeArea(
@@ -241,186 +214,208 @@ class _CartPageState extends State<CartPage>{
             )
           ) :
           SliverList.builder(
-            itemCount: cartList.length,
+            itemCount: cartList.length + 1,
             itemBuilder: (BuildContext context, int index){
-              final item = cartList[index];
-              return Dismissible(
-                key: Key(item['keranjang']['id_keranjang'].toString()),
-                dismissThresholds: const {
-                  DismissDirection.startToEnd: .9,
-                  DismissDirection.endToStart: .9
-                },
-                background: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.red
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.only(left: 30),
-                    child: Row(
-                      children: [
-                        Icon(Icons.delete, color: Colors.white)
-                      ],
+              if(index != cartList.length){
+                final item = cartList[index];
+                return Dismissible(
+                  key: Key(item['keranjang']['id_keranjang'].toString()),
+                  dismissThresholds: const {
+                    DismissDirection.startToEnd: .9,
+                    DismissDirection.endToStart: .9
+                  },
+                  background: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.red
                     ),
-                  )
-                ),
-                secondaryBackground: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.red
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.only(right: 30),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Icon(Icons.delete, color: Colors.white)
-                      ],
-                    ),
-                  )
-                ),
-                confirmDismiss: (DismissDirection dismissDirection) => _confirmDismiss(context, item['produk']['nama_produk']),
-                onDismissed: (DismissDirection dismissDirection){
-                  _deleteFromCart(context, item['keranjang']['id_keranjang']);
-                  setState(() {
-                    cartList.removeAt(index);
-                  });
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Wrap(
-                          spacing: 5,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            const Icon(Icons.storefront),
-                            Text(item['toko']['nama_toko']),
-                            _isOpen(item['toko']['is_open'])
-                          ],
-                        ),
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    child: const Padding(
+                      padding: EdgeInsets.only(left: 30),
+                      child: Row(
                         children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: CachedNetworkImage(
-                              imageUrl: 'https://$apiBaseUrl/public/${item['produk']['foto_produk']}',
-                              width: 100,
-                              height: 100,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 15),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item['produk']['nama_produk'],
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 50,
-                                    child: Text(
-                                      'Catatan: ${item['keranjang']['catatan'] == '' ? '...' : item['keranjang']['catatan']}',
-                                      maxLines: 3,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Rp. ${formatter.format(int.parse(item['produk']['harga']))}',
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600
-                                        ),
-                                      ),
-                                      Row(
-                                        children: [
-                                          IconButton(
-                                            onPressed: (){
-                                              if(item['toko']['is_open']){
-                                                if(item['keranjang']['jumlah'] > 1){
-                                                  _removeQty(item['keranjang']['jumlah'], item['keranjang']['id_keranjang']);
-                                                  setState(() {
-                                                    item['keranjang']['jumlah']--;
-                                                  });
-                                                }
-                                              }
-                                            },
-                                            visualDensity: VisualDensity.compact,
-                                            style: ButtonStyle(
-                                              backgroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColor),
-                                              padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-                                            ),
-                                            icon: const Icon(
-                                              Icons.remove,
-                                              size: 20,
-                                              color: Colors.white,
-                                            ),
-                                            constraints: const BoxConstraints(
-                                              maxWidth: 50,
-                                              maxHeight: 50
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 30,
-                                            child: Center(
-                                              child: Text(
-                                                item['keranjang']['jumlah'].toString(),
-                                                style: const TextStyle(
-                                                  fontSize: 16
-                                                ),
-                                              ),
-                                            )
-                                          ),
-                                          IconButton(
-                                            onPressed: (){
-                                              if(item['toko']['is_open']){
-                                                _addQty(item['keranjang']['jumlah'], item['keranjang']['id_keranjang']);
-                                                setState(() {
-                                                  item['keranjang']['jumlah']++;
-                                                });
-                                              }
-                                            },
-                                            visualDensity: VisualDensity.compact,
-                                            style: ButtonStyle(
-                                              backgroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColor),
-                                              padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-                                            ),
-                                            icon: const Icon(
-                                              Icons.add,
-                                              size: 20,
-                                              color: Colors.white,
-                                            ),
-                                            constraints: const BoxConstraints(
-                                              maxWidth: 50,
-                                              maxHeight: 50
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
-                            )
-                          )
+                          Icon(Icons.delete, color: Colors.white)
                         ],
                       ),
-                    ],
+                    )
                   ),
-                )
+                  secondaryBackground: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.red
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.only(right: 30),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Icon(Icons.delete, color: Colors.white)
+                        ],
+                      ),
+                    )
+                  ),
+                  confirmDismiss: (DismissDirection dismissDirection) => _confirmDismiss(context, item['produk']['nama_produk']),
+                  onDismissed: (DismissDirection dismissDirection){
+                    _deleteFromCart(context, item['keranjang']['id_keranjang']);
+                    setState(() {
+                      cartList.removeAt(index);
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Wrap(
+                            spacing: 5,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              const Icon(Icons.storefront),
+                              Text(item['toko']['nama_toko']),
+                              _isOpen(item['toko']['is_open'])
+                            ],
+                          ),
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: CachedNetworkImage(
+                                imageUrl: 'https://$apiBaseUrl/public/${item['produk']['foto_produk']}',
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 15),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      item['produk']['nama_produk'],
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 50,
+                                      child: Text(
+                                        'Catatan: ${item['keranjang']['catatan'] == '' ? '...' : item['keranjang']['catatan']}',
+                                        maxLines: 3,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Rp. ${formatter.format(int.parse(item['produk']['harga']))}',
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600
+                                          ),
+                                        ),
+                                        Row(
+                                          children: [
+                                            IconButton(
+                                              onPressed: (){
+                                                if(item['toko']['is_open']){
+                                                  if(item['keranjang']['jumlah'] > 1){
+                                                    _removeQty(item['keranjang']['jumlah'], item['keranjang']['id_keranjang']);
+                                                    setState(() {
+                                                      item['keranjang']['jumlah']--;
+                                                    });
+                                                  }
+                                                }
+                                              },
+                                              visualDensity: VisualDensity.compact,
+                                              style: ButtonStyle(
+                                                backgroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColor),
+                                                padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                                              ),
+                                              icon: const Icon(
+                                                Icons.remove,
+                                                size: 20,
+                                                color: Colors.white,
+                                              ),
+                                              constraints: const BoxConstraints(
+                                                maxWidth: 50,
+                                                maxHeight: 50
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 30,
+                                              child: Center(
+                                                child: Text(
+                                                  item['keranjang']['jumlah'].toString(),
+                                                  style: const TextStyle(
+                                                    fontSize: 16
+                                                  ),
+                                                ),
+                                              )
+                                            ),
+                                            IconButton(
+                                              onPressed: (){
+                                                if(item['toko']['is_open']){
+                                                  _addQty(item['keranjang']['jumlah'], item['keranjang']['id_keranjang']);
+                                                  setState(() {
+                                                    item['keranjang']['jumlah']++;
+                                                  });
+                                                }
+                                              },
+                                              visualDensity: VisualDensity.compact,
+                                              style: ButtonStyle(
+                                                backgroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColor),
+                                                padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                                              ),
+                                              icon: const Icon(
+                                                Icons.add,
+                                                size: 20,
+                                                color: Colors.white,
+                                              ),
+                                              constraints: const BoxConstraints(
+                                                maxWidth: 50,
+                                                maxHeight: 50
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              )
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  )
+                );
+              }
+
+              return const SafeArea(
+                top: false,
+                minimum: EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  children: [
+                    Divider(
+                      thickness: .25,
+                    ),
+                    Gap(5),
+                    Text(
+                      'Swipe untuk menghapus produk dari keranjang',
+                      style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontSize: 12
+                      ),
+                    )
+                  ],
+                ),
               );
             },
           ),

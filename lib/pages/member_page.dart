@@ -17,27 +17,14 @@ class _MemberPageState extends State<MemberPage>{
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          const SliverAppBar(),
-          const SliverToBoxAdapter(
-            child: SafeArea(
-              top: false,
-              minimum: EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Anggota',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w600
-                    ),
-                  ),
-                  Text(
-                    'Daftar anggota di toko ini.'
-                  )
-                ],
+          const SliverAppBar(
+            title: Text(
+              'Anggota',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600
               ),
-            )
+            ),
           ),
           FutureBuilder(
             future: getDataKelompok(context: context, idToko: widget.idToko),
@@ -49,6 +36,7 @@ class _MemberPageState extends State<MemberPage>{
                   itemBuilder: (BuildContext context, int index){
                     final kelompok = json.decode(response.data.body)['data'][index];
                     return SafeArea(
+                      top: false,
                       minimum: const EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
                         children: [

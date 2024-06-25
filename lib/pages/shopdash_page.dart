@@ -311,10 +311,38 @@ class _ShopDashPageState extends State<ShopDashPage>{
                                   onPressed: () => context.pushNamed('order-status', queryParameters: {'id_toko': widget.idToko, 'initial_index': '0'}),
                                   child: Column(
                                     children: [
-                                      Icon(
-                                        Icons.upcoming_outlined,
-                                        size: 35,
-                                        color: Theme.of(context).primaryColor,
+                                      StreamBuilder(
+                                        stream: Stream.periodic(const Duration(seconds: 1)).asyncMap((t) => getAllPesananByToko(context: context, idToko: widget.idToko)),
+                                        builder: (BuildContext context, AsyncSnapshot response){
+                                          if(response.hasData){
+                                            final order = json.decode(response.data.body)['data'];
+                                            final orderList = [];
+                                            for(int i = 0; i < order.length; i++){
+                                              if(order[i]['transaksi']['status'] != 'Selesai' && order[i]['transaksi']['status'] != 'Diproses'){
+                                                orderList.add(order[i]);
+                                              }
+                                            }
+
+                                            return Badge(
+                                              isLabelVisible: orderList.isNotEmpty ? true : false,
+                                              label: Text(orderList.length.toString()),
+                                              child: Icon(
+                                                Icons.upcoming_outlined,
+                                                color: Theme.of(context).primaryColor,
+                                                size: 35,
+                                              ),
+                                            );
+                                          }
+
+                                          return Badge(
+                                            isLabelVisible: false,
+                                            child: Icon(
+                                              Icons.upcoming_outlined,
+                                              color: Theme.of(context).primaryColor,
+                                              size: 35,
+                                            ),
+                                          );
+                                        },
                                       ),
                                       const Gap(10),
                                       const Text('Pesanan baru')
@@ -335,10 +363,38 @@ class _ShopDashPageState extends State<ShopDashPage>{
                                   onPressed: () => context.pushNamed('order-status', queryParameters: {'id_toko': widget.idToko, 'initial_index': '1'}),
                                   child: Column(
                                     children: [
-                                      Icon(
-                                        Icons.event_repeat_outlined,
-                                        size: 35,
-                                        color: Theme.of(context).primaryColor,
+                                      StreamBuilder(
+                                        stream: Stream.periodic(const Duration(seconds: 1)).asyncMap((t) => getAllPesananByToko(context: context, idToko: widget.idToko)),
+                                        builder: (BuildContext context, AsyncSnapshot response){
+                                          if(response.hasData){
+                                            final order = json.decode(response.data.body)['data'];
+                                            final orderList = [];
+                                            for(int i = 0; i < order.length; i++){
+                                              if(order[i]['transaksi']['status'] != 'Menunggu Konfirmasi' && order[i]['transaksi']['status'] != 'Selesai'){
+                                                orderList.add(order[i]);
+                                              }
+                                            }
+
+                                            return Badge(
+                                              isLabelVisible: orderList.isNotEmpty ? true : false,
+                                              label: Text(orderList.length.toString()),
+                                              child: Icon(
+                                                Icons.event_repeat_outlined,
+                                                color: Theme.of(context).primaryColor,
+                                                size: 35,
+                                              ),
+                                            );
+                                          }
+
+                                          return Badge(
+                                            isLabelVisible: false,
+                                            child: Icon(
+                                              Icons.event_repeat_outlined,
+                                              color: Theme.of(context).primaryColor,
+                                              size: 35,
+                                            ),
+                                          );
+                                        },
                                       ),
                                       const Gap(10),
                                       const Text('Diproses')
@@ -347,6 +403,40 @@ class _ShopDashPageState extends State<ShopDashPage>{
                                 ),
                               ),
                             ],
+                          ),
+                          const Gap(10),
+                          InkWell(
+                            borderRadius: BorderRadius.circular(10),
+                            onTap: () => context.pushNamed('quick-mode', queryParameters: {'id_toko': widget.idToko}),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Card(
+                                color: Colors.transparent,
+                                elevation: 0,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Wrap(
+                                      crossAxisAlignment: WrapCrossAlignment.center,
+                                      spacing: 10,
+                                      children: [
+                                        Icon(
+                                          Icons.storefront_outlined,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                        const Text(
+                                          'Quick Mode',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const Icon(Icons.keyboard_arrow_right)
+                                  ],
+                                ),
+                              ),
+                            )
                           ),
                         ],
                       ),
@@ -438,7 +528,7 @@ class _ShopDashPageState extends State<ShopDashPage>{
                                       spacing: 10,
                                       children: [
                                         Icon(
-                                          Icons.star_rate_outlined,
+                                          Icons.star_outline_rounded,
                                           color: Theme.of(context).primaryColor,
                                         ),
                                         const Text(
@@ -504,40 +594,6 @@ class _ShopDashPageState extends State<ShopDashPage>{
                                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                       onChanged: (value) => _updateJadwalToko(),
                                     )
-                                  ],
-                                ),
-                              ),
-                            )
-                          ),
-                          const Gap(5),
-                          InkWell(
-                            borderRadius: BorderRadius.circular(10),
-                            onTap: () => context.pushNamed('quick-mode', queryParameters: {'id_toko': widget.idToko}),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: Card(
-                                color: Colors.transparent,
-                                elevation: 0,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Wrap(
-                                      crossAxisAlignment: WrapCrossAlignment.center,
-                                      spacing: 10,
-                                      children: [
-                                        Icon(
-                                          Icons.storefront_outlined,
-                                          color: Theme.of(context).primaryColor,
-                                        ),
-                                        const Text(
-                                          'Quick Mode',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const Icon(Icons.keyboard_arrow_right)
                                   ],
                                 ),
                               ),

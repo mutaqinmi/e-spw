@@ -898,7 +898,7 @@ void updateFotoProduk({required BuildContext context, required String idProduk, 
   }
 }
 
-void updateProduk({required BuildContext context, required String namaProduk, required String harga, required String stok, required String deskripsiProduk, required String detailProduk, required String idProduk, required String idToko}) async {
+void updateProduk({required BuildContext context, required String namaProduk, required String harga, required String stok, required String deskripsiProduk, required String idProduk, required String idToko}) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final url = Uri.https(apiBaseUrl, '/v3/produk/update');
   final response = await http.patch(url, body: json.encode({
@@ -907,7 +907,6 @@ void updateProduk({required BuildContext context, required String namaProduk, re
     'harga': harga,
     'stok': stok,
     'deskripsi_produk': deskripsiProduk,
-    'detail_produk': detailProduk
   }), headers: {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer ${prefs.getString('token')}'

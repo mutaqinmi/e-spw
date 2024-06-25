@@ -82,7 +82,7 @@ class _OrderStatusPageState extends State<OrderStatusPage>{
 
   Widget _allOrders(){
     return Scaffold(
-      body: ListView.builder(
+      body: finishedOrderList.isNotEmpty ? ListView.builder(
         itemCount: finishedOrderList.length,
         itemBuilder: (BuildContext context, int index){
           final order = finishedOrderList[index];
@@ -99,13 +99,31 @@ class _OrderStatusPageState extends State<OrderStatusPage>{
             alamat: order['transaksi']['alamat'],
           );
         },
+      ) : Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/image/order.png',
+              width: 200,
+            ),
+            const Gap(10),
+            const Text(
+              'Belum ada pesanan',
+              style: TextStyle(
+                fontStyle: FontStyle.italic
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
 
   Widget _newOrders(){
     return Scaffold(
-      body: ListView.builder(
+      body: newOrderList.isNotEmpty ? ListView.builder(
         itemCount: newOrderList.length,
         itemBuilder: (BuildContext context, int index){
           final order = newOrderList[index];
@@ -124,13 +142,31 @@ class _OrderStatusPageState extends State<OrderStatusPage>{
             alamat: order['transaksi']['alamat'],
           );
         },
+      ) : Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/image/order.png',
+              width: 200,
+            ),
+            const Gap(10),
+            const Text(
+              'Belum ada pesanan',
+              style: TextStyle(
+                fontStyle: FontStyle.italic
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
 
   Widget _ongoingOrders(){
     return Scaffold(
-      body: ListView.builder(
+      body: onGoingOrderList.isNotEmpty ? ListView.builder(
         itemCount: onGoingOrderList.length,
         itemBuilder: (BuildContext context, int index){
           final order = onGoingOrderList[index];
@@ -149,6 +185,24 @@ class _OrderStatusPageState extends State<OrderStatusPage>{
             alamat: order['transaksi']['alamat'],
           );
         },
+      ) : Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/image/order.png',
+              width: 200,
+            ),
+            const Gap(10),
+            const Text(
+              'Belum ada pesanan',
+              style: TextStyle(
+                fontStyle: FontStyle.italic
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -45,8 +45,8 @@ class _AddProductPageState extends State<AddProductPage>{
         title: const Text(
           'Tambah Produk',
           style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600
+            fontSize: 18,
+            fontWeight: FontWeight.w600
           ),
         ),
       ),
@@ -56,25 +56,6 @@ class _AddProductPageState extends State<AddProductPage>{
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Tambah Produk',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w600
-                    ),
-                  ),
-                  Text(
-                    'Isi informasi produk anda.',
-                    style: TextStyle(
-                      fontSize: 12,
-                    ),
-                  )
-                ],
-              ),
-              const Gap(20),
               Form(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
