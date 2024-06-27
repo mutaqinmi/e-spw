@@ -32,6 +32,16 @@ class _OrderPageState extends State<OrderPage>{
         onGoingOrderList.add(json.decode(res.body)['data'][i]);
       }
     }));
+    getDataPesanan(context: context, statusPesanan: 'Menunggu Konfirmasi Pembeli').then((res) => setState(() {
+      for(int i = 0; i < json.decode(res!.body)['data'].length; i++){
+        onGoingOrderList.add(json.decode(res.body)['data'][i]);
+      }
+    }));
+    getDataPesanan(context: context, statusPesanan: 'Menunggu Konfirmasi Penjual').then((res) => setState(() {
+      for(int i = 0; i < json.decode(res!.body)['data'].length; i++){
+        onGoingOrderList.add(json.decode(res.body)['data'][i]);
+      }
+    }));
     getDataPesanan(context: context, statusPesanan: 'Selesai').then((res) => setState(() {
       for(int i = 0; i < json.decode(res!.body)['data'].length; i++){
         finishedOrderList.add(json.decode(res.body)['data'][i]);
@@ -245,6 +255,58 @@ class _OrderItemState extends State<OrderItem>{
           ],
         ),
       );
+    } else if (status == 'Menunggu Konfirmasi Pembeli'){
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+        decoration: const BoxDecoration(
+          color: Colors.green,
+          borderRadius: BorderRadius.all(Radius.circular(15))
+        ),
+        child: const Wrap(
+          spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Icon(
+              Icons.history,
+              size: 12,
+              color: Colors.white,
+            ),
+            Text(
+              'Menunggu Konfirmasi Selesai',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 12
+              ),
+            )
+          ],
+        ),
+      );
+    } else if (status == 'Menunggu Konfirmasi Penjual'){
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+        decoration: const BoxDecoration(
+          color: Colors.green,
+          borderRadius: BorderRadius.all(Radius.circular(15))
+        ),
+        child: const Wrap(
+          spacing: 5,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Icon(
+              Icons.history,
+              size: 12,
+              color: Colors.white,
+            ),
+            Text(
+              'Menunggu Konfirmasi Penjual',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 12
+              ),
+            )
+          ],
+        ),
+      );
     }
 
     return Container(
@@ -303,10 +365,26 @@ class _OrderItemState extends State<OrderItem>{
           updateStatusPesanan(
             context: context,
             idTransaksi: widget.idTransaksi!,
+            status: 'Menunggu Konfirmasi Penjual',
+          )
+        },
+        child: const Text('Selesaikan Pesanan'),
+      );
+    } else if (status == 'Menunggu Konfirmasi Pembeli'){
+      return FilledButton(
+        onPressed: () => {
+          updateStatusPesanan(
+            context: context,
+            idTransaksi: widget.idTransaksi!,
             status: 'Selesai',
           )
         },
         child: const Text('Selesaikan Pesanan'),
+      );
+    } else if (status == 'Menunggu Konfirmasi Penjual'){
+      return FilledButton(
+        onPressed: () => {},
+        child: const Text('Diminta'),
       );
     }
 

@@ -31,6 +31,16 @@ class _OrderStatusPageState extends State<OrderStatusPage>{
         onGoingOrderList.add(json.decode(res.body)['data'][i]);
       }
     }));
+    getPesananByToko(context: context, idToko: widget.idToko, statusPesanan: 'Menunggu Konfirmasi Penjual').then((res) => setState(() {
+      for(int i = 0; i < json.decode(res!.body)['data'].length; i++){
+        onGoingOrderList.add(json.decode(res.body)['data'][i]);
+      }
+    }));
+    getPesananByToko(context: context, idToko: widget.idToko, statusPesanan: 'Menunggu Konfirmasi Pembeli').then((res) => setState(() {
+      for(int i = 0; i < json.decode(res!.body)['data'].length; i++){
+        onGoingOrderList.add(json.decode(res.body)['data'][i]);
+      }
+    }));
     getPesananByToko(context: context, idToko: widget.idToko, statusPesanan: 'Selesai').then((res) => setState(() {
       for(int i = 0; i < json.decode(res!.body)['data'].length; i++){
         finishedOrderList.add(json.decode(res.body)['data'][i]);
@@ -208,7 +218,7 @@ class _OrderStatusPageState extends State<OrderStatusPage>{
   }
 }
 
-class OrderItem extends StatelessWidget{
+class OrderItem extends StatefulWidget{
   const OrderItem({super.key, required this.productImage, required this.productName, required this.date, required this.priceTotal, required this.qty, required this.status, required this.catatan, this.idTransaksi, this.idToko, required this.nama, required this.fotoProfil, required this.alamat});
   final String productImage;
   final String productName;
@@ -223,15 +233,20 @@ class OrderItem extends StatelessWidget{
   final String fotoProfil;
   final String alamat;
 
+  @override
+  State<OrderItem> createState() => _OrderItemState();
+}
+
+class _OrderItemState extends State<OrderItem>{
   Widget _status(BuildContext context, String status){
     if(status == 'Menunggu Konfirmasi'){
       return FilledButton(
         onPressed: (){
           updateStatusPesanan(
             context: context,
-            idTransaksi: idTransaksi!,
+            idTransaksi: widget.idTransaksi!,
             status: 'Diproses',
-            idToko: idToko!
+            idToko: widget.idToko!
           );
         },
         child: const Text('Konfirmasi Pesanan'),
@@ -241,12 +256,28 @@ class OrderItem extends StatelessWidget{
         onPressed: () => {
           updateStatusPesanan(
             context: context,
-            idTransaksi: idTransaksi!,
-            status: 'Selesai',
-            idToko: idToko!
+            idTransaksi: widget.idTransaksi!,
+            status: 'Menunggu Konfirmasi Pembeli',
+            idToko: widget.idToko!
           )
         },
         child: const Text('Selesaikan Pesanan'),
+      );
+    } else if (status == 'Menunggu Konfirmasi Penjual') {
+      return FilledButton(
+        onPressed: () => {
+          updateStatusPesanan(
+            context: context,
+            idTransaksi: widget.idTransaksi!,
+            status: 'Selesai',
+          )
+        },
+        child: const Text('Selesaikan Pesanan'),
+      );
+    } else if (status == 'Menunggu Konfirmasi Pembeli') {
+      return FilledButton(
+        onPressed: () => {},
+        child: const Text('Diminta'),
       );
     }
 
@@ -267,9 +298,9 @@ class OrderItem extends StatelessWidget{
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: CachedNetworkImage(
-                  imageUrl: productImage,
-                  width: 100,
-                  height: 100,
+                  imageUrl: widget.productImage,
+                  width: 75,
+                  height: 75,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -281,96 +312,80 @@ class OrderItem extends StatelessWidget{
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        productName,
+                        widget.productName,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600
                         ),
                       ),
-                      Text(
-                        'Rp. ${formatter.format(priceTotal)}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                        ),
+                      Wrap(
+                        spacing: 5,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          const Text(
+                            'Pemesan :',
+                            style: TextStyle(
+                              color: Colors.grey
+                            ),
+                          ),
+                          Text(widget.nama)
+                        ],
                       ),
-                      Text(
-                        'x$qty',
-                        style: const TextStyle(
-                          fontSize: 14,
-                        ),
+                      Wrap(
+                        spacing: 5,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          const Text(
+                            'Alamat :',
+                            style: TextStyle(
+                              color: Colors.grey
+                            ),
+                          ),
+                          Text(widget.alamat)
+                        ],
+                      ),
+                      Wrap(
+                        spacing: 5,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          const Text(
+                            'Catatan :',
+                            style: TextStyle(
+                              color: Colors.grey
+                            ),
+                          ),
+                          Text(widget.catatan)
+                        ],
                       ),
                     ],
                   ),
                 )
               ),
-            ],
-          ),
-          Card(
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              side: const BorderSide(
-                width: .5,
-              ),
-              borderRadius: BorderRadius.circular(10)
-            ),
-            margin: const EdgeInsets.symmetric(vertical: 5),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-              child: Column(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Nama Pemesan:',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600
-                        ),
-                      ),
-                      const Gap(5),
-                      Expanded(
-                        child: Text(nama),
-                      )
-                    ],
+                  Text(
+                    'Rp. ${formatter.format(widget.priceTotal)}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500
+                    ),
                   ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Alamat:',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600
-                        ),
-                      ),
-                      const Gap(5),
-                      Expanded(
-                        child: Text(alamat),
-                      )
-                    ],
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Catatan:',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600
-                        ),
-                      ),
-                      const Gap(5),
-                      Expanded(
-                        child: Text(catatan == '' ? '...' : catatan),
-                      )
-                    ],
+                  Text(
+                    'x${widget.qty}',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500
+                    ),
                   ),
                 ],
               )
-            ),
+            ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              _status(context, status)
+              _status(context, widget.status),
             ],
           ),
           const Gap(20)

@@ -480,6 +480,26 @@ void updateFotoProfilSiswa({required BuildContext context, required File profile
   }
 }
 
+void hapusFotoProfilSiswa({required BuildContext context}) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final url = Uri.https(apiBaseUrl, '/v3/user/delete/profile-picture');
+  final response = await http.delete(url, headers: {
+    'Authorization': 'Bearer ${prefs.getString('token')}'
+  });
+
+  if(!context.mounted) return;
+  if(response.statusCode == 401){
+    _sessionExpired(context);
+  }
+  if(response.statusCode == 200){
+    successSnackBar(
+      context: context,
+      content: 'Foto profil berhasil dihapus!'
+    );
+    context.goNamed('home');
+  }
+}
+
 Future<http.Response?> getDataKelas({required BuildContext context}) async {
   final url = Uri.https(apiBaseUrl, '/v3/kelas');
   final response = await http.get(url);
@@ -1247,10 +1267,10 @@ Future<http.Response?> createPesanan({required BuildContext context, required St
   }
   if(response.statusCode == 200){
     addNotifikasiToko(
+      idToko: idToko,
       type: 'Informasi',
       title: 'Pesanan baru!',
       description: 'Anda menerima pesanan baru! segera proses pesanan anda!',
-      idToko: idToko
     );
     addNotifikasi(
       type: 'Informasi',
@@ -1292,18 +1312,32 @@ void updateStatusPesanan({required BuildContext context, required String idTrans
           content: 'Pesanan selesai'
         );
         return context.goNamed('order-status', queryParameters: {'id_toko': idToko, 'initial_index': '2'});
+      } else if (status == 'Menunggu Konfirmasi Pembeli'){
+        successSnackBar(
+          context: context,
+          content: 'Menunggu konfirmasi pembeli'
+        );
+        return context.pop();
       }
     } else {
-      addNotifikasi(
-        type: 'Informasi',
-        title: 'Pesanan anda selesai!',
-        description: 'Mohon untuk mengecek kesesuaian pesanan anda.',
-      );
-      successSnackBar(
-        context: context,
-        content: 'Pesanan selesai'
-      );
-      return context.goNamed('order', queryParameters: {'initial_index': '1'});
+      if(status == 'Selesai'){
+        addNotifikasi(
+          type: 'Informasi',
+          title: 'Pesanan anda selesai!',
+          description: 'Mohon untuk mengecek kesesuaian pesanan anda.',
+        );
+        successSnackBar(
+          context: context,
+          content: 'Pesanan selesai'
+        );
+        return context.goNamed('order', queryParameters: {'initial_index': '1'});
+      } else if (status == 'Menunggu Konfirmasi Penjual'){
+        successSnackBar(
+          context: context,
+          content: 'Menunggu konfirmasi penjual'
+        );
+        return context.pop();
+      }
     }
   }
 }
@@ -1381,11 +1415,12 @@ void addUlasan({required BuildContext context, required String idProduk, require
   }
 }
 
-Future<http.Response?> getDataNotifikasi({required BuildContext context, required String type}) async {
+Future<http.Response?> getDataNotifikasi({required BuildContext context, required String type, required int limit}) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final url = Uri.https(apiBaseUrl, '/v3/user/notifikasi');
   final response = await http.post(url, body: json.encode({
     'type': type,
+    'limit': limit
   }), headers: {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer ${prefs.getString('token')}'
@@ -1415,11 +1450,12 @@ void addNotifikasi({required String type, required String title, required String
   });
 }
 
-Future<http.Response?> getDataNotifikasiToko({required BuildContext context, required String type}) async {
+Future<http.Response?> getDataNotifikasiToko({required BuildContext context, required String type, required int limit}) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final url = Uri.https(apiBaseUrl, '/v3/toko/notifikasi');
   final response = await http.post(url, body: json.encode({
     'type': type,
+    'limit': limit
   }), headers: {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer ${prefs.getString('token')}'

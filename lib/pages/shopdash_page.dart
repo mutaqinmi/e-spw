@@ -318,7 +318,7 @@ class _ShopDashPageState extends State<ShopDashPage>{
                                             final order = json.decode(response.data.body)['data'];
                                             final orderList = [];
                                             for(int i = 0; i < order.length; i++){
-                                              if(order[i]['transaksi']['status'] != 'Selesai' && order[i]['transaksi']['status'] != 'Diproses'){
+                                              if(order[i]['transaksi']['status'] == 'Menunggu Konfirmasi'){
                                                 orderList.add(order[i]);
                                               }
                                             }

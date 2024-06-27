@@ -48,6 +48,7 @@ class _EditProfilePageState extends State<EditProfilePage>{
   }
 
   void _getImage() async {
+    context.pop();
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     File? file = File(image!.path);
@@ -99,20 +100,57 @@ class _EditProfilePageState extends State<EditProfilePage>{
                   minimum: const EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
                     children: [
-                      Column(
-                        children: [
-                          CircleAvatar(
-                            radius: 50,
-                            backgroundImage: NetworkImage(
-                              data['siswa']['foto_profil'].isEmpty ? 'https://$baseUrl/images/profile.png' : 'https://$apiBaseUrl/public/${data['siswa']['foto_profil']}'
+                      GestureDetector(
+                        onTap: () => showDialog(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                            contentPadding: const EdgeInsets.symmetric(vertical: 20),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: InkWell(
+                                    onTap: () => _getImage(),
+                                    child: const Padding(
+                                      padding: EdgeInsets.all(20),
+                                      child: Text('Ubah Foto Profil'),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: InkWell(
+                                    onTap: () => hapusFotoProfilSiswa(
+                                      context: context
+                                    ),
+                                    child: const Padding(
+                                      padding: EdgeInsets.all(20),
+                                      child: Text('Hapus Foto Profil'),
+                                    ),
+                                  ),
+                                ),
+                              ]
                             ),
-                          ),
-                          TextButton(
-                            onPressed: () => _getImage(),
-                            child: const Text('Ubah Foto Profil'),
                           )
-                        ],
+                        ),
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundImage: NetworkImage(
+                            data['siswa']['foto_profil'].isEmpty ? 'https://$baseUrl/images/profile.png' : 'https://$apiBaseUrl/public/${data['siswa']['foto_profil']}'
+                          ),
+                          child: Container(
+                            width: double.infinity,
+                            height: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColor.withAlpha(100),
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: const Icon(Icons.edit_outlined),
+                          ),
+                        ),
                       ),
+                      const Gap(20),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

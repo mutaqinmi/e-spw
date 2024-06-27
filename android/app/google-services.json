@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "656715384692",
+    "project_id": "e-spw-app",
+    "storage_bucket": "e-spw-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:656715384692:android:ecac6cba465987aa714e21",
+        "android_client_info": {
+          "package_name": "com.app.espw"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACHqSR9j2xM8AN7dlJFN9ZHpzim3j1Vys"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

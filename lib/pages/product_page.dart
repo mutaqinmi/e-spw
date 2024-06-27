@@ -206,7 +206,6 @@ class _ProductPageState extends State<ProductPage>{
                           });
                         },
                         child: InkWell(
-                          // onTap: () => context.pushNamed('edit-product', queryParameters: {'id_produk': item['id_produk'], 'id_toko': widget.idToko}),
                           onTap: () => showModalBottomSheet(
                             isScrollControlled: true,
                             showDragHandle: true,

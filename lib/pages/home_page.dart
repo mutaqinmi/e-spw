@@ -381,30 +381,30 @@ class _HomePageState extends State<HomePage> {
                               return Card(
                                 elevation: 0,
                                 child: SizedBox(
-                                    width: 150,
-                                    child: Center(
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                            width: 50,
-                                            height: 50,
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(25),
-                                              color: Theme.of(context).primaryColor,
-                                            ),
-                                            child: const Center(
-                                              child: Icon(
-                                                Icons.keyboard_arrow_right,
-                                                color: Colors.white,
-                                              ),
+                                  width: 150,
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          width: 50,
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(25),
+                                            color: Theme.of(context).primaryColor,
+                                          ),
+                                          child: const Center(
+                                            child: Icon(
+                                              Icons.keyboard_arrow_right,
+                                              color: Colors.white,
                                             ),
                                           ),
-                                          const Gap(10),
-                                          const Text('Lihat semua')
-                                        ],
-                                      ),
-                                    )
+                                        ),
+                                        const Gap(10),
+                                        const Text('Lihat semua')
+                                      ],
+                                    ),
+                                  )
                                 ),
                               );
                             },
